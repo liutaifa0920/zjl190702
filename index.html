@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+        <link rel="stylesheet" href="index.css">
+        <script src="https://unpkg.com/vue/dist/vue.js"></script>
+        <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+        <style>
+            .cell {
+                text-align: center;
+            }
+
+            .revise-btn {
+                margin-bottom: 15px;
+                transition: .5s;
+            }
+
+            #revise-state,
+            #revise-number {
+                background-color: white;
+                width: 600px;
+                height: 650px;
+                box-shadow: 0 0 10px #ccc;
+                padding: 15px 80px;
+                border-radius: 10px;
+                box-sizing: border-box;
+                z-index: 50;
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                margin: auto;
+            }
+
+            #revise-state-name {
+                border: 1px solid #eeeeee;
+                padding: 8px;
+                margin-bottom: 15px;
+                box-sizing: border-box;
+                overflow-y: scroll;
+            }
+
+            .el-icon-close {
+                position: absolute;
+                top: 5px;
+                right: 25px;
+                padding: 10px;
+                cursor: pointer;
+            }
+
+            .revise-state-title {
+                text-align: center;
+            }
+
+            .times {
+                height: 5.4rem;
+                width: 100%;
+                padding: 0.75rem 0.75rem 0rem;
+                text-align: center;
+                margin-bottom: 0.75rem;
+            }
+
+            .time-top {
+                width: 100%;
+                height: 1.5rem;
+            }
+
+            .aui-icon-left,
+            .aui-icon-right {
+                width: 0.35rem;
+                height: 0.7rem;
+                color: #999999;
+            }
+
+            .currenttime {
+                color: #191919;
+                font-size: 0.75rem;
+            }
+
+            .week,
+            .day {
+                width: 100%;
+                text-align: left;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .week span {
+                flex: 1;
+                color: #8A8A8A;
+                font-size: 0.75rem;
+            }
+
+            .day span {
+                flex: 1;
+            }
+
+            .dayitem {
+                width: 1.2rem;
+                height: 1.2rem;
+                border-radius: 50%;
+                color: #838385;
+                font-size: 0.75rem;
+                display: inline-block;
+                line-height: 1.2rem;
+                text-align: center;
+            }
+
+            .time-bottom span {
+                text-align: center;
+            }
+
+            .week {
+                margin-top: 0.5rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .walk {
+                width: 100%;
+                height: 11rem;
+                margin-bottom: 10px;
+                background: url("../image/cdshwalk.png") no-repeat;
+                background-size: 100% 100%;
+                border-radius: 0.25rem;
+                position: relative;
+            }
+
+            .walk-top {
+                padding-top: 0.5rem;
+                padding-left: 0.4rem;
+                padding-right: 0.5rem;
+            }
+
+            .walk-top span:nth-of-type(2) {
+                margin-right: 0.15rem;
+                color: #999;
+                font-size: 0.6rem;
+            }
+
+            .walk-top img {
+                display: inline-block;
+            }
+
+            .walk-top img:nth-of-type(1) {
+                width: 0.75rem;
+                height: 0.75rem;
+                vertical-align: middle;
+            }
+
+            .walk-top .self {
+                display: inline-block;
+                width: 2.25rem;
+                text-align: center;
+                border-radius: 0.25rem;
+                line-height: 0.75rem;
+                height: 0.75rem;
+                background: url("../image/cdsbradiu.png") no-repeat;
+                background-size: 100% 100%;
+                font-size: 0.4rem;
+                color: #fff;
+            }
+
+            .walk-top span:nth-of-type(4) {
+                float: right;
+                color: #23ACF8;
+                font-size: 0.6rem;
+            }
+
+            .bodystate {
+                position: absolute;
+                bottom: 0.5rem;
+                width: 100%;
+                padding-left: 0.75rem;
+                color: #959595;
+                font-size: 0.6rem;
+            }
+
+            .btcl {
+                width: 100%;
+                height: 6rem;
+                position: absolute;
+                bottom: 0;
+                display: flex;
+                justify-content: flex-end;
+                padding-right: 20px;
+            }
+
+            .bodystate img {
+                width: 0.6rem;
+                height: 0.6rem;
+                margin-right: 0.25rem;
+                display: inline-block;
+            }
+
+            .btcl p {
+                width: 3.5rem;
+                height: 3.5rem;
+                border-radius: 2.5rem;
+                background: #55CB93;
+                box-shadow: 0.05rem 0.05rem 0.75rem 0.1rem #9af7cb;
+                color: #FFFFFF;
+                line-height: 3.5rem;
+                text-align: center;
+                font-size: 0.75rem;
+            }
+
+            .finish {
+                background: #8ACBAD;
+                color: #fff !important;
+            }
+
+            .fontcolor {
+                color: #191919;
+            }
+
+            .test {
+                pointer-events: none;
+            }
+
+            .warp {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="roomRoot">
+            <el-tabs type="card" @tab-click="handleClick" id="">
+                <el-tab-pane label="房态维护">
+                    <el-row>
+                        <el-button class="el-revise-btn revise-btn" type="primary" size="small"
+                            @click="reviseStateFrameClick">批量修改房态</el-button>
+                        <el-button class="el-revise-btn revise-btn" type="primary" size="small"
+                            @click="reviseNumFrameClick">批量修改房量</el-button>
+                    </el-row>
+                    <el-button-group>
+                        <el-button type="primary" icon="el-icon-arrow-left">前七天</el-button>
+                        <el-button type="primary">{{stateTime}}至{{endTime}}</el-button>
+                        <el-button type="primary" @click="endDate()">后七天<i
+                                class="el-icon-arrow-right el-icon--right"></i></el-button>
+                    </el-button-group>
+                    <div style="margin: 15px 0;"></div>
+                    <el-table :data="tableData" border style="width: 100%">
+                        <el-table-column prop="date" label="房型" :width="180">
+                        </el-table-column>
+                        <el-table-column v-for="day in weeks" prop="name" :label="day">
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="房价维护">
+                    <el-table :data="tableData" border style="width: 100%">
+                        <el-table-column prop="date" label="房型" :width="180">
+                        </el-table-column>
+                        <el-table-column v-for="item,i in 7" :key="i" prop="name" label="111">
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="房型维护">
+                    <el-row>
+                        <el-button class="el-revise-btn revise-btn" type="primary" size="small">创建房型</el-button>
+                    </el-row>
+                    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                        <el-form-item label="房间名称">
+                            <el-input v-model="formInline.user" placeholder="房间名称"></el-input>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button type="primary" @click="onSubmit" class="el-revise-btn revise-btn" size="small">查询
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                    <el-table :data="tableData" border style="width: 100%">
+                        <el-table-column label="房型" :width="130">
+                        </el-table-column>
+                        <el-table-column label="房型" :width="130">
+                        </el-table-column>
+                        <el-table-column label="房型" :width="130">
+                        </el-table-column>
+                        <el-table-column label="房型" :width="130">
+                        </el-table-column>
+                        <el-table-column label="房型" :width="100">
+                        </el-table-column>
+                        <el-table-column label="房型" :width="150">
+                        </el-table-column>
+                        <el-table-column label="房型" :width="120">
+                        </el-table-column>
+                        <el-table-column label="房型">
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+            </el-tabs>
+
+            <div v-if="reviseStateFrame" id="revise-state">
+                <i class="el-icon-close" @click="closeReviseStateClick"></i>
+                <h4 class="revise-state-title">批量修改房态</h4>
+                <p>房型:</p>
+                <div id="revise-state-name">
+                    <div v-for="n in 10">
+                        <el-checkbox>备选项</el-checkbox>
+                    </div>
+                </div>
+                <div>
+                    <span>房态设置</span>
+                    <el-button class="el-revise-btn revise-btn" type="primary" size="small">开房</el-button>
+                    <el-button class="el-revise-btn revise-btn" type="primary" size="small">关房</el-button>
+                </div>
+                <div>
+                    <span>修改日期</span>
+                    <input type="text">
+                    <span>至</span>
+                    <input type="text">
+                    <p>可修改60天房态</p>
+                    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选
+                    </el-checkbox>
+                    <div style="margin: 15px 0;"></div>
+                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
+                        <el-checkbox v-for="day,i in weeks" :label="day" :key="i">{{day}}</el-checkbox>
+                    </el-checkbox-group>
+                </div>
+            </div>
+            <div v-if="reviseNumFrame" id="revise-number">
+                <i class="el-icon-close" @click="closeReviseN
+                umClick"></i>
+                <h4>批量修改房量</h4>
+                <p>房型</p>
+                <div>
+                    <div v-for="n in tableData">
+                        <el-checkbox>备选项</el-checkbox>
+                        <el-input v-model="n.value" size="mini" placeholder="请输入" clearable
+                            style="display: inline-block;width: 80px;">
+                        </el-input>间
+                    </div>
+
+                </div>
+                <div>
+                    <span>修改日期</span>
+                    <input type="text">
+                    <span>至</span>
+                    <input type="text">
+                    <p>可修改60天房态</p>
+                    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选
+                    </el-checkbox>
+                    <div style="margin: 15px 0;"></div>
+                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
+                        <el-checkbox v-for="day,i in weeks" :label="day" :key="i">{{day}}</el-checkbox>
+                        </el-chFeckbox-group>
+                </div>
+            </div>
+
+            <div class="times">
+                <div class="time-top">
+                    <div class="row">
+                        <div class="aui-col-xs-4" style="text-align: center;"><i class="aui-iconfont aui-icon-left"
+                                tapmode="" @click="beforeDate('left')">qqqqqqq</i></div>
+                        <div class="aui-col-xs-4 currenttime">{{today}}</div>
+                        <div class="aui-col-xs-4" style="text-align: center"><i class="aui-iconfont aui-icon-right"
+                                tapmode="" @click="nextDate('right')">wwwww</i></div>
+                    </div>
+                </div>
+            </div>
+            <p v-for="item in tableData">
+                <input type="text" v-model="item.value">
+            </p>
+            <button @click="qqq"></button>
+        </div>
+
+        
+        <script>
+            const weekOptions = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+            var temp = new Date();
+            new Vue({
+                el: "#roomRoot",
+                data: {
+                    tableData: [{
+                        date: '2016-05-02',
+                        name: '王小虎',
+                        address: '上海市普陀区金沙江路 1518 弄',
+                        value: ''
+                    }, {
+                        date: '2016-05-04',
+                        name: '王小虎',
+                        address: '上海市普陀区金沙江路 1517 弄',
+                        value: ''
+                    }, {
+                        date: '2016-05-01',
+                        name: '王小虎',
+                        address: '上海市普陀区金沙江路 1519 弄',
+                        value: ''
+                    }, {
+                        date: '2016-05-03',
+                        name: '王小虎',
+                        address: '上海市普陀区金沙江路 1516 弄',
+                        value: ''
+                    }],
+                    tabHighLight: '',
+                    stateTime: "2017/07/01",
+                    endTime: "2017/07/07",
+                    formInline: {
+                        user: '',
+                        region: ''
+                    },
+                    checkAll: false,
+                    checkedCities: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+                    weeks: weekOptions,
+                    isIndeterminate: true,
+                    reviseNumber: '',
+                    reviseStateFrame: false,
+                    reviseNumFrame: false,
+
+                    weeks: [],
+                    months: [],
+                    day: 0,
+                    date: 0,
+                    month: 0,
+                    d: 0,
+                    today: '',
+                    flag: 0,
+                },
+                mounted() {
+                    // this.mountedAlert();
+                    this.d = new Date(); //当前日期
+                    this.day = this.d.getDay(); //周几
+                    this.date = this.d.getDate(); //几号
+                    this.month = this.d.getMonth() + 1; //月
+                    var timestr = this.month + "月" + this.date + "日";
+                    this.today = timestr;
+                    // this.flag = this.date;
+                    this.flag = this.formatDate(this.d);
+                    this.getResult(this.d);
+                    var ctime = parseInt(this.d.getFullYear().toString() + this.month.toString() + this.date
+                        .toString());
+
+                },
+                methods: {
+                    qqq(){
+                        console.log(this.tableData);
+                    },
+                    endDate() {
+                        // alert("123")
+                        var date = new Date;
+                        var year = date.getFullYear();
+                        var month = date.getMonth() + 1;
+                        var day = date.getDay();
+                        day = (day - "") + 7
+                        if (day < 10) {
+                            day = "0" + day
+                        }
+                        var datetime = year + "/" + month + "/" + day;
+                        this.endTime = datetime;
+                        console.log(day)
+                    },
+                    handleClick(tab, event) {
+                        console.log(tab.label);
+                    },
+                    onSubmit() {
+                        console.log('submit!');
+                    },
+                    // 房态弹出框
+                    reviseStateFrameClick() {
+                        this.reviseStateFrame = !this.reviseStateFrame;
+                    },
+                    closeReviseStateClick() {
+                        this.reviseStateFrame = false;
+                    },
+                    // 房量弹出框
+                    reviseNumFrameClick() {
+                        this.reviseNumFrame = !this.reviseNumFrame
+                    },
+                    closeReviseNumClick() {
+                        this.reviseNumFrame = false;
+                    },
+                    handleCheckAllChange(val) {
+                        this.checkedCities = val ? weekOptions : [];
+                        this.isIndeterminate = false;
+                    },
+                    handleCheckedCitiesChange(value) {
+                        let checkedCount = value.length;
+                        this.checkAll = checkedCount === this.weeks.length;
+                        this.isIndeterminate = checkedCount > 0 && checkedCount < this.weeks.length;
+                    },
+
+
+                    getMonDate: function (test) {
+                        if (test.getDay() == 1)
+                            return test;
+                        if (test.getDay() == 0)
+                            test.setDate(test.getDate() - 6);
+                        else
+                            test.setDate(test.getDate() - test.getDay() + 1);
+                        return test;
+                    },
+                    // 0-6转换成中文名称
+                    getDayName: function (day) {
+                        var day = parseInt(day);
+                        if (isNaN(day) || day < 0 || day > 6)
+                            return false;
+                        var weekday = ["日", "一", "二", "三", "四", "五", "六"];
+                        return weekday[day];
+                    },
+                    getResult: function (time, a) {
+                        var timeobj = this.getMonDate(time); // timeobj是当前星期一的日期对象
+                        var temTime = new Date(timeobj.getTime()); //当前当前星期一对象转换成时间戳
+                        var arr = [];
+                        var week = [];
+                        var dayss = new Date();
+                        for (var i = 0; i < 7; i++) {
+                            var time1 = new Date(temTime.getTime());
+                            var time2 = dayss.getTime();
+                            var result = time1 <= time2;
+                            var ymd = this.formatDate(temTime);
+                            // arr.push({'dayss':temTime.getDate(),'daystate':false}); //一周几号
+                            arr.push({
+                                'date': ymd,
+                                'state': result,
+                                'showDate': temTime.getDate()
+                            });
+                            week.push(this.getDayName(temTime.getDay())); //一周 周几
+                            temTime.setDate(temTime.getDate() + 1);
+                        }
+                        this.weeks = week;
+                        this.months = arr;
+                        console.log(this.months);
+
+                        if (a == 'left') {
+                            // $(".dayitem").removeClass("finish");
+                            this.flag = this.months[this.months.length - 1].date;
+                            var temp1 = temp;
+                            temp1.setDate(temp1.getDate() - temp1.getDay() + 7);
+                            this.getTimes(temp1);
+                        } else if (a == 'right') {
+                            // $(".dayitem").removeClass("finish");
+                            this.flag = this.months[0].date;
+                            var temp1 = temp;
+                            this.getTimes(temp1);
+                        }
+                    },
+                    getTimes: function (temp2) {
+                        var m = temp2.getMonth() + 1;
+                        var d = temp2.getDate();
+                        if (m < 10) {
+                            m = "0" + m;
+                        }
+                        if (d < 10) {
+                            d = "0" + d;
+                        }
+                        this.today = m + "月" + d + "日";
+                    },
+                    beforeDate: function (action) {
+                        temp.setDate(temp.getDate() - 7);
+                        this.getResult(temp, action);
+                    },
+                    nextDate: function (action) {
+                        temp.setDate(temp.getDate() + 7);
+                        this.getResult(temp, action);
+                    },
+                    formatDate: function (date) {
+                        var year = date.getFullYear();
+                        var months = date.getMonth() + 1;
+                        var month = (months < 10 ? '0' + months : months).toString();
+                        var day = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()).toString();
+                        return year + month + day;
+                    },
+                    getIndex: function (idx, item) {
+                        this.flag = this.months[idx].date;
+                        var year = item.substring(0, 4);
+                        var month = item.substring(4, 6);
+                        var day = item.substring(6, 8);
+                        var str = month + "月" + day + "日";
+                        this.today = str;
+                        console.log(item);
+                        getReportList(year + '-' + month + '-' + day);
+                    }
+                },
+                computed: {
+
+                }
+            })
+        </script>
+    </body>
+
+</html>
