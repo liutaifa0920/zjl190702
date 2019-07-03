@@ -80,8 +80,14 @@
             </div>
             <div>
                 <span>修改日期</span>
-                <el-date-picker v-model="roomStateValue" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"
-                    :default-time="['00:00:00', '23:59:59']">
+                <el-date-picker 
+                    v-model="roomStateValue" 
+                    type="daterange" 
+                    start-placeholder="开始日期" 
+                    end-placeholder="结束日期" 
+                    :default-time="['00:00:00', '23:59:59']" 
+                    size="mini"
+                >
                 </el-date-picker>
                 <p>可修改60天房态</p>
                 <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选
@@ -107,8 +113,14 @@
             </div>
             <div>
                 <span>修改日期</span>
-                <el-date-picker v-model="roomNumValue" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"
-                    :default-time="['00:00:00', '23:59:59']">
+                <el-date-picker 
+                    v-model="roomNumValue" 
+                    type="daterange" 
+                    start-placeholder="开始日期" 
+                    end-placeholder="结束日期" 
+                    :default-time="['00:00:00', '23:59:59']" 
+                    size="mini"
+                >
                 </el-date-picker>
                 <p>可修改60天房态</p>
                 <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选
