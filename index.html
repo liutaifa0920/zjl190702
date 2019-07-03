@@ -132,17 +132,7 @@
             </div>
         </div>
 
-        <div class="times">
-            <div class="time-top">
-                <div class="row">
-                    <!-- <div class="aui-col-xs-4" style="text-align: center;"><i class="aui-iconfont aui-icon-left"
-                                tapmode="" @click="beforeDate('left')">qqqqqqq</i></div> -->
-                    <div class="aui-col-xs-4 currenttime">{{startDate}}{{startDate}}</div>
-                    <!-- <div class="aui-col-xs-4" style="text-align: center"><i class="aui-iconfont aui-icon-right"
-                                tapmode="" @click="nextDate('right')">wwwww</i></div> -->
-                </div>
-            </div>
-        </div>
+        
     </div>
 
 
@@ -261,7 +251,7 @@
                 },
 
 
-                getMonDate: function (test) {
+                getMonDate(test) {
                     if (test.getDay() == 1)
                         return test;
                     if (test.getDay() == 0)
@@ -271,14 +261,14 @@
                     return test;
                 },
                 // 0-6转换成中文名称
-                getDayName: function (day) {
+                getDayName(day) {
                     var day = parseInt(day);
                     if (isNaN(day) || day < 0 || day > 6)
                         return false;
                     var weekday = ["日", "一", "二", "三", "四", "五", "六"];
                     return weekday[day];
                 },
-                getResult: function (time, a) {
+                getResult(time, a) {
                     var timeobj = this.getMonDate(time); // timeobj是当前星期一的日期对象
                     var temTime = new Date(timeobj.getTime()); //当前当前星期一对象转换成时间戳
                     var arr = [];
@@ -315,7 +305,7 @@
                         this.getTimes(temp1);
                     }
                 },
-                getTimes: function (temp2) {
+                getTimes(temp2) {
                     var m = temp2.getMonth() + 1;
                     var d = temp2.getDate();
                     if (m < 10) {
@@ -326,22 +316,22 @@
                     }
                     this.startDate = m + "月" + d + "日";
                 },
-                beforeDate: function (action) {
+                beforeDate(action) {
                     temp.setDate(temp.getDate() - 7);
                     this.getResult(temp, action);
                 },
-                nextDate: function (action) {
+                nextDate(action) {
                     temp.setDate(temp.getDate() + 7);
                     this.getResult(temp, action);
                 },
-                formatDate: function (date) {
+                formatDate(date) {
                     var year = date.getFullYear();
                     var months = date.getMonth() + 1;
                     var month = (months < 10 ? '0' + months : months).toString();
                     var day = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()).toString();
                     return year + month + day;
                 },
-                getIndex: function (idx, item) {
+                getIndex(idx, item) {
                     this.flag = this.months[idx].date;
                     var year = item.substring(0, 4);
                     var month = item.substring(4, 6);
