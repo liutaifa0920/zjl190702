@@ -40,8 +40,12 @@
                     <el-table-column label="房型" :width="180">
                         房型名称****
                     </el-table-column>
-                    <el-table-column v-for="dayTil in week" :label="dayTil">
-
+                    <el-table-column v-for="dayTil in week" :label="dayTil" width="201">
+                        <el-button type="text" @click="open">
+                            <el-button type="primary" size="mini">售3/5总</el-button>
+                            <el-button type="primary" size="mini">可售</el-button>
+                            <el-button type="info" size="mini">已关闭</el-button>
+                        </el-button>
                     </el-table-column>
                 </el-table>
             </el-tab-pane>
@@ -262,6 +266,11 @@
                     }
                     console.log(this.weeksNum);
                 },
+                open() {
+                    this.$alert('<strong>这是 <i>HTML</i> 片段</strong>', 'HTML 片段', {
+                        dangerouslyUseHTMLString: true
+                    });
+                },
 
                 roomStateOpen() {
                     this.$message({
@@ -279,10 +288,10 @@
                     });
                     this.reviseNumFrame = false;
                 },
-                roomStateClose(){
+                roomStateClose() {
                     this.reviseStateFrame = false;
                 },
-                roomNumClose(){
+                roomNumClose() {
                     this.reviseNumFrame = false;
                 },
                 open4() {
