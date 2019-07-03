@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="elindex.css">
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-
 </head>
 
 <body>
@@ -25,7 +24,7 @@
                 </el-row>
                 <el-button-group style="margin-bottom: 15px;">
                     <el-button type="primary" icon="el-icon-arrow-left" @click="beforeDate('left')">前七天</el-button>
-                    <el-button type="primary">{{startDate}}至{{startDate}}</el-button>
+                    <el-button type="primary">{{startDate}}至{{endDate}}</el-button>
                     <el-button type="primary" icon="el-icon-arrow-right" @click="nextDate('right')">后七天</el-button>
                 </el-button-group>
                 <el-table :data="tableData" border style="width: 100%">
@@ -185,6 +184,7 @@
                 month: 0,
                 d: 0,
                 startDate: '',
+                endDate: '',
                 flag: 0,
 
                 roomNumValue: '',
@@ -235,6 +235,7 @@
 
 
                 getMonDate(test) {
+                    console.log(test);
                     if (test.getDay() == 1)
                         return test;
                     if (test.getDay() == 0)
@@ -253,6 +254,7 @@
                 },
                 getResult(time, a) {
                     var timeobj = this.getMonDate(time); // timeobj是当前星期一的日期对象
+                    console.log(timeobj);
                     var temTime = new Date(timeobj.getTime()); //当前星期一对象转换成时间戳
                     var arr = [];
                     var week = [];
@@ -273,7 +275,7 @@
                     }
                     this.weeks = week;
                     this.months = arr;
-                    console.log(this.months);
+                    // console.log(this.months);
 
                     if (a == 'left') {
                         // $(".dayitem").removeClass("finish");
