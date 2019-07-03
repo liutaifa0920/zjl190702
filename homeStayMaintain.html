@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="homeStayMaintain.css">
     <link rel="stylesheet" href="index.css">
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
@@ -15,23 +16,29 @@
 <body>
     <div id="homeStayMaintain">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
-            <div id="search-left">
-                <el-form-item label="审批人">
-                    <el-input v-model="formInline.user" placeholder="审批人" size="mini"></el-input>
-                </el-form-item>
-                <el-form-item label="活动区域">
-                    <el-select v-model="formInline.region" placeholder="活动区域" size="mini">
-                        <el-option label="区域一" value="shanghai"></el-option>
-                        <el-option label="区域二" value="beijing"></el-option>
-                    </el-select>
-                </el-form-item>
+            <div id="search-box">
+                <div id="search-left">
+                    <el-form-item label="民宿名称">
+                        <el-input v-model="formInline.user" placeholder="请输入" size="mini"></el-input>
+                    </el-form-item>
+                    <el-form-item label="房东姓名">
+                            <el-input v-model="formInline.user" placeholder="请输入" size="mini"></el-input>
+                        </el-form-item>
+                    <el-form-item label="运营类别">
+                        <el-select v-model="formInline.region" placeholder="请选择" size="mini">
+                            <el-option label="民营" value="shanghai"></el-option>
+                            <el-option label="自营" value="beijing"></el-option>
+                        </el-select>
+                    </el-form-item>
+                </div>
+                <div id="search-right">
+                    <el-form-item>
+                        <el-button type="primary" size="mini">查询</el-button>
+                        <el-button type="info" size="mini">重置</el-button>
+                    </el-form-item>
+                </div>
             </div>
-            <div id="search-right">
-                <el-form-item>
-                    <el-button type="primary" size="mini">查询</el-button>
-                    <el-button type="info" size="mini">重置</el-button>
-                </el-form-item>
-            </div>
+
         </el-form>
     </div>
 
