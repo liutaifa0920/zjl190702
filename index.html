@@ -237,14 +237,9 @@
                     this.checkAll = checkedCount === this.week.length;
                     this.isIndeterminate = checkedCount > 0 && checkedCount < this.week.length;
                 },
-                // 获取当前日
-                getCurrentDate(){
-
-                },
                 // 上一周
                 beforeDate() {
                     this.roomStateStartValue = new Date();
-                    let currentDay = this.roomStateStartValue.getDate();
                     this.nextWeeks -= 7;
                     this.roomStateStartValue.setDate(this.nextWeeks);
                     this.weeksNum--;
