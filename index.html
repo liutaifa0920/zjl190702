@@ -192,6 +192,8 @@
                 data: 0,
                 beforeNum: 0,
                 nextNum: 0,
+                beforeWeeks: 0,
+                nextWeeks: 0,
 
                 roomNumValue: '',
                 roomStateValue: '',
@@ -203,7 +205,9 @@
                     myddy = 7;
                 }
                 var weekday = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
-
+                console.log(this.roomStateStartValue);
+                // this.roomStateStartValue.setDate(40);
+                console.log(this.roomStateStartValue);
                 console.log(weekday[myddy]);
             },
             methods: {
@@ -238,14 +242,17 @@
                 },
                 // 上一周
                 beforeDate() {
-                    console.log("上一周");
+                    this.roomStateStartValue = new Date();
+                    this.nextWeeks -= 7;
+                    this.roomStateStartValue.setDate(this.nextWeeks);
                 },
                 // 下一周
                 nextDate() {
-                    console.log("下一周");
+                    this.roomStateStartValue = new Date();
                     this.nextNum++;
-                    if (this.nextNum < 5) {
-
+                    if (this.nextNum < 9) {
+                        this.nextWeeks += 7;
+                        this.roomStateStartValue.setDate(this.nextWeeks);
                     } else {
                         this.open4();
                     }
