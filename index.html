@@ -112,6 +112,7 @@
             </div>
             <div>
                 <span>修改日期</span>
+
                 <el-date-picker 
                     v-model="roomNumValue" 
                     type="daterange" 
@@ -202,22 +203,6 @@
                     .toString());
             },
             methods: {
-                qqq() {
-                    console.log(this.tableData);
-                },
-                endDate() {
-                    var date = new Date;
-                    var year = date.getFullYear();
-                    var month = date.getMonth() + 1;
-                    var day = date.getDay();
-                    day = (day - "") + 7
-                    if (day < 10) {
-                        day = "0" + day
-                    }
-                    var datetime = year + "/" + month + "/" + day;
-                    this.endTime = datetime;
-                    console.log(day)
-                },
                 handleClick(tab, event) {
                     console.log(tab.label);
                 },
