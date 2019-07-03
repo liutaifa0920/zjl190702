@@ -23,16 +23,15 @@
                     <el-button class="el-revise-btn revise-btn" type="primary" size="small"
                         @click="reviseNumFrameClick">批量修改房量</el-button>
                 </el-row>
-                <el-button-group>
+                <el-button-group style="margin-bottom: 15px;">
                     <el-button type="primary" icon="el-icon-arrow-left" @click="beforeDate('left')">前七天</el-button>
                     <el-button type="primary">{{startDate}}至{{startDate}}</el-button>
                     <el-button type="primary" icon="el-icon-arrow-right" @click="nextDate('right')">后七天</el-button>
                 </el-button-group>
-                <div style="margin: 15px 0;"></div>
                 <el-table :data="tableData" border style="width: 100%">
                     <el-table-column prop="date" label="房型" :width="180">
                     </el-table-column>
-                    <el-table-column v-for="day in weeks" prop="name" :label="day">
+                    <el-table-column v-for="dayTil in week" prop="name" :label="dayTil">
                     </el-table-column>
                 </el-table>
             </el-tab-pane>
@@ -201,7 +200,6 @@
                 this.getResult(this.d);
                 var ctime = parseInt(this.d.getFullYear().toString() + this.month.toString() + this.date
                     .toString());
-
             },
             methods: {
                 qqq() {
@@ -255,7 +253,7 @@
                     if (test.getDay() == 1)
                         return test;
                     if (test.getDay() == 0)
-                        test.setDate(test.getDate() - 6);
+                        test.setDate(test.getDate());
                     else
                         test.setDate(test.getDate() - test.getDay() + 1);
                     return test;
@@ -270,7 +268,7 @@
                 },
                 getResult(time, a) {
                     var timeobj = this.getMonDate(time); // timeobj是当前星期一的日期对象
-                    var temTime = new Date(timeobj.getTime()); //当前当前星期一对象转换成时间戳
+                    var temTime = new Date(timeobj.getTime()); //当前星期一对象转换成时间戳
                     var arr = [];
                     var week = [];
                     var dayss = new Date();
