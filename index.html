@@ -100,8 +100,8 @@
                     <el-checkbox v-for="day,i in week" :label="day" :key="i">{{day}}</el-checkbox>
                 </el-checkbox-group>
                 <el-row class="revise-bot-btn">
-                    <el-button type="warning" size="small" @click="roomStateClose">取消</el-button>
                     <el-button type="primary" size="small" @click="roomStateOpen">确认</el-button>
+                    <el-button type="warning" size="small" @click="roomStateClose">取消</el-button>
                 </el-row>
             </div>
         </div>
@@ -132,8 +132,8 @@
                     <el-checkbox v-for="day,i in week" :label="day" :key="i">{{day}}</el-checkbox>
                     </el-chFeckbox-group>
                     <el-row class="revise-bot-btn">
-                        <el-button type="warning" size="small" @click="roomNumClose">取消</el-button>
                         <el-button type="primary" size="small" @click="roomNumOpen">确认</el-button>
+                        <el-button type="warning" size="small" @click="roomNumClose">取消</el-button>
                     </el-row>
             </div>
         </div>
@@ -190,8 +190,7 @@
                 month: 0,
                 year: 0,
                 data: 0,
-                beforeNum: 0,
-                nextNum: 0,
+                weeksNum: 0,
                 beforeWeeks: 0,
                 nextWeeks: 0,
 
@@ -205,8 +204,6 @@
                     myddy = 7;
                 }
                 var weekday = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
-                console.log(this.roomStateStartValue);
-                // this.roomStateStartValue.setDate(40);
                 console.log(this.roomStateStartValue);
                 console.log(weekday[myddy]);
             },
@@ -240,23 +237,35 @@
                     this.checkAll = checkedCount === this.week.length;
                     this.isIndeterminate = checkedCount > 0 && checkedCount < this.week.length;
                 },
+                // 获取当前日
+                getCurrentDate(){
+
+                },
                 // 上一周
                 beforeDate() {
                     this.roomStateStartValue = new Date();
+                    let currentDay = this.roomStateStartValue.getDate();
                     this.nextWeeks -= 7;
                     this.roomStateStartValue.setDate(this.nextWeeks);
+                    this.weeksNum--;
+                    console.log(this.roomStateStartValue);
+                    console.log(this.weeksNum);
                 },
                 // 下一周
                 nextDate() {
                     this.roomStateStartValue = new Date();
-                    this.nextNum++;
-                    if (this.nextNum < 9) {
+                    let currentDay = this.roomStateStartValue.getDate();
+                    if (this.weeksNum < 9) {
+                        this.weeksNum++;
                         this.nextWeeks += 7;
-                        this.roomStateStartValue.setDate(this.nextWeeks);
+                        this.roomStateStartValue.setDate(this.nextWeeks + currentDay);
+                        console.log(this.roomStateStartValue);
+
                     } else {
+                        this.roomStateStartValue.setDate(this.nextWeeks + currentDay);
                         this.open4();
                     }
-
+                    console.log(this.weeksNum);
                 },
 
                 roomStateOpen() {
