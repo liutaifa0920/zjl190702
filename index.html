@@ -27,15 +27,21 @@
                     <el-button type="primary">{{startDate}}至{{endDate}}</el-button>
                     <el-button type="primary" icon="el-icon-arrow-right" @click="nextDate('right')">后七天</el-button> -->
 
-                    <el-button type="primary" icon="el-icon-arrow-left" @click="beforeDate">前七天</el-button>
-                    <el-date-picker v-model="roomStateHomeValue" type="week" format="yyyy 第 WW 周" placeholder="选择周">
-                    </el-date-picker>
-                    <el-button type="primary" icon="el-icon-arrow-right" @click="nextDate">后七天</el-button>
+                    <div id="dateChange">
+                        <el-button type="primary" icon="el-icon-arrow-left" @click="beforeDate">前七天</el-button>
+                        <el-date-picker v-model="roomStateStartValue" type="week" format="yyyy 第 WW 周"
+                            placeholder="选择周">
+                        </el-date-picker>
+                        <el-button type="primary" icon="el-icon-arrow-right" @click="nextDate">后七天</el-button>
+                    </div>
+
                 </el-button-group>
                 <el-table :data="tableData" border style="width: 100%">
-                    <el-table-column prop="date" label="房型" :width="180">
+                    <el-table-column label="房型" :width="180">
+                        房型名称****
                     </el-table-column>
-                    <el-table-column v-for="dayTil in week" prop="name" :label="dayTil">
+                    <el-table-column v-for="dayTil in week" :label="dayTil">
+
                     </el-table-column>
                 </el-table>
             </el-tab-pane>
@@ -93,9 +99,9 @@
                 <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
                     <el-checkbox v-for="day,i in week" :label="day" :key="i">{{day}}</el-checkbox>
                 </el-checkbox-group>
-                <el-row>
-                    <el-button type="primary" size="small">取消</el-button>
-                    <el-button type="primary" size="small">确认</el-button>
+                <el-row class="revise-bot-btn">
+                    <el-button type="warning" size="small" @click="roomStateClose">取消</el-button>
+                    <el-button type="primary" size="small" @click="roomStateOpen">确认</el-button>
                 </el-row>
             </div>
         </div>
@@ -125,19 +131,20 @@
                 <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
                     <el-checkbox v-for="day,i in week" :label="day" :key="i">{{day}}</el-checkbox>
                     </el-chFeckbox-group>
-                    <el-row>
-                        <el-button type="primary" size="small">取消</el-button>
-                        <el-button type="primary" size="small">确认</el-button>
+                    <el-row class="revise-bot-btn">
+                        <el-button type="warning" size="small" @click="roomNumClose">取消</el-button>
+                        <el-button type="primary" size="small" @click="roomNumOpen">确认</el-button>
                     </el-row>
             </div>
         </div>
 
-
+        <!-- <el-button :plain="true" @click="open2">成功</el-button>
+        <el-button :plain="true" @click="open4">警告</el-button> -->
     </div>
 
 
     <script>
-        const weekOptions = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+        const weekOptions = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
         var temp = new Date();
         new Vue({
             el: "#roomRoot",
@@ -177,31 +184,27 @@
                 reviseNumber: '',
                 reviseStateFrame: false,
                 reviseNumFrame: false,
-
-                // weeks: [],
-                // months: [],
-                // day: 0,
-                // date: 0,
-                // month: 0,
-                // d: 0,
-                // startDate: '',
-                // endDate: '',
-                // flag: 0,
+                roomStateStartValue: '',
+                beforeWeek: '',
+                nextWeek: '',
+                month: 0,
+                year: 0,
+                data: 0,
+                beforeNum: 0,
+                nextNum: 0,
 
                 roomNumValue: '',
                 roomStateValue: '',
             },
             mounted() {
-                // this.d = new Date(); //当前日期
-                // this.day = this.d.getDay(); //周几
-                // this.date = this.d.getDate(); //几号
-                // this.month = this.d.getMonth() + 1; //月
-                // var timestr = this.month + "月" + this.date + "日";
-                // this.startDate = timestr;
-                // this.flag = this.formatDate(this.d);
-                // this.getResult(this.d);
-                // var ctime = parseInt(this.d.getFullYear().toString() + this.month.toString() + this.date
-                //     .toString());
+                this.roomStateStartValue = new Date();
+                var myddy = this.roomStateStartValue.getDay();//获取存储当前日期
+                if (myddy == 0) {
+                    myddy = 7;
+                }
+                var weekday = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+
+                console.log(weekday[myddy]);
             },
             methods: {
                 handleClick(tab, event) {
@@ -233,6 +236,51 @@
                     this.checkAll = checkedCount === this.week.length;
                     this.isIndeterminate = checkedCount > 0 && checkedCount < this.week.length;
                 },
+                // 上一周
+                beforeDate() {
+                    console.log("上一周");
+                },
+                // 下一周
+                nextDate() {
+                    console.log("下一周");
+                    this.nextNum++;
+                    if (this.nextNum < 5) {
+
+                    } else {
+                        this.open4();
+                    }
+
+                },
+
+                roomStateOpen() {
+                    this.$message({
+                        showClose: true,
+                        message: '房态修改成功',
+                        type: 'success'
+                    });
+                    this.reviseStateFrame = false;
+                },
+                roomNumOpen() {
+                    this.$message({
+                        showClose: true,
+                        message: '房量修改成功',
+                        type: 'success'
+                    });
+                    this.reviseNumFrame = false;
+                },
+                roomStateClose(){
+                    this.reviseStateFrame = false;
+                },
+                roomNumClose(){
+                    this.reviseNumFrame = false;
+                },
+                open4() {
+                    this.$message({
+                        showClose: true,
+                        message: '只能修改两个月的信息',
+                        type: 'error'
+                    });
+                }
 
 
                 // getMonDate(test) {

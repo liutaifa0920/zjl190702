@@ -45,4 +45,8 @@
 .revise-state-title {
     text-align: center;
 }
-
+.revise-bot-btn{
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+}
