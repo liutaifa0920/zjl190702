@@ -24,9 +24,6 @@
                         @click="reviseNumFrameClick">批量修改房量</el-button>
                 </el-row>
                 <el-button-group style="margin-bottom: 15px;">
-                    <!-- <el-button type="primary" icon="el-icon-arrow-left" @click="beforeDate('left')">前七天</el-button>
-                    <el-button type="primary">{{startDate}}至{{endDate}}</el-button>
-                    <el-button type="primary" icon="el-icon-arrow-right" @click="nextDate('right')">后七天</el-button> -->
 
                     <div id="dateChange">
                         <el-button type="primary" icon="el-icon-arrow-left" @click="beforeDate">前七天</el-button>
@@ -304,99 +301,7 @@
                 }
 
 
-                // getMonDate(test) {
-                //     console.log(test);
-                //     if (test.getDay() == 1)
-                //         return test;
-                //     if (test.getDay() == 0)
-                //         test.setDate(test.getDate());
-                //     else
-                //         test.setDate(test.getDate() - test.getDay() + 1);
-                //     return test;
-                // },
-                // // 0-6转换成中文名称
-                // getDayName(day) {
-                //     var day = parseInt(day);
-                //     if (isNaN(day) || day < 0 || day > 6)
-                //         return false;
-                //     var weekday = ["日", "一", "二", "三", "四", "五", "六"];
-                //     return weekday[day];
-                // },
-                // getResult(time, a) {
-                //     var timeobj = this.getMonDate(time); // timeobj是当前星期一的日期对象
-                //     console.log(timeobj);
-                //     var temTime = new Date(timeobj.getTime()); //当前星期一对象转换成时间戳
-                //     var arr = [];
-                //     var week = [];
-                //     var dayss = new Date();
-                //     for (var i = 0; i < 7; i++) {
-                //         var time1 = new Date(temTime.getTime());
-                //         console.log(time1);
-                //         var time2 = dayss.getTime();
-                //         var result = time1 <= time2;
-                //         var ymd = this.formatDate(temTime);
-                //         // arr.push({'dayss':temTime.getDate(),'daystate':false}); //一周几号
-                //         arr.push({
-                //             'date': ymd,
-                //             'state': result,
-                //             'showDate': temTime.getDate()
-                //         });
-                //         week.push(this.getDayName(temTime.getDay())); //一周 周几
-                //         temTime.setDate(temTime.getDate() + 1);
-                //     }
-                //     this.weeks = week;
-                //     this.months = arr;
-                //     // console.log(this.months);
-
-                //     if (a == 'left') {
-                //         // $(".dayitem").removeClass("finish");
-                //         this.flag = this.months[this.months.length - 1].date;
-                //         var temp1 = temp;
-                //         temp1.setDate(temp1.getDate() - temp1.getDay() + 7);
-                //         this.getTimes(temp1);
-                //     } else if (a == 'right') {
-                //         // $(".dayitem").removeClass("finish");
-                //         this.flag = this.months[0].date;
-                //         var temp1 = temp;
-                //         this.getTimes(temp1);
-                //     }
-                // },
-                // getTimes(temp2) {
-                //     var m = temp2.getMonth() + 1;
-                //     var d = temp2.getDate();
-                //     if (m < 10) {
-                //         m = "0" + m;
-                //     }
-                //     if (d < 10) {
-                //         d = "0" + d;
-                //     }
-                //     this.startDate = m + "月" + d + "日";
-                // },
-                // beforeDate(action) {
-                //     temp.setDate(temp.getDate() - 7);
-                //     this.getResult(temp, action);
-                // },
-                // nextDate(action) {
-                //     temp.setDate(temp.getDate() + 7);
-                //     this.getResult(temp, action);
-                // },
-                // formatDate(date) {
-                //     var year = date.getFullYear();
-                //     var months = date.getMonth() + 1;
-                //     var month = (months < 10 ? '0' + months : months).toString();
-                //     var day = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()).toString();
-                //     return year + month + day;
-                // },
-                // getIndex(idx, item) {
-                //     this.flag = this.months[idx].date;
-                //     var year = item.substring(0, 4);
-                //     var month = item.substring(4, 6);
-                //     var day = item.substring(6, 8);
-                //     var str = month + "月" + day + "日";
-                //     this.startDate = str;
-                //     console.log(item);
-                //     getReportList(year + '-' + month + '-' + day);
-                // }
+                
             },
             computed: {
 
