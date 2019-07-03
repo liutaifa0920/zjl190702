@@ -241,7 +241,7 @@
                 beforeDate() {
                     this.roomStateStartValue = new Date();
                     this.nextWeeks -= 7;
-                    this.roomStateStartValue.setDate(this.nextWeeks);
+                    this.roomStateStartValue.setDate(this.roomStateStartValue.getDate() + this.nextWeeks);
                     this.weeksNum--;
                     console.log(this.roomStateStartValue);
                     console.log(this.weeksNum);
