@@ -94,7 +94,7 @@
                 </el-checkbox>
                 <div style="margin: 15px 0;"></div>
                 <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                    <el-checkbox v-for="day,i in weeks" :label="day" :key="i">{{day}}</el-checkbox>
+                    <el-checkbox v-for="day,i in week" :label="day" :key="i">{{day}}</el-checkbox>
                 </el-checkbox-group>
             </div>
         </div>
@@ -127,8 +127,8 @@
                 </el-checkbox>
                 <div style="margin: 15px 0;"></div>
                 <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                    <el-checkbox v-for="day,i in weeks" :label="day" :key="i">{{day}}</el-checkbox>
-                    </el-chFeckbox-group>
+                    <el-checkbox v-for="day,i in week" :label="day" :key="i">{{day}}</el-checkbox>
+                </el-chFeckbox-group>
             </div>
         </div>
 
@@ -182,7 +182,7 @@
                 },
                 checkAll: false,
                 checkedCities: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-                weeks: weekOptions,
+                week: weekOptions,
                 isIndeterminate: true,
                 reviseNumber: '',
                 reviseStateFrame: false,
@@ -256,8 +256,8 @@
                 },
                 handleCheckedCitiesChange(value) {
                     let checkedCount = value.length;
-                    this.checkAll = checkedCount === this.weeks.length;
-                    this.isIndeterminate = checkedCount > 0 && checkedCount < this.weeks.length;
+                    this.checkAll = checkedCount === this.week.length;
+                    this.isIndeterminate = checkedCount > 0 && checkedCount < this.week.length;
                 },
 
 
