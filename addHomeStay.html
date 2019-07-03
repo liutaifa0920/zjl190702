@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="addHomeStay.css">
+    <link rel="stylesheet" href="index.css">
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <title>新建民宿</title>
+</head>
+
+<body>
+    <div id="addHomeStay">
+        <div>
+            <h2>基础信息</h2>
+            <el-input style="width:30%" type="text" placeholder="请输入内容" v-model="text" maxlength="10" show-word-limit></el-input>
+            <el-input type="text" placeholder="请输入内容" v-model="text" maxlength="20" show-word-limit></el-input>
+            <select class="sele-width">
+                <option style="color: white">请选择</option>
+                <option value="1">民营</option>
+                <option value="2">自营</option>
+            </select>
+            <el-input type="text" placeholder="请输入内容" v-model="text" show-word-limit></el-input>
+            <el-input type="text" placeholder="请输入内容" v-model="text" maxlength="20" show-word-limit></el-input>
+            <el-input type="text" placeholder="请输入内容" v-model="text" maxlength="10" show-word-limit></el-input>
+            <el-input type="text" placeholder="请输入内容" v-model="text" show-word-limit></el-input>
+        </div>
+        <div>
+            <h2>民宿照片</h2>
+        </div>
+        <div>
+            <h2>设施维护</h2>
+        </div>
+        <div>
+            <h2>民宿位置</h2>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: "#addHomeStay",
+            data: {
+                text: ''
+            },
+            methods: {
+                
+            },
+        })
+    </script>
+</body>
+
+</html>
