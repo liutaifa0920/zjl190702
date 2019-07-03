@@ -78,14 +78,8 @@
             </div>
             <div>
                 <span>修改日期</span>
-                <el-date-picker 
-                    v-model="roomStateValue" 
-                    type="daterange" 
-                    start-placeholder="开始日期" 
-                    end-placeholder="结束日期" 
-                    :default-time="['00:00:00', '23:59:59']" 
-                    size="mini"
-                >
+                <el-date-picker v-model="roomStateValue" type="daterange" start-placeholder="开始日期"
+                    end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']" size="mini">
                 </el-date-picker>
                 <p>可修改60天房态</p>
                 <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选
@@ -94,13 +88,17 @@
                 <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
                     <el-checkbox v-for="day,i in week" :label="day" :key="i">{{day}}</el-checkbox>
                 </el-checkbox-group>
+                <el-row>
+                    <el-button type="primary" size="small">取消</el-button>
+                    <el-button type="primary" size="small">确认</el-button>
+                </el-row>
             </div>
         </div>
         <div v-if="reviseNumFrame" id="revise-number">
             <i class="el-icon-close" @click="closeReviseNumClick"></i>
-            <h4>批量修改房量</h4>
+            <h4 class="revise-state-title">批量修改房量</h4>
             <p>房型</p>
-            <div>
+            <div id="revise-number-name">
                 <div v-for="n in tableData">
                     <el-checkbox>备选项</el-checkbox>
                     <el-input v-model="n.value" size="mini" placeholder="请输入" clearable
@@ -112,14 +110,8 @@
             <div>
                 <span>修改日期</span>
 
-                <el-date-picker 
-                    v-model="roomNumValue" 
-                    type="daterange" 
-                    start-placeholder="开始日期" 
-                    end-placeholder="结束日期" 
-                    :default-time="['00:00:00', '23:59:59']" 
-                    size="mini"
-                >
+                <el-date-picker v-model="roomNumValue" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"
+                    :default-time="['00:00:00', '23:59:59']" size="mini">
                 </el-date-picker>
                 <p>可修改60天房态</p>
                 <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选
@@ -128,10 +120,14 @@
                 <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
                     <el-checkbox v-for="day,i in week" :label="day" :key="i">{{day}}</el-checkbox>
                 </el-chFeckbox-group>
+                <el-row>
+                    <el-button type="primary" size="small">取消</el-button>
+                    <el-button type="primary" size="small">确认</el-button>
+                </el-row>
             </div>
         </div>
 
-        
+
     </div>
 
 
@@ -261,6 +257,7 @@
                     var dayss = new Date();
                     for (var i = 0; i < 7; i++) {
                         var time1 = new Date(temTime.getTime());
+                        console.log(time1);
                         var time2 = dayss.getTime();
                         var result = time1 <= time2;
                         var ymd = this.formatDate(temTime);

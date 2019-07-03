@@ -26,6 +26,7 @@
 }
 
 #revise-state-name, #revise-number-name {
+    height: 200px;
     border: 1px solid #eeeeee;
     padding: 8px;
     margin-bottom: 15px;
