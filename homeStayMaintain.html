@@ -22,8 +22,8 @@
                         <el-input v-model="formInline.user" placeholder="请输入" size="mini"></el-input>
                     </el-form-item>
                     <el-form-item label="房东姓名">
-                            <el-input v-model="formInline.user" placeholder="请输入" size="mini"></el-input>
-                        </el-form-item>
+                        <el-input v-model="formInline.user" placeholder="请输入" size="mini"></el-input>
+                    </el-form-item>
                     <el-form-item label="运营类别">
                         <el-select v-model="formInline.region" placeholder="请选择" size="mini">
                             <el-option label="民营" value="shanghai"></el-option>
@@ -38,8 +38,34 @@
                     </el-form-item>
                 </div>
             </div>
-
         </el-form>
+        <el-button size="mini" icon="el-icon-plus" type="primary">新建</el-button>
+        <el-table :data="tableData" stripe style="width: 100%;">
+            <el-table-column prop="name" label="民宿名称">
+            </el-table-column>
+            <el-table-column prop="category" label="运营类别">
+            </el-table-column>
+            <el-table-column prop="house_name" label="房东姓名">
+            </el-table-column>
+            <el-table-column prop="number" label="房型数量">
+            </el-table-column>
+            <el-table-column prop="time" label="创建时间">
+            </el-table-column>
+            <el-table-column prop="recommend" label="推荐" width="180">
+            </el-table-column>
+            <el-table-column label="操作">
+                <el-button type="primary" icon="el-icon-edit" circle size="mini"></el-button>
+                <el-button icon="el-icon-info" circle size="mini"></el-button>
+            </el-table-column>
+        </el-table>
+        <div id="footer-page-box">
+            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                :current-page="currentPage4" :page-sizes="[100, 200, 300, 400]" :page-size="100"
+                layout="total, sizes, prev, pager, next, jumper" :total="400">
+            </el-pagination>
+        </div>
+
+
     </div>
 
     <script>
@@ -49,10 +75,52 @@
                 formInline: {
                     user: '',
                     region: ''
-                }
+                },
+                tableData: [{
+                    name: '【夏目竹上】民宿5',
+                    category: 1,
+                    house_name: '张源锋',
+                    number: 0,
+                    time: '2019-07-03 10:51:49',
+                    recommend: 5
+                }, {
+                    name: '【夏目竹上】民宿5',
+                    category: 1,
+                    house_name: '张源锋',
+                    number: 0,
+                    time: '2019-07-03 10:51:49',
+                    recommend: 5
+                }, {
+                    name: '【夏目竹上】民宿5',
+                    category: 1,
+                    house_name: '张源锋',
+                    number: 0,
+                    time: '2019-07-03 10:51:49',
+                    recommend: 5
+                }, {
+                    name: '【夏目竹上】民宿5',
+                    category: 1,
+                    house_name: '张源锋',
+                    number: 0,
+                    time: '2019-07-03 10:51:49',
+                    recommend: 5
+                }, {
+                    name: '【夏目竹上】民宿5',
+                    category: 1,
+                    house_name: '张源锋',
+                    number: 0,
+                    time: '2019-07-03 10:51:49',
+                    recommend: 5
+                }],
+                currentPage4: 4,
             },
             methods: {
-
+                handleSizeChange(val) {
+                    console.log(`每页 ${val} 条`);
+                },
+                handleCurrentChange(val) {
+                    console.log(`当前页: ${val}`);
+                }
             },
         })
     </script>

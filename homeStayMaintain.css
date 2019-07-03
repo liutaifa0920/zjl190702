@@ -1,6 +1,16 @@
+.cell {
+    text-align: center;
+}
 #search-box{
     width: 100%;
     display: flex;
     justify-content: space-between;
-    min-width: 800px;
+    min-width: 740px;
+}
+#search-box input{
+    width: 120px;
+}
+#footer-page-box{
+    margin-top: 40px;
+    text-align: center;
 }
