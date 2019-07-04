@@ -17,13 +17,13 @@
     <div id="addHomeStay">
         <div>
             <h2>基础信息</h2>
-            <el-input style="width:30%" type="text" placeholder="请输入内容" v-model="text" maxlength="10" show-word-limit></el-input>
+            <el-input style="width:30%" type="text" placeholder="请输入内容" v-model="text" maxlength="10" show-word-limit>
+            </el-input>
             <el-input type="text" placeholder="请输入内容" v-model="text" maxlength="20" show-word-limit></el-input>
-            <select class="sele-width">
-                <option style="color: white">请选择</option>
-                <option value="1">民营</option>
-                <option value="2">自营</option>
-            </select>
+            <el-select v-model="seleValue" placeholder="请选择">
+                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+            </el-select>
             <el-input type="text" placeholder="请输入内容" v-model="text" show-word-limit></el-input>
             <el-input type="text" placeholder="请输入内容" v-model="text" maxlength="20" show-word-limit></el-input>
             <el-input type="text" placeholder="请输入内容" v-model="text" maxlength="10" show-word-limit></el-input>
@@ -35,15 +35,9 @@
                 :on-change="handlePictureCardPreview" :on-remove="handleRemove" :limit="8" accept="image/*">
                 <i class="el-icon-plus"></i>
             </el-upload>
-            <el-button 
-                type="primary" 
-                plain 
-                v-for="imgItem, i in upLoadImgList" 
-                class="uploadimgbtn" 
-                @click="upLoadBtn(i)" 
-                size="mini"
-            >{{homeImgNum == i?'主页':'设为主页'}}</el-button>
-            
+            <el-button type="primary" plain v-for="imgItem, i in upLoadImgList" class="uploadimgbtn"
+                @click="upLoadBtn(i)" size="mini">{{homeImgNum == i?'主页':'设为主页'}}</el-button>
+
         </div>
         <div>
             <h2>设施维护</h2>
@@ -62,6 +56,14 @@
                 dialogVisibleNum: 0,
                 upLoadImgList: [],
                 homeImgNum: 0,
+                options: [{
+                    value: '1',
+                    label: '民营'
+                }, {
+                    value: '2',
+                    label: '自营'
+                }],
+                seleValue: ''
             },
             methods: {
                 // 图片上传移除

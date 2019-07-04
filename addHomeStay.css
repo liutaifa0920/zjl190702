@@ -1,8 +1,12 @@
 .el-input{
     width: 30% !important;
+    margin-bottom: 8px;
+}
+.el-select{
+    width: 30%;
 }
 .sele-width{
-    width: 286.4px;
+    width: 30%;
     height: 40px;
     border-radius: 4px;
     border: 1px solid #dcdfe6;
@@ -13,4 +17,10 @@
     text-align: center;
     position: relative !important;
     top: -10px !important;
+}
+.el-input--suffix{
+    width: 100% !important;
+}
+.el-input__inner{
+    width: 100% !important;
 }
