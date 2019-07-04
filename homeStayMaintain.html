@@ -1,423 +1,460 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <link rel="stylesheet" href="homeStayMaintain.css">
-    <link rel="stylesheet" href="index.css">
-    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
-    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-    <title>民宿维护</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+        <link rel="stylesheet" href="homeStayMaintain.css">
+        <link rel="stylesheet" href="index.css">
+        <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+        <script src="https://unpkg.com/vue/dist/vue.js"></script>
+        <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+        <title>民宿维护</title>
+    </head>
 
-<body>
-    <div id="homeStayMaintain">
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
-            <div id="search-box">
-                <div id="search-left">
-                    <el-form-item label="民宿名称">
-                        <el-input v-model="name" placeholder="请输入" size="mini"></el-input>
-                    </el-form-item>
-                    <el-form-item label="房东姓名">
-                        <el-input v-model="house_name" placeholder="请输入" size="mini"></el-input>
-                    </el-form-item>
-                    <el-form-item label="运营类别">
-                        <el-select v-model="category" placeholder="请选择" size="mini">
-                            <el-option label="自营" value="1"></el-option>
-                            <el-option label="民居" value="2"></el-option>
-                        </el-select>
-                    </el-form-item>
-                </div>
-                <div id="search-right">
-                    <el-form-item>
-                        <el-button type="primary" size="mini" @click="searchHomeStay">查询</el-button>
-                        <el-button type="info" size="mini" @click="resetHomeStay">重置</el-button>
-                    </el-form-item>
-                </div>
-            </div>
-        </el-form>
-        <el-button size="mini" icon="el-icon-plus" type="primary" class="add-homestay-btn" @click="addHomeStayBtn">新建</el-button>
-        <el-table :data="tableData" stripe style="width: 100%;">
-            <el-table-column prop="name" label="民宿名称">
-            </el-table-column>
-            <el-table-column prop="category" label="运营类别">
-            </el-table-column>
-            <el-table-column prop="house_name" label="房东姓名">
-            </el-table-column>
-            <el-table-column prop="number" label="房型数量">
-            </el-table-column>
-            <el-table-column prop="time" label="创建时间">
-            </el-table-column>
-            <el-table-column prop="recommend" label="推荐" width="180">
-            </el-table-column>
-            <el-table-column label="操作">
-                <el-button icon="el-icon-edit" circle size="mini" type="primary"></el-button>
-            </el-table-column>
-        </el-table>
-        <div id="footer-page-box">
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                :current-page="currentPage" :page-sizes="[5, 10, 20, 50]" :page-size="100"
-                layout="total, sizes, prev, pager, next, jumper" :total="totalNum">
-            </el-pagination>
-        </div>
-
-        <!-- -------------------------------- 添加民宿,民宿详情,民宿信息修改弹出层 -------------------------------- -->
-        <div id="addBox" v-if="addFlag">
-            <i class="el-icon-close" @click="closeAddBoxClick"></i>
-            <div>
-                <h2>基础信息</h2>
-                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " style="width:30%" type="text"
-                    placeholder="民宿名称" v-model="text" maxlength="10" show-word-limit>
-                </el-input>
-                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="一句话描述"
-                    v-model="text" maxlength="20" show-word-limit></el-input>
-                <el-select v-model="seleValue" placeholder="运营类别" class="add-el-select add-sele-width">
-                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
-                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东姓名"
-                    v-model="text" show-word-limit></el-input>
-                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="重要提示"
-                    v-model="text" maxlength="20" show-word-limit></el-input>
-                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="推荐理由"
-                    v-model="text" maxlength="10" show-word-limit></el-input>
-                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东微信号"
-                    v-model="text" show-word-limit></el-input>
-            </div>
-            <div id="homestay-img">
-                <h2>民宿照片<span class="upload-num">{{uploadImgNum}}/20</span></h2>
-                <div class="upLoadSmallBox">
-                    <div class="upLoadBigBox">
-                        <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card"
-                            :on-change="handlePictureCardPreview" :on-remove="handleRemove" :limit="20"
-                            accept="image/*">
-                            <i class="el-icon-plus"></i>
-                        </el-upload>
-                        <el-button type="primary" plain v-for="imgItem, i in upLoadImgList" class="add-uploadimgbtn"
-                            @click="upLoadBtn(i)" size="mini">{{homeImgNum == i?'主页':'设为主页'}}</el-button>
+    <body>
+        <div id="homeStayMaintain">
+            <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                <div id="search-box">
+                    <div id="search-left">
+                        <el-form-item label="民宿名称">
+                            <el-input v-model="name" placeholder="请输入" size="mini"></el-input>
+                        </el-form-item>
+                        <el-form-item label="房东姓名">
+                            <el-input v-model="house_name" placeholder="请输入" size="mini"></el-input>
+                        </el-form-item>
+                        <el-form-item label="运营类别">
+                            <el-select v-model="category" placeholder="请选择" size="mini">
+                                <el-option label="自营" value="1"></el-option>
+                                <el-option label="民居" value="2"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </div>
+                    <div id="search-right">
+                        <el-form-item>
+                            <el-button type="primary" size="mini" @click="searchHomeStay">查询</el-button>
+                            <el-button type="info" size="mini" @click="resetHomeStay">重置</el-button>
+                        </el-form-item>
                     </div>
                 </div>
+            </el-form>
+            <el-button size="mini" icon="el-icon-plus" type="primary" class="add-homestay-btn" @click="addHomeStayBtn">
+                新建</el-button>
+            <el-table :data="tableData" stripe style="width: 100%;">
+                <el-table-column prop="name" label="民宿名称">
+                </el-table-column>
+                <el-table-column prop="category" label="运营类别">
+                </el-table-column>
+                <el-table-column prop="house_name" label="房东姓名">
+                </el-table-column>
+                <el-table-column prop="number" label="房型数量">
+                </el-table-column>
+                <el-table-column prop="time" label="创建时间">
+                </el-table-column>
+                <el-table-column prop="recommend" label="推荐" width="180">
+                </el-table-column>
+                <el-table-column label="操作">
+                    <el-button icon="el-icon-edit" circle size="mini" type="primary"></el-button>
+                </el-table-column>
+            </el-table>
+            <div id="footer-page-box">
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                    :current-page="currentPage" :page-sizes="[5, 10, 20, 50]" :page-size="100"
+                    layout="total, sizes, prev, pager, next, jumper" :total="totalNum">
+                </el-pagination>
             </div>
-            <div>
-                <h2>设施维护</h2>
-                <h4>网络服务</h4>
-                <p>无线网络</p>
-                <div class="radio-box">
-                    <el-radio v-model="addWifi" label="0">无</el-radio>
-                    <el-radio v-model="addWifi" label="1">收费</el-radio>
-                    <el-radio v-model="addWifi" label="2">免费</el-radio>
-                </div>
 
-                <p>有线网络</p>
-                <div class="radio-box">
-                    <el-radio v-model="addCable_network" label="0">无</el-radio>
-                    <el-radio v-model="addCable_network" label="1">收费</el-radio>
-                    <el-radio v-model="addCable_network" label="2">免费</el-radio>
+            <!-- -------------------------------- 添加民宿,民宿详情,民宿信息修改弹出层 -------------------------------- -->
+            <div id="addBox" v-if="addFlag">
+                <i class="el-icon-close" @click="closeAddBoxClick"></i>
+                <div>
+                    <h2>基础信息</h2>
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " style="width:30%"
+                        type="text" placeholder="民宿名称" v-model="text" maxlength="10" show-word-limit>
+                    </el-input>
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                        placeholder="一句话描述" v-model="text" maxlength="20" show-word-limit></el-input>
+                    <el-select v-model="seleValue" placeholder="运营类别" class="add-el-select add-sele-width">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                        placeholder="房东姓名" v-model="text" show-word-limit></el-input>
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                        placeholder="重要提示" v-model="text" maxlength="20" show-word-limit></el-input>
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                        placeholder="推荐理由" v-model="text" maxlength="10" show-word-limit></el-input>
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                        placeholder="房东微信号" v-model="text" show-word-limit></el-input>
                 </div>
+                <div id="homestay-img">
+                    <h2>民宿照片<span class="upload-num">{{uploadImgNum}}/20</span></h2>
+                    <div class="upLoadSmallBox">
+                        <div class="upLoadBigBox">
+                            <el-upload 
+                                action="https://jsonplaceholder.typicode.com/posts/" 
+                                list-type="picture-card" 
+                                :before-upload="beforeUpload" 
+                                :before-remove="beforeRemove" 
+                                :on-change="onUpload" 
+                                :on-error="failUpload" 
+                                :limit="20" 
+                                accept="image/*" 
+                                :file-list="mounteImgArr"
+                            >
+                                <i class="el-icon-plus"></i>
+                            </el-upload>
+                            <el-button type="primary" plain v-for="imgItem, i in upLoadImgList" class="add-uploadimgbtn"
+                                @click="upLoadBtn(i)" size="mini">{{homeImgNum == i?'主页':'设为主页'}}</el-button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h2>设施维护</h2>
+                    <h4>网络服务</h4>
+                    <p>无线网络</p>
+                    <div class="radio-box">
+                        <el-radio v-model="addWifi" label="0">无</el-radio>
+                        <el-radio v-model="addWifi" label="1">收费</el-radio>
+                        <el-radio v-model="addWifi" label="2">免费</el-radio>
+                    </div>
 
-                <h4>停车服务</h4>
-                <div class="radio-box">
-                    <el-radio v-model="addParking" label="0">无</el-radio>
-                    <el-radio v-model="addParking" label="1">收费</el-radio>
-                    <el-radio v-model="addParking" label="2">免费</el-radio>
-                </div>
+                    <p>有线网络</p>
+                    <div class="radio-box">
+                        <el-radio v-model="addCable_network" label="0">无</el-radio>
+                        <el-radio v-model="addCable_network" label="1">收费</el-radio>
+                        <el-radio v-model="addCable_network" label="2">免费</el-radio>
+                    </div>
 
-                <h4>餐饮服务</h4>
-                <div class="check-box">
-                    <el-checkbox-group v-model="addRestaurant">
-                        <el-checkbox label="中餐厅"></el-checkbox>
-                        <el-checkbox label="西餐厅"></el-checkbox>
-                        <el-checkbox label="日式餐厅"></el-checkbox>
-                        <el-checkbox label="自助餐厅"></el-checkbox>
-                        <el-checkbox label="宴会厅"></el-checkbox>
-                        <el-checkbox label="咖啡厅"></el-checkbox>
-                    </el-checkbox-group>
-                </div>
+                    <h4>停车服务</h4>
+                    <div class="radio-box">
+                        <el-radio v-model="addParking" label="0">无</el-radio>
+                        <el-radio v-model="addParking" label="1">收费</el-radio>
+                        <el-radio v-model="addParking" label="2">免费</el-radio>
+                    </div>
 
-                <h4>酒店服务</h4>
-                <div class="check-box">
-                    <el-checkbox-group v-model="addHotel">
-                        <el-checkbox label="接机服务"></el-checkbox>
-                        <el-checkbox label="叫车服务"></el-checkbox>
-                        <el-checkbox label="租车服务"></el-checkbox>
-                        <el-checkbox label="免费班车"></el-checkbox>
-                        <el-checkbox label="前台保险柜"></el-checkbox>
-                        <el-checkbox label="票务服务"></el-checkbox>
-                        <el-checkbox label="行李寄存"></el-checkbox>
-                        <el-checkbox label="外币兑换"></el-checkbox>
-                        <el-checkbox label="洗衣服务"></el-checkbox>
-                    </el-checkbox-group>
-                </div>
+                    <h4>餐饮服务</h4>
+                    <div class="check-box">
+                        <el-checkbox-group v-model="addRestaurant">
+                            <el-checkbox label="中餐厅"></el-checkbox>
+                            <el-checkbox label="西餐厅"></el-checkbox>
+                            <el-checkbox label="日式餐厅"></el-checkbox>
+                            <el-checkbox label="自助餐厅"></el-checkbox>
+                            <el-checkbox label="宴会厅"></el-checkbox>
+                            <el-checkbox label="咖啡厅"></el-checkbox>
+                        </el-checkbox-group>
+                    </div>
 
-                <h4>公共设施服务</h4>
-                <div class="check-box">
-                    <el-checkbox-group v-model="addPublic">
-                        <el-checkbox label="电脑"></el-checkbox>
-                        <el-checkbox label="行政酒廊"></el-checkbox>
-                        <el-checkbox label="电梯"></el-checkbox>
-                        <el-checkbox label="无烟楼梯"></el-checkbox>
-                        <el-checkbox label="公共区域监控"></el-checkbox>
-                        <el-checkbox label="自助提款机"></el-checkbox>
-                        <el-checkbox label="会议设施"></el-checkbox>
-                        <el-checkbox label="残疾人设施"></el-checkbox>
-                    </el-checkbox-group>
-                </div>
+                    <h4>酒店服务</h4>
+                    <div class="check-box">
+                        <el-checkbox-group v-model="addHotel">
+                            <el-checkbox label="接机服务"></el-checkbox>
+                            <el-checkbox label="叫车服务"></el-checkbox>
+                            <el-checkbox label="租车服务"></el-checkbox>
+                            <el-checkbox label="免费班车"></el-checkbox>
+                            <el-checkbox label="前台保险柜"></el-checkbox>
+                            <el-checkbox label="票务服务"></el-checkbox>
+                            <el-checkbox label="行李寄存"></el-checkbox>
+                            <el-checkbox label="外币兑换"></el-checkbox>
+                            <el-checkbox label="洗衣服务"></el-checkbox>
+                        </el-checkbox-group>
+                    </div>
 
-                <h4>娱乐设施服务</h4>
-                <div class="check-box">
-                    <el-checkbox-group v-model="addEntertainment">
-                        <el-checkbox label="儿童乐园"></el-checkbox>
-                        <el-checkbox label="休闲会所"></el-checkbox>
-                        <el-checkbox label="棋牌室"></el-checkbox>
-                        <el-checkbox label="私家沙滩"></el-checkbox>
-                        <el-checkbox label="游泳池"></el-checkbox>
-                        <el-checkbox label="桑拿浴室"></el-checkbox>
-                        <el-checkbox label="健身中心"></el-checkbox>
-                        <el-checkbox label="SPA"></el-checkbox>
-                        <el-checkbox label="足浴足疗"></el-checkbox>
-                        <el-checkbox label="保健按摩"></el-checkbox>
-                        <el-checkbox label="温泉"></el-checkbox>
-                        <el-checkbox label="电子游戏室"></el-checkbox>
-                        <el-checkbox label="网吧"></el-checkbox>
-                        <el-checkbox label="书吧"></el-checkbox>
-                        <el-checkbox label="空中花园"></el-checkbox>
-                    </el-checkbox-group>
+                    <h4>公共设施服务</h4>
+                    <div class="check-box">
+                        <el-checkbox-group v-model="addPublic">
+                            <el-checkbox label="电脑"></el-checkbox>
+                            <el-checkbox label="行政酒廊"></el-checkbox>
+                            <el-checkbox label="电梯"></el-checkbox>
+                            <el-checkbox label="无烟楼梯"></el-checkbox>
+                            <el-checkbox label="公共区域监控"></el-checkbox>
+                            <el-checkbox label="自助提款机"></el-checkbox>
+                            <el-checkbox label="会议设施"></el-checkbox>
+                            <el-checkbox label="残疾人设施"></el-checkbox>
+                        </el-checkbox-group>
+                    </div>
+
+                    <h4>娱乐设施服务</h4>
+                    <div class="check-box">
+                        <el-checkbox-group v-model="addEntertainment">
+                            <el-checkbox label="儿童乐园"></el-checkbox>
+                            <el-checkbox label="休闲会所"></el-checkbox>
+                            <el-checkbox label="棋牌室"></el-checkbox>
+                            <el-checkbox label="私家沙滩"></el-checkbox>
+                            <el-checkbox label="游泳池"></el-checkbox>
+                            <el-checkbox label="桑拿浴室"></el-checkbox>
+                            <el-checkbox label="健身中心"></el-checkbox>
+                            <el-checkbox label="SPA"></el-checkbox>
+                            <el-checkbox label="足浴足疗"></el-checkbox>
+                            <el-checkbox label="保健按摩"></el-checkbox>
+                            <el-checkbox label="温泉"></el-checkbox>
+                            <el-checkbox label="电子游戏室"></el-checkbox>
+                            <el-checkbox label="网吧"></el-checkbox>
+                            <el-checkbox label="书吧"></el-checkbox>
+                            <el-checkbox label="空中花园"></el-checkbox>
+                        </el-checkbox-group>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <h2>民宿位置</h2>
+                <div>
+                    <h2>民宿位置</h2>
+                </div>
             </div>
         </div>
-    </div>
 
-    <script>
-        new Vue({
-            el: '#homeStayMaintain',
-            data: {
-                formInline: {
-                    user: '',
-                    region: ''
-                },
-                currentPage: 1,
-                tableData: [],
-                everyPageNum: 5,
-                totalNum: 0,
-                name: '',
-                house_name: '',
-                category: '',
+        <script>
+            new Vue({
+                el: '#homeStayMaintain',
+                data: {
+                    formInline: {
+                        user: '',
+                        region: ''
+                    },
+                    currentPage: 1,
+                    tableData: [],
+                    everyPageNum: 5,
+                    totalNum: 0,
+                    name: '',
+                    house_name: '',
+                    category: '',
 
-                // ------------ 添加民宿弹出层 ---------------
+                    // ------------ 添加民宿弹出层 ---------------
 
-                text: '',
-                dialogImageUrl: '',
-                dialogVisibleNum: 0,
-                upLoadImgList: [],
-                homeImgNum: 0,
-                options: [{
-                    value: '1',
-                    label: '自营'
-                }, {
-                    value: '2',
-                    label: '民居'
-                }],
-                // 上传图片个数
-                uploadImgNum: 0,
-                // 运营类别绑定
-                seleValue: '',
-                // add弹框
-                addFlag: false,
-
-                // 民宿名称
-                addName: '',
-                // 描述
-                addDescriptive: '',
-                // 运营类别
-                addCategory: '',
-                // 房东姓名
-                addHouse_name: '',
-                // 重要提示
-                addTips: '',
-                // 推荐理由
-                addReason: '',
-                // 房东微信
-                addHouse_wx: '',
-                // 无线
-                addWifi: '',
-                // 有线
-                addCable_network: '',
-                // 停车
-                addParking: '',
-                // 餐饮服务
-                addRestaurant: [],
-                // 酒店服务
-                addHotel: [],
-                // 公共设施服务
-                addPublic: [],
-                // 娱乐设施
-                addEntertainment: [],
-                // 民宿位置
-                addPosition: '',
-            },
-            methods: {
-                handleSizeChange(val) {
-                    this.everyPageNum = val;
-                    this.queryHomestayList();
-                },
-                handleCurrentChange(val) {
-                    this.currentPage = val;
-                    this.queryHomestayList();
-                },
-                // 页面请求数据
-                queryHomestayList() {
-                    let that = this;
-                    let data = {
-                        'size': `${this.everyPageNum}`,
-                        'order': `${this.currentPage}`,
-                        'name': `${this.name}`,
-                        'house_name': `${this.house_name}`,
-                        'category': `${this.category}`
-                    }
-                    $.ajax({
-                        url: 'https://api.sdzhujialin.com/admin/Index/IndexData',
-                        data: data,
-                        type: 'POST',
-                        dataType: 'json',
-                        success(res) {
-                            that.totalNum = res.data.total;
-                            that.tableData = res.data.data;
-                            that.tableData.map(e => {
-                                e.category = e.category == 1 ? '自营' : '民居';
-                                return e;
-                            });
-                        },
-                        error(err) {
-                            console.log(err.msg);
+                    text: '',
+                    dialogImageUrl: '',
+                    dialogVisibleNum: 0,
+                    upLoadImgList: [],
+                    homeImgNum: 0,
+                    options: [{
+                        value: '1',
+                        label: '自营'
+                    }, {
+                        value: '2',
+                        label: '民居'
+                    }],
+                    // 上传图片个数
+                    uploadImgNum: 0,
+                    // 默认上传图片列表
+                    mounteImgArr:[
+                        {
+                            name: "123",
+                            url: "blob:null/959f3501-2ba3-4dad-8bd2-a55838cc2cf5"
                         }
-                    })
-                },
-                // 查询民宿
-                searchHomeStay() {
-                    let tempCategory = this.category == '自营' ? 1 : 2;
-                    if (!this.name && !this.house_name && !tempCategory) {
-                        this.noSearchTip();
-                    } else {
-                        this.queryHomestayList();
-                    }
-                },
-                // 重置民宿
-                resetHomeStay() {
-                    this.name = '';
-                    this.house_name = '';
-                    this.category = '';
-                    this.queryHomestayList();
-                },
-                // 未填写搜索条件提示
-                noSearchTip() {
-                    this.$message({
-                        message: '搜索条件未填写',
-                        type: 'warning'
-                    });
-                },
-                // 弹窗控制
-                addHomeStayBtn(){
-                    this.addFlag = !this.addFlag;
-                    
-                },
-                closeAddBoxClick(){
-                    this.addFlag = false;
-                },
+                    ],
+                    // 运营类别绑定
+                    seleValue: '',
+                    // add弹框
+                    addFlag: false,
 
-                // -------------------- 添加民宿方法 ---------------------
-                // 图片上传移除
-                handleRemove(file, fileList) {
-                    let tempFlag = fileList.every(e => {
-                        return e.flag == false;
-                    })
-                    console.log(tempFlag)
-                    if (tempFlag) {
-                        this.upLoadImgList[0].flag = true;
-                    }
-                    console.log(file, fileList);
-                    this.uploadImgNum = fileList.length;
-                    this.homeImgNum = 0;
+                    // 民宿名称
+                    addName: '',
+                    // 描述
+                    addDescriptive: '',
+                    // 运营类别
+                    addCategory: '',
+                    // 房东姓名
+                    addHouse_name: '',
+                    // 重要提示
+                    addTips: '',
+                    // 推荐理由
+                    addReason: '',
+                    // 房东微信
+                    addHouse_wx: '',
+                    // 无线
+                    addWifi: '',
+                    // 有线
+                    addCable_network: '',
+                    // 停车
+                    addParking: '',
+                    // 餐饮服务
+                    addRestaurant: [],
+                    // 酒店服务
+                    addHotel: [],
+                    // 公共设施服务
+                    addPublic: [],
+                    // 娱乐设施
+                    addEntertainment: [],
+                    // 民宿位置
+                    addPosition: '',
                 },
-                // 添加图片
-                handlePictureCardPreview(file, fileList) {
-                    if (this.dialogVisibleNum < 1) {
-                        // console.log(file, fileList);
-                        this.dialogVisibleNum++;
-                        this.dialogImageUrl = file.url;
-                        fileList.map((item, i) => {
-                            if (i == 0) {
-                                return item.flag = true;
-                            } else {
-                                return item.flag = false
+                methods: {
+                    handleSizeChange(val) {
+                        this.everyPageNum = val;
+                        this.queryHomestayList();
+                    },
+                    handleCurrentChange(val) {
+                        this.currentPage = val;
+                        this.queryHomestayList();
+                    },
+                    // 页面请求数据
+                    queryHomestayList() {
+                        let that = this;
+                        let data = {
+                            'size': `${this.everyPageNum}`,
+                            'order': `${this.currentPage}`,
+                            'name': `${this.name}`,
+                            'house_name': `${this.house_name}`,
+                            'category': `${this.category}`
+                        }
+                        $.ajax({
+                            url: 'https://api.sdzhujialin.com/admin/Index/IndexData',
+                            data: data,
+                            type: 'POST',
+                            dataType: 'json',
+                            success(res) {
+                                that.totalNum = res.data.total;
+                                that.tableData = res.data.data;
+                                that.tableData.map(e => {
+                                    e.category = e.category == 1 ? '自营' : '民居';
+                                    return e;
+                                });
+                            },
+                            error(err) {
+                                console.log(err.msg);
                             }
                         })
-                        this.upLoadImgList = fileList;
-                        this.uploadImgNum = this.upLoadImgList.length;
-                        if (this.uploadImgNum == 20) {
-                            this.noUploadImgTip();
+                    },
+                    // 查询民宿
+                    searchHomeStay() {
+                        let tempCategory = this.category == '自营' ? 1 : 2;
+                        if (!this.name && !this.house_name && !tempCategory) {
+                            this.noSearchTip();
                         } else {
-                            this.uploadImgTip();
+                            this.queryHomestayList();
                         }
+                    },
+                    // 重置民宿
+                    resetHomeStay() {
+                        this.name = '';
+                        this.house_name = '';
+                        this.category = '';
+                        this.queryHomestayList();
+                    },
+                    // 未填写搜索条件提示
+                    noSearchTip() {
+                        this.$message({
+                            message: '搜索条件未填写',
+                            type: 'warning'
+                        });
+                    },
+                    // 弹窗控制
+                    addHomeStayBtn() {
+                        this.addFlag = !this.addFlag;
+
+                    },
+                    closeAddBoxClick() {
+                        this.addFlag = false;
+                    },
+
+                    // -------------------- 添加民宿方法 ---------------------
+                    // 从图片数组中移除元素
+
+                    // 上传图片前
+                    beforeUpload(file) {
+                        console.log(file);
+                        if (file) {
+                            this.upLoadImgList.push(file);
+                            console.log(this.upLoadImgList)
+                            this.upLoadImgList.map((item, i) => {
+                                if (i == 0) {
+                                    return item.flag = true;
+                                } else {
+                                    return item.flag = false
+                                }
+                            })
+                        }
+                    },
+                    // 图片移除前
+                    beforeRemove(file, fileList) {
+                        let tempImgNum = '';
+                        for (let i = 0; i < this.upLoadImgList.length; i++) {
+                            if (this.upLoadImgList[i].uid == file.uid) {
+                                tempImgNum = i
+                                break;
+                            }
+                        }
+                        if (this.upLoadImgList[tempImgNum].flag == true) {
+                            this.upLoadImgList[0].flag == true;
+                            this.homeImgNum = 0;
+                        }
+                        this.upLoadImgList.splice(tempImgNum, 1);
+                        console.log(this.upLoadImgList);
+                        // 显示已上传图片个数
+                        this.uploadImgNum = this.upLoadImgList.length;
+                    },
+                    // 上传图片失败
+                    failUpload(err, file, fileList) {
+                        console.log(err, file);
+                        let tempImgNum = '';
+                        for (let i = 0; i < this.upLoadImgList.length; i++) {
+                            if (this.upLoadImgList[i].uid == file.uid) {
+                                tempImgNum = i
+                                break;
+                            }
+                        }
+                        this.upLoadImgList.splice(tempImgNum, 1);
+
+                    },
+                    // 上传图片后
+                    onUpload(file, fileList){
+                        console.log(fileList)
+                    },
+                    // 移除图片后
+
+                    // 设为主页按钮
+                    upLoadBtn(i) {
+                        // console.log(this.upLoadImgList)
+                        if (i != 0) {
+                            this.upLoadImgList[0].flag = false;
+                        }
+                        this.upLoadImgList.map(e => {
+                            return e.flag = false;
+                        })
+                        this.upLoadImgList[i].flag = true;
+
+                        this.homeImgNum = i;
                         console.log(this.upLoadImgList)
-                    } else {
-                        this.dialogVisibleNum = 0;
+                    },
+                    // 图片上传个数提示
+                    uploadImgTip() {
+                        this.$message({
+                            message: `已上传${this.uploadImgNum}张图片, 还可上传${20 - this.uploadImgNum}张`,
+                            type: 'success'
+                        });
+                    },
+                    // 图片上传到达上限提示
+                    noUploadImgTip() {
+                        this.$message({
+                            message: `最多上传20张图片`,
+                            type: 'warning'
+                        });
+                    },
+                },
+                mounted() {
+                    this.queryHomestayList();
+                },
+                watch: {
+                    name() {
+                        if (!this.name && !this.house_name && !this.tempCategory) {
+                            this.queryHomestayList();
+                        }
+                    },
+                    house_name() {
+                        if (!this.name && !this.house_name && !this.tempCategory) {
+                            this.queryHomestayList();
+                        }
+                    },
+                    category() {
+                        if (!this.name && !this.house_name && !this.tempCategory) {
+                            this.queryHomestayList();
+                        }
                     }
                 },
-                // 设为主页按钮
-                upLoadBtn(i) {
-                    console.log(this.upLoadImgList)
-                    if (i != 0) {
-                        this.upLoadImgList[0].flag = false;
-                    }
-                    this.upLoadImgList[i].flag = true;
-                    this.homeImgNum = i;
-                },
-                // 图片上传个数提示
-                uploadImgTip() {
-                    this.$message({
-                        message: `已上传${this.uploadImgNum}张图片, 还可上传${20 - this.uploadImgNum}张`,
-                        type: 'success'
-                    });
-                },
-                // 图片上传到达上限提示
-                noUploadImgTip() {
-                    this.$message({
-                        message: `最多上传20张图片`,
-                        type: 'warning'
-                    });
-                },
-            },
-            mounted() {
-                this.queryHomestayList();
-            },
-            watch: {
-                name() {
-                    if (!this.name && !this.house_name && !this.tempCategory) {
-                        this.queryHomestayList();
-                    }
-                },
-                house_name() {
-                    if (!this.name && !this.house_name && !this.tempCategory) {
-                        this.queryHomestayList();
-                    }
-                },
-                category() {
-                    if (!this.name && !this.house_name && !this.tempCategory) {
-                        this.queryHomestayList();
-                    }
-                }
-            },
-        })
-    </script>
+            })
+        </script>
 
 
-</body>
+    </body>
 
 </html>
