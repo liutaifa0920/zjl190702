@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="homeStayMaintain.css">
     <link rel="stylesheet" href="index.css">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <title>民宿维护</title>
@@ -60,7 +61,7 @@
         </el-table>
         <div id="footer-page-box">
             <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                :current-page="currentPage4" :page-sizes="[100, 200, 300, 400]" :page-size="100"
+                :current-page="currentPage4" :page-sizes="[5, 10, 20, 50]" :page-size="100"
                 layout="total, sizes, prev, pager, next, jumper" :total="400">
             </el-pagination>
         </div>
@@ -120,7 +121,24 @@
                 },
                 handleCurrentChange(val) {
                     console.log(`当前页: ${val}`);
+                },
+                // 页面首次请求数据
+                queryHomestayList(){
+                    $.ajax({
+                        url: 'https://api.sdzhujialin.com/admin/Index/IndexData',
+                        type: 'get',
+                        dataType: 'json',
+                        success(res){
+                            console.log(res);
+                        },
+                        error(err){
+                            console.log(err.msg);
+                        }
+                    })
                 }
+            },
+            mounted() {
+                this.queryHomestayList();
             },
         })
     </script>
