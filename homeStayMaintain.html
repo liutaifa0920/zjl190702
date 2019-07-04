@@ -42,7 +42,7 @@
             </el-form>
             <el-button size="mini" icon="el-icon-plus" type="primary" class="add-homestay-btn" @click="addHomeStayBtn">
                 新建</el-button>
-            <el-table :data="tableData" stripe style="width: 100%;">
+            <el-table :data="tableData" stripe style="width: 100%;" @cell-click="reviseBtn">
                 <el-table-column prop="name" label="民宿名称">
                 </el-table-column>
                 <el-table-column prop="category" label="运营类别">
@@ -233,6 +233,8 @@
                         value: '2',
                         label: '民居'
                     }],
+                    // 是否是新建
+                    addFlag: '',
                     // 上传图片个数
                     uploadImgNum: 0,
                     // 默认上传图片列表
@@ -337,6 +339,17 @@
                             message: '搜索条件未填写',
                             type: 'warning'
                         });
+                    },
+                    // 修改按钮
+                    reviseBtn(row, column, cell, event){
+                        // console.log(cell.className.split(""));
+                        // console.log(cell.className.split("")[18]);
+                        let currentCell = cell.className.split("")[18];
+                        if(currentCell == 7){
+                            // 发请求 row.xxxxx .....
+                        }
+
+
                     },
                     // 弹窗控制
                     addHomeStayBtn() {
