@@ -1,5 +1,6 @@
 #homeStayMaintain{
     min-width: 1000px;
+    position: relative;
 }
 .cell {
     text-align: center;
@@ -20,7 +21,34 @@
 .add-homestay-btn{
     margin-bottom: 15px;
 }
+/* 关闭弹出层x */
+.el-icon-close {
+    position: absolute;
+    top: 5px;
+    right: 25px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+
+
 /* 添加民宿弹出层 */
+#addBox{
+    width: 1100px;
+    height: 700px;
+    padding: 25px;
+    position: absolute;
+    margin: auto;
+    top: 60px;
+    right: 0;
+    left: 0;
+    background-color: white;
+    box-shadow: 0 0 10px #dddddd;
+    overflow-y: scroll;
+    border-radius: 8px;
+    z-index: 50;
+}
+
 .add-el-input input{
     width: 100% !important;
     margin-bottom: 8px;
@@ -79,6 +107,22 @@
     right: 20px;
     padding-top: 28px;
 }
-h2{
+h2,h4,p{
     color: #666666;
+}
+h4{
+    padding-left: 28px;
+}
+p{
+    padding-left: 56px;
+}
+.radio-box{
+    padding-left: 84px;
+}
+.check-box{
+    width: 800px;
+    padding-left: 28px;
+}
+.check-box label{
+    margin-bottom: 5px;
 }

@@ -40,7 +40,7 @@
                 </div>
             </div>
         </el-form>
-        <el-button size="mini" icon="el-icon-plus" type="primary" class="add-homestay-btn">新建</el-button>
+        <el-button size="mini" icon="el-icon-plus" type="primary" class="add-homestay-btn" @click="addHomeStayBtn">新建</el-button>
         <el-table :data="tableData" stripe style="width: 100%;">
             <el-table-column prop="name" label="民宿名称">
             </el-table-column>
@@ -66,64 +66,132 @@
         </div>
 
         <!-- -------------------------------- 添加民宿,民宿详情,民宿信息修改弹出层 -------------------------------- -->
-        <div>
-            <h2>基础信息</h2>
-            <el-input class="add-el-input add-el-input--suffix add-el-input__inner " style="width:30%" type="text"
-                placeholder="民宿名称" v-model="text" maxlength="10" show-word-limit>
-            </el-input>
-            <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="一句话描述"
-                v-model="text" maxlength="20" show-word-limit></el-input>
-            <el-select v-model="seleValue" placeholder="运营类别" class="add-el-select add-sele-width">
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-            </el-select>
-            <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东姓名"
-                v-model="text" show-word-limit></el-input>
-            <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="重要提示"
-                v-model="text" maxlength="20" show-word-limit></el-input>
-            <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="推荐理由"
-                v-model="text" maxlength="10" show-word-limit></el-input>
-            <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东微信号"
-                v-model="text" show-word-limit></el-input>
-        </div>
-        <div id="homestay-img">
-            <h2>民宿照片<span class="upload-num">{{uploadImgNum}}/20</span></h2>
-            <div class="upLoadSmallBox">
-                <div class="upLoadBigBox">
-                    <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card"
-                        :on-change="handlePictureCardPreview" :on-remove="handleRemove" :limit="20" accept="image/*">
-                        <i class="el-icon-plus"></i>
-                    </el-upload>
-                    <el-button type="primary" plain v-for="imgItem, i in upLoadImgList" class="add-uploadimgbtn"
-                        @click="upLoadBtn(i)" size="mini">{{homeImgNum == i?'主页':'设为主页'}}</el-button>
+        <div id="addBox" v-if="addFlag">
+            <i class="el-icon-close" @click="closeAddBoxClick"></i>
+            <div>
+                <h2>基础信息</h2>
+                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " style="width:30%" type="text"
+                    placeholder="民宿名称" v-model="text" maxlength="10" show-word-limit>
+                </el-input>
+                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="一句话描述"
+                    v-model="text" maxlength="20" show-word-limit></el-input>
+                <el-select v-model="seleValue" placeholder="运营类别" class="add-el-select add-sele-width">
+                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东姓名"
+                    v-model="text" show-word-limit></el-input>
+                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="重要提示"
+                    v-model="text" maxlength="20" show-word-limit></el-input>
+                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="推荐理由"
+                    v-model="text" maxlength="10" show-word-limit></el-input>
+                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东微信号"
+                    v-model="text" show-word-limit></el-input>
+            </div>
+            <div id="homestay-img">
+                <h2>民宿照片<span class="upload-num">{{uploadImgNum}}/20</span></h2>
+                <div class="upLoadSmallBox">
+                    <div class="upLoadBigBox">
+                        <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card"
+                            :on-change="handlePictureCardPreview" :on-remove="handleRemove" :limit="20"
+                            accept="image/*">
+                            <i class="el-icon-plus"></i>
+                        </el-upload>
+                        <el-button type="primary" plain v-for="imgItem, i in upLoadImgList" class="add-uploadimgbtn"
+                            @click="upLoadBtn(i)" size="mini">{{homeImgNum == i?'主页':'设为主页'}}</el-button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div>
-            <h2>设施维护</h2>
+            <div>
+                <h2>设施维护</h2>
                 <h4>网络服务</h4>
                 <p>无线网络</p>
-                <el-radio v-model="addWifi" label="0">无</el-radio>
-                <el-radio v-model="addWifi" label="1">收费</el-radio>
-                <el-radio v-model="addWifi" label="2">免费</el-radio>
+                <div class="radio-box">
+                    <el-radio v-model="addWifi" label="0">无</el-radio>
+                    <el-radio v-model="addWifi" label="1">收费</el-radio>
+                    <el-radio v-model="addWifi" label="2">免费</el-radio>
+                </div>
+
                 <p>有线网络</p>
-                <el-radio v-model="addCable_network" label="0">无</el-radio>
-                <el-radio v-model="addCable_network" label="1">收费</el-radio>
-                <el-radio v-model="addCable_network" label="2">免费</el-radio>
+                <div class="radio-box">
+                    <el-radio v-model="addCable_network" label="0">无</el-radio>
+                    <el-radio v-model="addCable_network" label="1">收费</el-radio>
+                    <el-radio v-model="addCable_network" label="2">免费</el-radio>
+                </div>
 
                 <h4>停车服务</h4>
-                <el-radio v-model="addParking" label="0">无</el-radio>
-                <el-radio v-model="addParking" label="1">收费</el-radio>
-                <el-radio v-model="addParking" label="2">免费</el-radio>
-                
+                <div class="radio-box">
+                    <el-radio v-model="addParking" label="0">无</el-radio>
+                    <el-radio v-model="addParking" label="1">收费</el-radio>
+                    <el-radio v-model="addParking" label="2">免费</el-radio>
+                </div>
+
                 <h4>餐饮服务</h4>
+                <div class="check-box">
+                    <el-checkbox-group v-model="addRestaurant">
+                        <el-checkbox label="中餐厅"></el-checkbox>
+                        <el-checkbox label="西餐厅"></el-checkbox>
+                        <el-checkbox label="日式餐厅"></el-checkbox>
+                        <el-checkbox label="自助餐厅"></el-checkbox>
+                        <el-checkbox label="宴会厅"></el-checkbox>
+                        <el-checkbox label="咖啡厅"></el-checkbox>
+                    </el-checkbox-group>
+                </div>
 
+                <h4>酒店服务</h4>
+                <div class="check-box">
+                    <el-checkbox-group v-model="addHotel">
+                        <el-checkbox label="接机服务"></el-checkbox>
+                        <el-checkbox label="叫车服务"></el-checkbox>
+                        <el-checkbox label="租车服务"></el-checkbox>
+                        <el-checkbox label="免费班车"></el-checkbox>
+                        <el-checkbox label="前台保险柜"></el-checkbox>
+                        <el-checkbox label="票务服务"></el-checkbox>
+                        <el-checkbox label="行李寄存"></el-checkbox>
+                        <el-checkbox label="外币兑换"></el-checkbox>
+                        <el-checkbox label="洗衣服务"></el-checkbox>
+                    </el-checkbox-group>
+                </div>
 
+                <h4>公共设施服务</h4>
+                <div class="check-box">
+                    <el-checkbox-group v-model="addPublic">
+                        <el-checkbox label="电脑"></el-checkbox>
+                        <el-checkbox label="行政酒廊"></el-checkbox>
+                        <el-checkbox label="电梯"></el-checkbox>
+                        <el-checkbox label="无烟楼梯"></el-checkbox>
+                        <el-checkbox label="公共区域监控"></el-checkbox>
+                        <el-checkbox label="自助提款机"></el-checkbox>
+                        <el-checkbox label="会议设施"></el-checkbox>
+                        <el-checkbox label="残疾人设施"></el-checkbox>
+                    </el-checkbox-group>
+                </div>
+
+                <h4>娱乐设施服务</h4>
+                <div class="check-box">
+                    <el-checkbox-group v-model="addEntertainment">
+                        <el-checkbox label="儿童乐园"></el-checkbox>
+                        <el-checkbox label="休闲会所"></el-checkbox>
+                        <el-checkbox label="棋牌室"></el-checkbox>
+                        <el-checkbox label="私家沙滩"></el-checkbox>
+                        <el-checkbox label="游泳池"></el-checkbox>
+                        <el-checkbox label="桑拿浴室"></el-checkbox>
+                        <el-checkbox label="健身中心"></el-checkbox>
+                        <el-checkbox label="SPA"></el-checkbox>
+                        <el-checkbox label="足浴足疗"></el-checkbox>
+                        <el-checkbox label="保健按摩"></el-checkbox>
+                        <el-checkbox label="温泉"></el-checkbox>
+                        <el-checkbox label="电子游戏室"></el-checkbox>
+                        <el-checkbox label="网吧"></el-checkbox>
+                        <el-checkbox label="书吧"></el-checkbox>
+                        <el-checkbox label="空中花园"></el-checkbox>
+                    </el-checkbox-group>
+                </div>
+            </div>
+            <div>
+                <h2>民宿位置</h2>
+            </div>
         </div>
-        <div>
-            <h2>民宿位置</h2>
-        </div>
-
     </div>
 
     <script>
@@ -160,6 +228,8 @@
                 uploadImgNum: 0,
                 // 运营类别绑定
                 seleValue: '',
+                // add弹框
+                addFlag: false,
 
                 // 民宿名称
                 addName: '',
@@ -252,18 +322,34 @@
                         type: 'warning'
                     });
                 },
+                // 弹窗控制
+                addHomeStayBtn(){
+                    this.addFlag = !this.addFlag;
+                    
+                },
+                closeAddBoxClick(){
+                    this.addFlag = false;
+                },
 
                 // -------------------- 添加民宿方法 ---------------------
                 // 图片上传移除
                 handleRemove(file, fileList) {
+                    let tempFlag = fileList.every(e => {
+                        return e.flag == false;
+                    })
+                    console.log(tempFlag)
+                    if (tempFlag) {
+                        this.upLoadImgList[0].flag = true;
+                    }
                     console.log(file, fileList);
-                    this.upLoadImgList[0].flag = true;
+                    this.uploadImgNum = fileList.length;
                     this.homeImgNum = 0;
                 },
                 // 添加图片
                 handlePictureCardPreview(file, fileList) {
                     if (this.dialogVisibleNum < 1) {
                         // console.log(file, fileList);
+                        this.dialogVisibleNum++;
                         this.dialogImageUrl = file.url;
                         fileList.map((item, i) => {
                             if (i == 0) {
@@ -280,7 +366,6 @@
                             this.uploadImgTip();
                         }
                         console.log(this.upLoadImgList)
-                        this.dialogVisibleNum++;
                     } else {
                         this.dialogVisibleNum = 0;
                     }
