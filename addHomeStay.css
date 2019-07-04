@@ -12,11 +12,16 @@
     border: 1px solid #dcdfe6;
 }
 
+.uploadimgbtn:nth-of-type(1){
+    margin: 0 !important;
+}
 .uploadimgbtn{
     width: 148px;
     text-align: center;
     position: relative !important;
-    top: -10px !important;
+    top: -40px !important;
+    margin: 0 !important;
+    margin-left: 8px !important;
 }
 .el-input--suffix{
     width: 100% !important;

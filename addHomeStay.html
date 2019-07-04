@@ -17,17 +17,17 @@
     <div id="addHomeStay">
         <div>
             <h2>基础信息</h2>
-            <el-input style="width:30%" type="text" placeholder="请输入内容" v-model="text" maxlength="10" show-word-limit>
+            <el-input style="width:30%" type="text" placeholder="民宿名称" v-model="text" maxlength="10" show-word-limit>
             </el-input>
-            <el-input type="text" placeholder="请输入内容" v-model="text" maxlength="20" show-word-limit></el-input>
-            <el-select v-model="seleValue" placeholder="请选择">
+            <el-input type="text" placeholder="一句话描述" v-model="text" maxlength="20" show-word-limit></el-input>
+            <el-select v-model="seleValue" placeholder="运营类别">
                 <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                 </el-option>
             </el-select>
-            <el-input type="text" placeholder="请输入内容" v-model="text" show-word-limit></el-input>
-            <el-input type="text" placeholder="请输入内容" v-model="text" maxlength="20" show-word-limit></el-input>
-            <el-input type="text" placeholder="请输入内容" v-model="text" maxlength="10" show-word-limit></el-input>
-            <el-input type="text" placeholder="请输入内容" v-model="text" show-word-limit></el-input>
+            <el-input type="text" placeholder="房东姓名" v-model="text" show-word-limit></el-input>
+            <el-input type="text" placeholder="重要提示" v-model="text" maxlength="20" show-word-limit></el-input>
+            <el-input type="text" placeholder="推荐理由" v-model="text" maxlength="10" show-word-limit></el-input>
+            <el-input type="text" placeholder="房东微信号" v-model="text" show-word-limit></el-input>
         </div>
         <div>
             <h2>民宿照片</h2>
@@ -58,12 +58,28 @@
                 homeImgNum: 0,
                 options: [{
                     value: '1',
-                    label: '民营'
+                    label: '自营'
                 }, {
                     value: '2',
-                    label: '自营'
+                    label: '民居'
                 }],
-                seleValue: ''
+                seleValue: '',
+                name: '',
+                descriptive: '',
+                category: '',
+                house_name: '',
+                tips: '',
+                reason: '',
+                house_wx: '',
+                wifi: '',
+                cable_network: '',
+                parking: '',
+                restaurant: '',
+                hotel: '',
+                public: '',
+                entertainment: '',
+                position: '',
+
             },
             methods: {
                 // 图片上传移除

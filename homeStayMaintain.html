@@ -27,8 +27,8 @@
                     </el-form-item>
                     <el-form-item label="运营类别">
                         <el-select v-model="category" placeholder="请选择" size="mini">
-                            <el-option label="民营" value="1"></el-option>
-                            <el-option label="自营" value="2"></el-option>
+                            <el-option label="自营" value="1"></el-option>
+                            <el-option label="民居" value="2"></el-option>
                         </el-select>
                     </el-form-item>
                 </div>
@@ -114,7 +114,7 @@
                             that.totalNum = res.data.total;
                             that.tableData = res.data.data;
                             that.tableData.map(e=>{
-                                e.category = e.category == 1 ? '民营' : '自营';
+                                e.category = e.category == 1 ? '自营' : '民居';
                                 return e;
                             });
                         },
@@ -125,7 +125,7 @@
                 },
                 // 查询民宿
                 searchHomeStay() {
-                    let tempCategory = this.category == '民营' ? 1 : 2;
+                    let tempCategory = this.category == '自营' ? 1 : 2;
                     if (!this.name && !this.house_name && !tempCategory) {
                         this.noSearchTip();
                     } else {
