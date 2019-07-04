@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="addHomeStay.css">
     <link rel="stylesheet" href="index.css">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <title>新建民宿</title>
@@ -15,107 +16,18 @@
 
 <body>
     <div id="addHomeStay">
-        <div>
-            <h2>基础信息</h2>
-            <el-input style="width:30%" type="text" placeholder="民宿名称" v-model="text" maxlength="10" show-word-limit>
-            </el-input>
-            <el-input type="text" placeholder="一句话描述" v-model="text" maxlength="20" show-word-limit></el-input>
-            <el-select v-model="seleValue" placeholder="运营类别">
-                <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                </el-option>
-            </el-select>
-            <el-input type="text" placeholder="房东姓名" v-model="text" show-word-limit></el-input>
-            <el-input type="text" placeholder="重要提示" v-model="text" maxlength="20" show-word-limit></el-input>
-            <el-input type="text" placeholder="推荐理由" v-model="text" maxlength="10" show-word-limit></el-input>
-            <el-input type="text" placeholder="房东微信号" v-model="text" show-word-limit></el-input>
-        </div>
-        <div>
-            <h2>民宿照片</h2>
-            <el-upload action="https://jsonplaceholder.typicode.com/posts/" list-type="picture-card"
-                :on-change="handlePictureCardPreview" :on-remove="handleRemove" :limit="8" accept="image/*">
-                <i class="el-icon-plus"></i>
-            </el-upload>
-            <el-button type="primary" plain v-for="imgItem, i in upLoadImgList" class="uploadimgbtn"
-                @click="upLoadBtn(i)" size="mini">{{homeImgNum == i?'主页':'设为主页'}}</el-button>
-
-        </div>
-        <div>
-            <h2>设施维护</h2>
-        </div>
-        <div>
-            <h2>民宿位置</h2>
-        </div>
+        
     </div>
 
     <script>
         new Vue({
             el: "#addHomeStay",
             data: {
-                text: '',
-                dialogImageUrl: '',
-                dialogVisibleNum: 0,
-                upLoadImgList: [],
-                homeImgNum: 0,
-                options: [{
-                    value: '1',
-                    label: '自营'
-                }, {
-                    value: '2',
-                    label: '民居'
-                }],
-                seleValue: '',
-                name: '',
-                descriptive: '',
-                category: '',
-                house_name: '',
-                tips: '',
-                reason: '',
-                house_wx: '',
-                wifi: '',
-                cable_network: '',
-                parking: '',
-                restaurant: '',
-                hotel: '',
-                public: '',
-                entertainment: '',
-                position: '',
+                
 
             },
             methods: {
-                // 图片上传移除
-                handleRemove(file, fileList) {
-                    console.log(file, fileList);
-                    this.upLoadImgList[0].flag = true;
-                    this.homeImgNum = 0;
-                },
-                // 添加图片
-                handlePictureCardPreview(file, fileList) {
-                    if (this.dialogVisibleNum < 1) {
-                        // console.log(file, fileList);
-                        this.dialogImageUrl = file.url;
-                        fileList.map((item, i) => {
-                            if (i == 0) {
-                                return item.flag = true;
-                            } else {
-                                return item.flag = false
-                            }
-                        })
-                        this.upLoadImgList = fileList;
-                        console.log(this.upLoadImgList)
-                        this.dialogVisibleNum++;
-                    } else {
-                        this.dialogVisibleNum = 0;
-                    }
-                },
-                // 设为主页按钮
-                upLoadBtn(i) {
-                    console.log(this.upLoadImgList)
-                    if (i != 0) {
-                        this.upLoadImgList[0].flag = false;
-                    }
-                    this.upLoadImgList[i].flag = true;
-                    this.homeImgNum = i;
-                },
+                
             },
         })
     </script>

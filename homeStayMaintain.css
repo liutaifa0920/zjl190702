@@ -1,3 +1,6 @@
+#homeStayMaintain{
+    min-width: 1000px;
+}
 .cell {
     text-align: center;
 }
@@ -16,4 +19,66 @@
 }
 .add-homestay-btn{
     margin-bottom: 15px;
+}
+/* 添加民宿弹出层 */
+.add-el-input input{
+    width: 100% !important;
+    margin-bottom: 8px;
+}
+.add-el-select{
+    width: 30% !important;
+    margin-bottom: 8px;
+}
+.add-sele-width{
+    width: 30% !important;
+    height: 40px;
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
+}
+
+.add-uploadimgbtn:nth-of-type(1){
+    margin: 0 !important;
+}
+.add-uploadimgbtn{
+    width: 148px;
+    text-align: center;
+    position: relative !important;
+    top: -40px !important;
+    margin: 0 !important;
+    margin-left: 8px !important;
+}
+.add-el-input--suffix{
+    width: 100% !important;
+}
+.add-el-input__inner{
+    width: 30% !important;
+}
+.upLoadSmallBox{
+    
+    width: 100% !important;
+    height: 200px;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #dcdfe6;
+    border-radius: 6px;
+    overflow-x: scroll !important;
+    overflow-y: hidden;
+}
+#homestay-img{
+    position: relative;
+    width: 100%;
+}
+.upLoadBigBox{
+    position: relative;
+    width: 3500px !important;
+}
+.upload-num{
+    position: absolute !important;
+    font-size: 14px;
+    font-weight: 500;
+    right: 20px;
+    padding-top: 28px;
+}
+h2{
+    color: #666666;
 }
