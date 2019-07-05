@@ -35,7 +35,7 @@
 /* 添加民宿弹出层 */
 #addBox{
     width: 1100px;
-    height: 700px;
+    height: 68vh;
     padding: 25px;
     position: absolute;
     margin: auto;
@@ -125,4 +125,28 @@ p{
 }
 .check-box label{
     margin-bottom: 5px;
+}
+/* 地图 */
+#addContainer{
+    position: relative;
+    width: 500px;
+    height: 220px;
+    border-radius: 8px;
+    border: 1px solid #dbdbdb;
+}
+#mapBox{
+    position: relative;
+}
+.add-addressInp{
+    position: absolute !important;
+    bottom: 30px;
+    left: 520px;
+    width: 30% !important;
+}
+#addInfoUpload{
+    width: 100%;
+    height: 120px;
+    text-align: right;
+    display: flex;
+    align-items: center;
 }
