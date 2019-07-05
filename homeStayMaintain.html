@@ -76,22 +76,22 @@
             <div>
                 <h2>基础信息</h2>
                 <el-input class="add-el-input add-el-input--suffix add-el-input__inner " style="width:30%" type="text"
-                    placeholder="民宿名称" v-model="text" maxlength="10" show-word-limit>
+                    placeholder="民宿名称" v-model="addName" maxlength="10" show-word-limit>
                 </el-input>
                 <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="一句话描述"
-                    v-model="text" maxlength="20" show-word-limit></el-input>
-                <el-select v-model="seleValue" placeholder="运营类别" class="add-el-select add-sele-width">
+                    v-model="addDescriptive" maxlength="20" show-word-limit></el-input>
+                <el-select v-model="addCategory" placeholder="运营类别" class="add-el-select add-sele-width">
                     <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                 </el-select>
                 <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东姓名"
-                    v-model="text" show-word-limit></el-input>
+                    v-model="addHouse_name" show-word-limit></el-input>
                 <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="重要提示"
-                    v-model="text" maxlength="20" show-word-limit></el-input>
+                    v-model="addTips" maxlength="20" show-word-limit></el-input>
                 <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="推荐理由"
-                    v-model="text" maxlength="10" show-word-limit></el-input>
+                    v-model="addReason" maxlength="10" show-word-limit></el-input>
                 <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东微信号"
-                    v-model="text" show-word-limit></el-input>
+                    v-model="addHouse_wx" show-word-limit></el-input>
             </div>
             <div id="homestay-img">
                 <h2>民宿照片<span class="upload-num">{{uploadImgNum}}/20</span></h2>
@@ -216,7 +216,7 @@
             template: "#container",
             data() {
                 return {
-
+                    
                 }
             },
             props: [],
@@ -224,12 +224,16 @@
                 // 创建地图
                 createMap() {
                     let map = new AMap.Map('addContainer', {
-                        center: [116.397428, 39.90923],
                         resizeEnable: true,
-                        zoom: 10
+                        zoom: 8
                     })
+                    map.on('click',function(e){
+                        let position = `${e.lnglat.getLng()},${e.lnglat.getLat()}`;
+                        console.log(position);
+                        // this.$emit("positionEmit", position)
+                    })
+                },
 
-                }
             },
             mounted() {
                 this.createMap();
@@ -270,8 +274,6 @@
                 uploadImgNum: 0,
                 // 默认上传图片列表
                 mounteImgArr: [],
-                // 运营类别绑定
-                seleValue: '',
                 // add弹框
                 addFlag: false,
 
@@ -386,12 +388,17 @@
                     this.addFlag = false;
                 },
                 // 提交新建民宿信息
-                UploadHomeStayInfo(){
-
-                    this.addFlag = false;
+                UploadHomeStayInfo() {
+                    console.log(this.addPublic);
+                    if (!this.addName || !this.addDescriptive || !this.addCategory || !this.addHouse_name || !this.addTips || !this.addReason || !this.addHouse_wx || !this.addWifi || !this.addCable_network || !this.addParking || !this.addRestaurant || !this.addHotel || !this.addPublic || !this.addEntertainment || !this.addPosition || !this.addAddress) {
+                        this.noUploadInfoTip();
+                    } else if(this.addName.length>10 || this.addName.length>20 || this.addName.length>20 || this.addName.length>10) {
+                        this.failInfoSizeTip();
+                    } else{
+                        // 传info发请求
+                        this.addFlag = false;
+                    }
                 },
-
-                // -------------------- 添加民宿方法 ---------------------
                 // 从图片数组中移除元素
 
                 // 上传图片前
@@ -475,12 +482,23 @@
                     });
                 },
                 // 民宿信息填写不完整提示
-                noUploadImgTip() {
+                noUploadInfoTip() {
                     this.$message({
                         message: `民宿信息填写不完整提示`,
                         type: 'warning'
                     });
                 },
+                // 信息不符
+                failInfoSizeTip(){
+                    this.$message({
+                        message: `民宿信息填写超出字数限制`,
+                        type: 'warning'
+                    });
+                },
+                // 接受子组件定位
+                setPosition(e){
+                    this.addPosition = e;
+                }
 
             },
             mounted() {
