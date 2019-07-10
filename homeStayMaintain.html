@@ -156,12 +156,14 @@
     </div>
 
 
-
+    <!-- 地图组件 -->
     <script type="text/html" id="container">
-            <div id="addContainer"></div>
-        </script>
+        <div id="addContainer"></div>
+    </script>
 
+   
     <script>
+        // 地图组件
         let container = {
             template: "#container",
             data() {
@@ -217,7 +219,11 @@
             },
         }
         // 页面首次渲染
-        const fristList = 'https://api.sdzhujialin.com/admin/Index/IndexData';
+        const fristListURL = 'https://api.sdzhujialin.com/admin/Index/IndexData';
+        const addCheckListURL = 'https://api.sdzhujialin.com/admin/Facilities/IndexData';
+        const setHomeStayInfoURL = 'https://api.sdzhujialin.com/admin/Index/AddData';
+        const setHomeStayImgURL = 'https://api.sdzhujialin.com/admin/Index/upload';
+        const reviseHomeStayURL = 'https://api.sdzhujialin.com/admin/Index/Details';
 
         new Vue({
             el: '#homeStayMaintain',
@@ -296,8 +302,12 @@
                 addAddress: '',
                 // 上传change触发次数
                 uploadNum: 0,
+
+                // 修改/详情民宿ID
+                reviseHomeStayId: '',
             },
             methods: {
+                // 分页
                 handleSizeChange(val) {
                     this.everyPageNum = val;
                     this.queryHomestayList();
@@ -317,7 +327,7 @@
                         'category': `${this.category}`
                     }
                     $.ajax({
-                        url: fristList,
+                        url: fristListURL,
                         data: data,
                         type: 'POST',
                         dataType: 'json',
@@ -334,18 +344,7 @@
                         }
                     })
                 },
-                // 发送可选项请求
-                queryHomeStayCheck() {
-                    let that = this;
-                    $.ajax({
-                        url: 'https://api.sdzhujialin.com/admin/Facilities/IndexData',
-                        type: 'POST',
-                        dataType: 'json',
-                        success(res) {
-                            that.checkList = res.data;
-                        }
-                    })
-                },
+                
                 // 查询民宿
                 searchHomeStay() {
                     let tempCategory = this.category == '自营' ? 1 : 2;
@@ -369,27 +368,43 @@
                         type: 'warning'
                     });
                 },
+
+
                 // 修改按钮
                 reviseBtn(row, column, cell, event) {
                     let currentCell = cell.className.split("")[18];
                     if (currentCell == 7) {
-                        // 发请求 row.xxxxx .....
-                        console.log(row);
+                        // console.log(row);
+                        this.reviseHomeStayId = row.id;
+                        this.queryReviseHomeStay();
                     }
 
-
                 },
-                // 弹窗控制
+
+
+
+                // 新建民宿按钮
                 addHomeStayBtn() {
                     this.addFlag = !this.addFlag;
-
                 },
+                // 新建民宿弹窗关闭
                 closeAddBoxClick() {
                     this.addFlag = false;
                 },
-                // 提交新建民宿信息
+                // 发送可选项请求
+                queryHomeStayCheck() {
+                    let that = this;
+                    $.ajax({
+                        url: addCheckListURL,
+                        type: 'POST',
+                        dataType: 'json',
+                        success(res) {
+                            that.checkList = res.data;
+                        }
+                    })
+                },
+                // 提交新建民宿信息按钮/请求
                 UploadHomeStayInfo() {
-                    // console.log(this.addHomeStayInfoList);
                     if (!this.addName || !this.addDescriptive || !this.addCategory || !this.addHouse_name ||!this.addTips || !this.addReason || !this.addHouse_wx || !this.addWifi || !this.addCable_network || !this.addParking || !this.addPosition || !this.addAddress) {
                         this.noUploadInfoTip();
                     } else if (this.addName.length > 10 || this.addName.length > 20 || this.addName.length >
@@ -416,9 +431,9 @@
                             }
                         }
                         let that = this;
-                        // 传info发请求
+                        // 新建民宿信息（除图片）请求
                         $.ajax({
-                            url: 'https://api.sdzhujialin.com/admin/Index/AddData',
+                            url: setHomeStayInfoURL,
                             type: 'POST',    
                             data: {
                                 name: this.addName,
@@ -446,6 +461,7 @@
                         
                     }
                 },
+                // 新建民宿添加图片请求
                 queryImg(id){
                     let that = this;
                     var fd = new FormData();
@@ -455,10 +471,8 @@
                     fd.append("id",id);
                     fd.append("flag",this.homeImgNum);
                     console.log(fd.get("files[]"));
-
-                    // console.log(fd.get("id"));
                     $.ajax({
-                        url: 'https://api.sdzhujialin.com/admin/Index/upload',
+                        url: setHomeStayImgURL,
                         type: 'POST',
                         data: fd,
                         processData:false,
@@ -476,7 +490,29 @@
                         }
                     })
                 },
-
+                // 修改/详情民宿请求
+                queryReviseHomeStay(){
+                    let that = this;
+                    $.ajax({
+                        url: reviseHomeStayURL,
+                        type: "POST",
+                        data: this.reviseHomeStayId,
+                        dataType: "json",
+                        success(res){
+                            console.log(res);
+                            if(that.addFlag){
+                                that.addFlag = false;
+                                setTimeout(() => {
+                                    that.addFlag = true;
+                                }, 1000);
+                            } else {
+                                that.addFlag = true;
+                            }
+                            
+                        }
+                    })
+                },
+                
                 // 上传图片change
                 onUpload(file, fileList) {
                     this.uploadNum++;
@@ -507,9 +543,6 @@
                     console.log(this.upLoadImgList)
                     this.homeImgNum = i;
                 },
-
-
-
                 // 图片上传个数提示
                 uploadImgTip() {
                     this.$message({
@@ -586,15 +619,26 @@
                         this.addCategory = '';
                         this.addHouse_name = '';
                         this.addTips = '';
+                        // 推荐理由
                         this.addReason = '';
+                        // 房主微信
                         this.addHouse_wx = '';
+                        // 无线
                         this.addWifi = '';
+                        // 有线网络服务
                         this.addCable_network = '';
+                        // 停车服务
                         this.addParking = '';
+                        // 服务信息总合
                         this.addHomeStayInfoList = [];
+                        // 民宿位置坐标
                         this.addPosition = [];
+                        // 民宿位置描述
                         this.addAddress = '';
+                        // 照片组信息
                         this.upLoadImgList = [];
+                        // 主页索引
+                        this.homeImgNum = 0;
                     }
                 }
             },
