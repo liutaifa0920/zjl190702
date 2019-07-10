@@ -98,23 +98,13 @@
                 <div class="upLoadSmallBox">
                     <div class="upLoadBigBox">
 
-                        
-                        <!-- <el-upload 
-                            :action="serverUrl" 
-                            list-type="picture-card" 
-                            :before-upload="beforeUpload" 
-                            :before-remove="beforeRemove" 
-                            :on-change="onUpload" 
-                            :on-error="failUpload" 
-                            :on-success="handleAvatarSuccess" 
-                            :limit="20" 
-                            accept="image/*" 
-                            :file-list="mounteImgArr"
-                        >
+
+                        <el-upload action="https://api.sdzhujialin.com/admin/Index/IndexData" list-type="picture-card" :on-change="onUpload" :limit="20"
+                            accept="image/*" :file-list="mounteImgArr">
                             <i class="el-icon-plus"></i>
                         </el-upload>
                         <el-button type="primary" plain v-for="imgItem, i in upLoadImgList" class="add-uploadimgbtn"
-                            @click="upLoadBtn(i)" size="mini">{{homeImgNum == i?'主页':'设为主页'}}</el-button> -->
+                            @click="upLoadBtn(i)" size="mini">{{homeImgNum == i?'主页':'设为主页'}}</el-button>
                     </div>
                 </div>
             </div>
@@ -226,6 +216,9 @@
 
             },
         }
+        // 页面首次渲染
+        const fristList = 'https://api.sdzhujialin.com/admin/Index/IndexData';
+
         new Vue({
             el: '#homeStayMaintain',
             data: {
@@ -244,8 +237,6 @@
                 // ------------ 添加民宿弹出层 ---------------
 
                 text: '',
-                // 图片上传地址
-                serverUrl: 'https://api.sdzhujialin.com/admin/Index/AddData',
                 dialogImageUrl: '',
                 dialogVisibleNum: 0,
                 upLoadImgList: [],
@@ -304,7 +295,7 @@
                 // 民宿位置描述
                 addAddress: '',
                 // 上传change触发次数
-                uploadnum: 0,
+                uploadNum: 0,
             },
             methods: {
                 handleSizeChange(val) {
@@ -326,7 +317,7 @@
                         'category': `${this.category}`
                     }
                     $.ajax({
-                        url: 'https://api.sdzhujialin.com/admin/Index/IndexData',
+                        url: fristList,
                         data: data,
                         type: 'POST',
                         dataType: 'json',
@@ -399,10 +390,7 @@
                 // 提交新建民宿信息
                 UploadHomeStayInfo() {
                     // console.log(this.addHomeStayInfoList);
-                    if (!this.addName || !this.addDescriptive || !this.addCategory || !this.addHouse_name ||
-                        !this.addTips || !this.addReason || !this.addHouse_wx || !this.addWifi || !this
-                            .addCable_network || !this.addParking || !this.addHomeStayInfoList || !this
-                                .addPosition || !this.addAddress) {
+                    if (!this.addName || !this.addDescriptive || !this.addCategory || !this.addHouse_name ||!this.addTips || !this.addReason || !this.addHouse_wx || !this.addWifi || !this.addCable_network || !this.addParking || !this.addPosition || !this.addAddress) {
                         this.noUploadInfoTip();
                     } else if (this.addName.length > 10 || this.addName.length > 20 || this.addName.length >
                         20 || this.addName.length > 10) {
@@ -414,7 +402,6 @@
                                 for (let m = 0; m < this.addHomeStayInfoList.length; m++) {
                                     if (this.addHomeStayInfoList[m] == this.checkList[i].content[j].name) {
                                         arr.push(this.checkList[i].content[j].id.toString());
-                                        // console.log(arr);
                                     }
                                 }
                             }
@@ -428,143 +415,97 @@
                                 this.addEntertainment = arr
                             }
                         }
+                        let that = this;
                         // 传info发请求
                         $.ajax({
                             url: 'https://api.sdzhujialin.com/admin/Index/AddData',
-                            type: 'POST',
+                            type: 'POST',    
                             data: {
-                                'name': this.addName,
-                                'descriptive': this.addDescriptive,
-                                'category': this.addCategory,
-                                'house_name': this.addHouse_name,
-                                'tips': this.addTips,
-                                'reason': this.addReason,
-                                'house_wx': this.addHouse_wx,
-                                'wifi': this.addWifi,
-                                'cable_network': this.addCable_network,
-                                'parking': this.addParking,
-                                'restaurant': this.addRestaurant,
-                                'hotel': this.addHotel,
-                                'public': this.addPublic,
-                                'entertainment': this.addEntertainment,
-                                'position': this.addPosition,
-                                'address': this.addAddress
+                                name: this.addName,
+                                descriptive: this.addDescriptive,
+                                category: this.addCategory,
+                                house_name: this.addHouse_name,
+                                tips: this.addTips,
+                                reason: this.addReason,
+                                house_wx: this.addHouse_wx,
+                                wifi: this.addWifi,
+                                cable_network: this.addCable_network,
+                                parking: this.addParking,
+                                restaurant: this.addRestaurant,
+                                hotel: this.addHotel,
+                                public: this.addPublic,
+                                entertainment: this.addEntertainment,
+                                position: this.addPosition,
+                                address: this.addAddress
                             },
                             dataType: 'json',
                             success(res) {
-                                console.log(res);
+                                that.queryImg(res.data);
                             }
                         })
-                        // this.addName = this.addDescriptive = this.addCategory = this.addHouse_name = this.addTips = this.addReason = this.addHouse_wx = this.addWifi = this.addCable_network = this.addParking = this.addHomeStayInfoList = this.addPosition = this.addAddress = this.upLoadImgList = '';
-                        // this.addFlag = false;
+                        
                     }
                 },
+                queryImg(id){
+                    let that = this;
+                    var fd = new FormData();
+                    for(let i = 0;i<this.upLoadImgList.length;i++){
+                        fd.append("files[]", this.upLoadImgList[i].raw)
+                    }
+                    fd.append("id",id);
+                    fd.append("flag",this.homeImgNum);
+                    console.log(fd.get("files[]"));
 
-
-
-                // // 从图片数组中移除元素
-                // // 上传图片前
-                // beforeUpload(file) {
-                //     // console.log(file);
-                //     if (file) {
-                //         let tempArr = [];
-                //         this.upLoadImgList.push(tempArr);
-                //         this.upLoadImgList.map((item, i) => {
-                //             if (i == 0) {
-                //                 return item.flag = true;
-                //             } else {
-                //                 return item.flag = false
-                //             }
-                //         })
-                //     }
-                //     // console.log(this.upLoadImgList);
-                // },
-                // // 图片移除前
-                // beforeRemove(file, fileList) {
-
-                //     let tempImgNum = '';
-                //     for (let i = 0; i < this.upLoadImgList.length; i++) {
-                //         if (this.upLoadImgList[i].uid == file.uid) {
-                //             tempImgNum = i
-                //             break;
-                //         }
-                //     }
-                //     if (this.upLoadImgList[tempImgNum].flag == true) {
-                //         this.upLoadImgList[0].flag == true;
-                //         this.homeImgNum = 0;
-                //     }
-                //     this.upLoadImgList.splice(tempImgNum, 1);
-                //     // console.log(this.upLoadImgList);
-                //     // 显示已上传图片个数
-                //     this.uploadImgNum = this.upLoadImgList.length;
-                // },
-                // // 上传图片失败
-                // failUpload(err, file, fileList) {
-                //     // console.log(fileList);
-                //     let tempImgNum = '';
-                //     for (let i = 0; i < this.upLoadImgList.length; i++) {
-                //         if (this.upLoadImgList[i].uid == file.uid) {
-                //             tempImgNum = i
-                //             break;
-                //         }
-                //     }
-                //     this.upLoadImgList.splice(tempImgNum, 1);
-
-                // },
-                // // 上传成功
-                // handleAvatarSuccess(res,file){
-                //     console.log(res.code);
-                // },
-                // // 上传图片后
-                // onUpload(file, fileList) {
-                //     console.log(fileList);
-                //     // this.uploadnum++;
-                //     // let that = this;
-                //     // if (this.uploadnum <= 1) {
-                //     //     console.log(file);
-                //     //     console.log(this.upLoadImgList.length);
-                //     //     this.getBase64(file.raw).then(res => {
-                //     //         console.log(res)
-                //     //     });
-                //     // } else {
-                //     //     this.uploadnum = 0;
-                //     // }
-
-                // },
-                getBase64(file) {
-                    return new Promise(function (resolve, reject) {
-                        let reader = new FileReader();
-                        let imgResult = "";
-                        reader.readAsDataURL(file);
-                        reader.onload = function () {
-                            imgResult = reader.result;
-                        };
-                        reader.onerror = function (error) {
-                            reject(error);
-                        };
-                        reader.onloadend = function () {
-                            resolve(imgResult);
-                        };
-                    });
+                    // console.log(fd.get("id"));
+                    $.ajax({
+                        url: 'https://api.sdzhujialin.com/admin/Index/upload',
+                        type: 'POST',
+                        data: fd,
+                        processData:false,
+                        contentType:false, 
+                        success(res){
+                            console.log(res);
+                            if(res.code == 200){
+                                that.addFlag = false;
+                            } else if (res.code == 201){
+                                this.failArgumentsTip(res.msg);
+                            } else if(res.code == 302){
+                                this.failAddInfoTip(res.msg);
+                            }
+                            
+                        }
+                    })
                 },
-                // 移除图片后
 
+                // 上传图片change
+                onUpload(file, fileList) {
+                    this.uploadNum++;
+                    if (this.uploadNum == 2) {
+                        this.upLoadImgList = fileList;
+                        this.upLoadImgList.map((e, i) => {
+                            if(i == 0){
+                                return e.raw.flag = true;
+                            } else {
+                                return e.raw.flag = false;
+                            }
+                        })
+                        this.uploadNum = 0;
+                        console.log(this.upLoadImgList);
+                    }
 
-
-
+                },
                 // 设为主页按钮
                 upLoadBtn(i) {
-                    // console.log(this.upLoadImgList)
+                    
                     if (i != 0) {
-                        this.upLoadImgList[0].flag = false;
+                        this.upLoadImgList[0].raw.flag = false;
                     }
                     this.upLoadImgList.map(e => {
-                        return e.flag = false;
+                        return e.raw.flag = false;
                     })
-                    this.upLoadImgList[i].flag = true;
-
+                    this.upLoadImgList[i].raw.flag = true;
+                    console.log(this.upLoadImgList)
                     this.homeImgNum = i;
-                    // console.log(this.upLoadImgList)
                 },
 
 
@@ -597,6 +538,20 @@
                         type: 'warning'
                     });
                 },
+                // 新建民宿参数错误
+                failArgumentsTip(msg) {
+                    this.$message({
+                        message: `${msg}`,
+                        type: 'warning'
+                    });
+                },
+                // 新建民宿提交失败
+                failAddInfoTip(msg) {
+                    this.$message({
+                        message: `${msg}`,
+                        type: 'warning'
+                    });
+                },
                 // 接受子组件定位
                 setShowPosition(e) {
                     // console.log(e);
@@ -622,6 +577,24 @@
                 category() {
                     if (!this.name && !this.house_name && !this.tempCategory) {
                         this.queryHomestayList();
+                    }
+                },
+                addFlag(){
+                    if(!this.addFlag){
+                        this.addName = '';
+                        this.addDescriptive = '';
+                        this.addCategory = '';
+                        this.addHouse_name = '';
+                        this.addTips = '';
+                        this.addReason = '';
+                        this.addHouse_wx = '';
+                        this.addWifi = '';
+                        this.addCable_network = '';
+                        this.addParking = '';
+                        this.addHomeStayInfoList = [];
+                        this.addPosition = [];
+                        this.addAddress = '';
+                        this.upLoadImgList = [];
                     }
                 }
             },
