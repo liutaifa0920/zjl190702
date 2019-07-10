@@ -189,8 +189,14 @@
                 // 创建地图
                 createMap() {
                     // console.log(this.position.split(","));
-                    let lat = this.position.split(",")[1]*1;
-                    let lng = this.position.split(",")[0]*1;
+                    let lat = '';
+                    let lng = '';
+                    console.log(this.position)
+                    if(this.position){
+                        lat = this.position.split(",")[1]*1;
+                        lng = this.position.split(",")[0]*1;
+                    }
+                    
                     // console.log(lat);
                     // console.log(lng);
                     let revisePosition = [lng, lat];
@@ -511,7 +517,7 @@
                     }
                     fd.append("id",id);
                     fd.append("flag",this.homeImgNum);
-                    console.log(fd.get("files[]"));
+                    // console.log(fd.get("files[]"));
                     $.ajax({
                         url: setHomeStayImgURL,
                         type: 'POST',
@@ -519,7 +525,7 @@
                         processData:false,
                         contentType:false, 
                         success(res){
-                            console.log(res);
+                            // console.log(res);
                             if(res.code == 200){
                                 that.addFlag = false;
                                 that.queryHomestayList();
@@ -542,7 +548,7 @@
                         },
                         dataType: "json",
                         success(res){
-                            console.log(res);
+                            // console.log(res);
 
                             that.addFlag = !that.addFlag;
 
@@ -577,7 +583,7 @@
                                     }
                                 }
                             }
-                            console.log(tempCheckArr);
+                            // console.log(tempCheckArr);
                             that.addHomeStayInfoList = tempCheckArr;
                             
                             
@@ -754,7 +760,7 @@
                         // 服务信息总合
                         this.addHomeStayInfoList = [];
                         // 民宿位置坐标
-                        this.addPosition = [];
+                        this.addPosition = '';
                         // 民宿位置描述
                         this.addAddress = '';
                         // 照片组信息
