@@ -73,6 +73,7 @@
         <!-- -------------------------------- 添加民宿,民宿详情,民宿信息修改弹出层 -------------------------------- -->
         <div id="addBox" v-if="addFlag">
             <i class="el-icon-close" @click="closeAddBoxClick"></i>
+            <h1>{{addBoxTitle}}</h1>
             <div>
                 <h2>基础信息</h2>
                 <el-input class="add-el-input add-el-input--suffix add-el-input__inner " style="width:30%" type="text"
@@ -96,15 +97,23 @@
             <div id="homestay-img">
                 <h2>民宿照片<span class="upload-num">{{uploadImgNum}}/20</span></h2>
                 <div class="upLoadSmallBox">
-                    <div class="upLoadBigBox">
-
-
+                    <!-- 新建 -->
+                    <div v-if="addBoxShow" class="upLoadBigBox">
                         <el-upload action="https://api.sdzhujialin.com/admin/Index/IndexData" list-type="picture-card" :on-change="onUpload" :limit="20"
                             accept="image/*" :file-list="mounteImgArr">
                             <i class="el-icon-plus"></i>
                         </el-upload>
                         <el-button type="primary" plain v-for="imgItem, i in upLoadImgList" class="add-uploadimgbtn"
                             @click="upLoadBtn(i)" size="mini">{{homeImgNum == i?'主页':'设为主页'}}</el-button>
+                    </div>
+                    <!-- 详情 -->
+                    <div v-if="!addBoxShow" class="upLoadBigBox">
+                        <el-upload action="https://api.sdzhujialin.com/admin/Index/IndexData" list-type="picture-card" :on-change="onUploadRevise"
+                            :limit="20" accept="image/*" :file-list="mounteImgArr">
+                            <i class="el-icon-plus"></i>
+                        </el-upload>
+                        <el-button type="primary" plain v-for="imgItem, i in upLoadImgList" class="add-uploadimgbtn" @click="upLoadBtn(i)"
+                            size="mini">{{homeImgNum == i?'主页':'设为主页'}}</el-button>
                     </div>
                 </div>
             </div>
@@ -148,9 +157,13 @@
                 <el-input v-model="addAddress" placeholder="民宿地址描述" size="small" class="add-addressInp" maxlength="20"
                     show-word-limit></el-input>
             </div>
-            <div id="addInfoUpload">
+            <div v-if="addBoxShow" class="addInfoUpload">
                 <el-button type="info" size="mini" @click="closeAddBoxClick">取消</el-button>
                 <el-button type="primary" size="mini" @click="UploadHomeStayInfo">提交</el-button>
+            </div>
+            <div v-if="!addBoxShow" class="addInfoUpload">
+                <el-button type="info" size="mini" @click="closeAddBoxClick">取消</el-button>
+                <el-button type="primary" size="mini" @click="">确认</el-button>
             </div>
         </div>
     </div>
@@ -175,21 +188,36 @@
             methods: {
                 // 创建地图
                 createMap() {
+                    // console.log(this.position.split(","));
+                    let lat = this.position.split(",")[1]*1;
+                    let lng = this.position.split(",")[0]*1;
+                    // console.log(lat);
+                    // console.log(lng);
+                    let revisePosition = [lng, lat];
                     let map = new AMap.Map('addContainer', {
                         resizeEnable: true,
                         zoom: 8
                     })
                     let position = '';
-                    let lat = '';
-                    let lng = '';
                     let marker = '';
+                    if(this.position){
+                        console.log(revisePosition);
+                        marker = new AMap.Marker({
+                            icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+                            position: revisePosition,
+                            offset: new AMap.Pixel(-13, -30)
+                        });
+                        marker.setMap(map);
+                    }
+                    
                     let that = this;
                     map.on('click', function (e) {
                         lat = e.lnglat.getLat();
                         lng = e.lnglat.getLng();
                         position = `${e.lnglat.getLng()},${e.lnglat.getLat()}`;
                         this.currentPosition = position;
-                        // console.log(lng, lat)
+                        console.log(lng, lat)
+
                         if (!marker) {
                             marker = new AMap.Marker({
                                 icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
@@ -303,6 +331,9 @@
                 // 上传change触发次数
                 uploadNum: 0,
 
+                // 弹出框标题
+                addBoxTitle: '',
+                addBoxShow: '',
                 // 修改/详情民宿ID
                 reviseHomeStayId: '',
             },
@@ -374,7 +405,11 @@
                 reviseBtn(row, column, cell, event) {
                     let currentCell = cell.className.split("")[18];
                     if (currentCell == 7) {
-                        // console.log(row);
+                        console.log(row.id);
+                        this.addBoxTitle = '民宿详情';
+                        if(this.addBoxTitle == '民宿详情'){
+                            this.addBoxShow = false;
+                        }
                         this.reviseHomeStayId = row.id;
                         this.queryReviseHomeStay();
                     }
@@ -385,11 +420,17 @@
 
                 // 新建民宿按钮
                 addHomeStayBtn() {
+                    this.addBoxTitle = '新建民宿'
+                    if(this.addBoxTitle == '新建民宿'){
+                        this.addBoxShow = true;
+                    }
+                    console.log(this.addBoxTitle);
                     this.addFlag = !this.addFlag;
                 },
                 // 新建民宿弹窗关闭
                 closeAddBoxClick() {
                     this.addFlag = false;
+                    this.addBoxTitle = '';
                 },
                 // 发送可选项请求
                 queryHomeStayCheck() {
@@ -481,12 +522,12 @@
                             console.log(res);
                             if(res.code == 200){
                                 that.addFlag = false;
+                                that.queryHomestayList();
                             } else if (res.code == 201){
-                                this.failArgumentsTip(res.msg);
+                                that.failArgumentsTip(res.msg);
                             } else if(res.code == 302){
-                                this.failAddInfoTip(res.msg);
+                                that.failAddInfoTip(res.msg);
                             }
-                            
                         }
                     })
                 },
@@ -496,24 +537,87 @@
                     $.ajax({
                         url: reviseHomeStayURL,
                         type: "POST",
-                        data: this.reviseHomeStayId,
+                        data: {
+                            id: this.reviseHomeStayId
+                        },
                         dataType: "json",
                         success(res){
                             console.log(res);
-                            if(that.addFlag){
-                                that.addFlag = false;
-                                setTimeout(() => {
-                                    that.addFlag = true;
-                                }, 1000);
-                            } else {
-                                that.addFlag = true;
+
+                            that.addFlag = !that.addFlag;
+
+                            that.addName = res.data.data.name;
+                            that.addDescriptive = res.data.data.descriptive;
+                            that.addCategory = res.data.data.category == 0 ? '自营':'民居';
+                            that.addHouse_name = res.data.data.house_name;
+                            that.addTips = res.data.data.tips;
+                            // 推荐理由
+                            that.addReason = res.data.data.reason;
+                            // 房主微信
+                            that.addHouse_wx = res.data.data.house_wx;
+
+                            // 无线
+                            that.addWifi = res.data.data.wifi.toString();
+                            // 有线网络服务
+                            that.addCable_network = res.data.data.cable_network.toString();
+                            // 停车服务
+                            that.addParking = res.data.data.parking.toString();
+
+                            // 服务信息总合
+
+                            let tempCheckArr = res.data.data.hotel.concat(res.data.data.restaurant,res.data.data.public,res.data.data.entertainment);
+                            // console.log(tempCheckArr);
+                            // console.log(res.data.title);
+                            for(let i = 0; i < res.data.title.length; i++){
+                                for(let j = 0; j < res.data.title[i].content.length; j++){
+                                    for(let m = 0; m < tempCheckArr.length; m++){
+                                        if(res.data.title[i].content[j].id == tempCheckArr[m]*1){
+                                            tempCheckArr[m] = res.data.title[i].content[j].name;
+                                        }
+                                    }
+                                }
+                            }
+                            console.log(tempCheckArr);
+                            that.addHomeStayInfoList = tempCheckArr;
+                            
+                            
+                            // 民宿位置坐标
+                            that.addPosition = res.data.data.position;
+                            // 民宿位置描述
+                            that.addAddress = res.data.data.address;
+
+                            let tempImgArr = [];
+                            for(let i = 0; i < res.data.data.img.length; i++){
+                                let tempImgObj = {};
+                                tempImgObj.name = res.data.data.img[i].img_id.toString();
+                                tempImgObj.url = res.data.data.img[i].img_url;
+                                // console.log(res.data.data.img[i].img_url);
+                                // console.log(tempImgObj)
+                                tempImgArr.push(tempImgObj);
+                            }
+                            // console.log(tempImgArr);
+                            // 照片组信息
+                            that.mounteImgArr = tempImgArr;
+                            that.upLoadImgList = tempImgArr;
+
+
+                            let is_main = {};
+                            for(let i = 0; i < res.data.data.img.length; i++){
+                                if(res.data.data.img[i].is_main == 1){
+                                    is_main = res.data.data.img[i];
+                                    res.data.data.img[i] = res.data.data.img[0];
+                                    res.data.data.img[0] = is_main;
+                                    
+                                    // 主页索引
+                                    that.homeImgNum = i;
+                                }
                             }
                             
                         }
                     })
                 },
                 
-                // 上传图片change
+                // 新建上传图片change
                 onUpload(file, fileList) {
                     this.uploadNum++;
                     if (this.uploadNum == 2) {
@@ -526,9 +630,24 @@
                             }
                         })
                         this.uploadNum = 0;
-                        console.log(this.upLoadImgList);
+                        // console.log(this.upLoadImgList);
                     }
-
+                },
+                // 修改上传图片change
+                onUploadRevise(){
+                    this.uploadNum++;
+                    if (this.uploadNum == 2) {
+                        this.upLoadImgList = fileList;
+                        this.upLoadImgList.map((e, i) => {
+                            if(i == 0){
+                                return e.raw.flag = true;
+                            } else {
+                                return e.raw.flag = false;
+                            }
+                        })
+                        this.uploadNum = 0;
+                        // console.log(this.upLoadImgList);
+                    }
                 },
                 // 设为主页按钮
                 upLoadBtn(i) {
@@ -596,6 +715,9 @@
                 this.queryHomestayList();
                 this.queryHomeStayCheck();
             },
+            computed: {
+                
+            },
             watch: {
                 name() {
                     if (!this.name && !this.house_name && !this.tempCategory) {
@@ -639,6 +761,8 @@
                         this.upLoadImgList = [];
                         // 主页索引
                         this.homeImgNum = 0;
+                        // 默认图片列表
+                        this.mounteImgArr = [];
                     }
                 }
             },

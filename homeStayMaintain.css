@@ -143,10 +143,9 @@ p{
     left: 520px;
     width: 30% !important;
 }
-#addInfoUpload{
+.addInfoUpload{
     width: 100%;
-    height: 120px;
-    text-align: right;
-    display: flex;
-    align-items: center;
+    height: 100px;
+    margin-top: 50px;
+    text-align: center;
 }
