@@ -112,3 +112,13 @@
     margin: 0 !important;
     margin-left: 8px !important;
 }
+.upLoadBigBox{
+    width: 780px;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    border: 1px solid #dddddd;
+}
+.upLoadSmallBox{
+    width: 2000px;
+    height: 170px;
+}
