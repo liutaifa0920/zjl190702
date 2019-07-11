@@ -108,8 +108,14 @@
                     </div>
                     <!-- 详情 -->
                     <div v-if="!addBoxShow" class="upLoadBigBox">
-                        <el-upload action="https://api.sdzhujialin.com/admin/Index/IndexData" list-type="picture-card" :on-change="onUploadRevise"
-                            :limit="20" accept="image/*" :file-list="mounteImgArr">
+                        <el-upload 
+                            action="https://api.sdzhujialin.com/admin/Index/Imgadd" 
+                            list-type="picture-card" 
+                            :on-change="onUploadRevise" 
+                            :on-remove="onDeleRevise" 
+                            :limit="20" 
+                            accept="image/*" 
+                            :file-list="mounteImgArr">
                             <i class="el-icon-plus"></i>
                         </el-upload>
                         <el-button type="primary" plain v-for="imgItem, i in upLoadImgList" class="add-uploadimgbtn" @click="upLoadBtn(i)"
@@ -163,7 +169,7 @@
             </div>
             <div v-if="!addBoxShow" class="addInfoUpload">
                 <el-button type="info" size="mini" @click="closeAddBoxClick">取消</el-button>
-                <el-button type="primary" size="mini" @click="">确认</el-button>
+                <el-button type="primary" size="mini" @click="setReviseHomeStay">确认</el-button>
             </div>
         </div>
     </div>
@@ -191,7 +197,7 @@
                     // console.log(this.position.split(","));
                     let lat = '';
                     let lng = '';
-                    console.log(this.position)
+                    // console.log(this.position)
                     if(this.position){
                         lat = this.position.split(",")[1]*1;
                         lng = this.position.split(",")[0]*1;
@@ -199,15 +205,25 @@
                     
                     // console.log(lat);
                     // console.log(lng);
+                    let tempCenter = {};
+                    if(this.position == ''){
+                        tempCenter = {
+                            resizeEnable: true,
+                            zoom: 10
+                        }
+                    } else {
+                        tempCenter = {
+                            resizeEnable: true,
+                            center: [lng, lat],
+                            zoom: 10
+                        }
+                    }
                     let revisePosition = [lng, lat];
-                    let map = new AMap.Map('addContainer', {
-                        resizeEnable: true,
-                        zoom: 8
-                    })
+                    let map = new AMap.Map('addContainer', tempCenter)
                     let position = '';
                     let marker = '';
                     if(this.position){
-                        console.log(revisePosition);
+                        // console.log(revisePosition);
                         marker = new AMap.Marker({
                             icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
                             position: revisePosition,
@@ -222,8 +238,7 @@
                         lng = e.lnglat.getLng();
                         position = `${e.lnglat.getLng()},${e.lnglat.getLat()}`;
                         this.currentPosition = position;
-                        console.log(lng, lat)
-
+                        // console.log(lng, lat)
                         if (!marker) {
                             marker = new AMap.Marker({
                                 icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
@@ -254,10 +269,22 @@
         }
         // 页面首次渲染
         const fristListURL = 'https://api.sdzhujialin.com/admin/Index/IndexData';
+        // 民宿设置
         const addCheckListURL = 'https://api.sdzhujialin.com/admin/Facilities/IndexData';
+        // 添加民宿
         const setHomeStayInfoURL = 'https://api.sdzhujialin.com/admin/Index/AddData';
+        // 添加民宿图片上传
         const setHomeStayImgURL = 'https://api.sdzhujialin.com/admin/Index/upload';
-        const reviseHomeStayURL = 'https://api.sdzhujialin.com/admin/Index/Details';
+        // 民宿详情接口
+        const queryReviseHomeStayURL = 'https://api.sdzhujialin.com/admin/Index/Details';
+        // 修改民宿
+        const setReviseHomeStayURL = 'https://api.sdzhujialin.com/admin/Index/Updata';
+        // 详情设为主图
+        const setIsMainImgURL = 'https://api.sdzhujialin.com/admin/Index/ImgOne';
+        // 详情删除图片
+        const setDeleImgURL = 'https://api.sdzhujialin.com/admin/Index/ImgDel';
+        // 详情上传图片
+        const setUploadImgURL = 'https://api.sdzhujialin.com/admin/Index/Imgadd';
 
         new Vue({
             el: '#homeStayMaintain',
@@ -369,15 +396,16 @@
                         type: 'POST',
                         dataType: 'json',
                         success(res) {
-                            that.totalNum = res.data.total;
-                            that.tableData = res.data.data;
-                            that.tableData.map(e => {
-                                e.category = e.category == 1 ? '自营' : '民居';
-                                return e;
-                            });
-                        },
-                        error(err) {
-                            console.log(err.msg);
+                            if(res.code == 200){
+                                that.totalNum = res.data.total;
+                                that.tableData = res.data.data;
+                                that.tableData.map(e => {
+                                    e.category = e.category == 1 ? '自营' : '民居';
+                                    return e;
+                                });
+                            } else {
+                                that.failTip(res.msg);
+                            }
                         }
                     })
                 },
@@ -411,7 +439,7 @@
                 reviseBtn(row, column, cell, event) {
                     let currentCell = cell.className.split("")[18];
                     if (currentCell == 7) {
-                        console.log(row.id);
+                        // console.log(row.id);
                         this.addBoxTitle = '民宿详情';
                         if(this.addBoxTitle == '民宿详情'){
                             this.addBoxShow = false;
@@ -430,7 +458,7 @@
                     if(this.addBoxTitle == '新建民宿'){
                         this.addBoxShow = true;
                     }
-                    console.log(this.addBoxTitle);
+                    // console.log(this.addBoxTitle);
                     this.addFlag = !this.addFlag;
                 },
                 // 新建民宿弹窗关闭
@@ -446,7 +474,9 @@
                         type: 'POST',
                         dataType: 'json',
                         success(res) {
-                            that.checkList = res.data;
+                            if(res.code == 200){
+                               that.checkList = res.data; 
+                            }
                         }
                     })
                 },
@@ -502,7 +532,13 @@
                             },
                             dataType: 'json',
                             success(res) {
-                                that.queryImg(res.data);
+                                if(res.code == 200){
+                                    that.queryImg(res.data);
+                                } else if (res.code == 201){
+                                    that.failTip(res.msg);    
+                                } else if (res.code == 300){
+                                    that.failTip(res.msg);
+                                }
                             }
                         })
                         
@@ -527,21 +563,22 @@
                         success(res){
                             // console.log(res);
                             if(res.code == 200){
+                                that.successTip(res.msg);
                                 that.addFlag = false;
                                 that.queryHomestayList();
                             } else if (res.code == 201){
-                                that.failArgumentsTip(res.msg);
+                                that.failTip(res.msg);
                             } else if(res.code == 302){
-                                that.failAddInfoTip(res.msg);
+                                that.failTip(res.msg);
                             }
                         }
                     })
                 },
-                // 修改/详情民宿请求
+                // 民宿详情请求
                 queryReviseHomeStay(){
                     let that = this;
                     $.ajax({
-                        url: reviseHomeStayURL,
+                        url: queryReviseHomeStayURL,
                         type: "POST",
                         data: {
                             id: this.reviseHomeStayId
@@ -549,9 +586,14 @@
                         dataType: "json",
                         success(res){
                             // console.log(res);
+                            if(that.addBoxShow == false){
+                                that.addFlag = true;
+                            } else {
+                                that.addFlag = !that.addFlag;
+                            }
+                            
 
-                            that.addFlag = !that.addFlag;
-
+                            that.checkList = res.data.title;
                             that.addName = res.data.data.name;
                             that.addDescriptive = res.data.data.descriptive;
                             that.addCategory = res.data.data.category == 0 ? '自营':'民居';
@@ -561,19 +603,14 @@
                             that.addReason = res.data.data.reason;
                             // 房主微信
                             that.addHouse_wx = res.data.data.house_wx;
-
                             // 无线
                             that.addWifi = res.data.data.wifi.toString();
                             // 有线网络服务
                             that.addCable_network = res.data.data.cable_network.toString();
                             // 停车服务
                             that.addParking = res.data.data.parking.toString();
-
                             // 服务信息总合
-
                             let tempCheckArr = res.data.data.hotel.concat(res.data.data.restaurant,res.data.data.public,res.data.data.entertainment);
-                            // console.log(tempCheckArr);
-                            // console.log(res.data.title);
                             for(let i = 0; i < res.data.title.length; i++){
                                 for(let j = 0; j < res.data.title[i].content.length; j++){
                                     for(let m = 0; m < tempCheckArr.length; m++){
@@ -583,15 +620,11 @@
                                     }
                                 }
                             }
-                            // console.log(tempCheckArr);
                             that.addHomeStayInfoList = tempCheckArr;
-                            
-                            
                             // 民宿位置坐标
                             that.addPosition = res.data.data.position;
                             // 民宿位置描述
                             that.addAddress = res.data.data.address;
-
                             let tempImgArr = [];
                             for(let i = 0; i < res.data.data.img.length; i++){
                                 let tempImgObj = {};
@@ -605,24 +638,104 @@
                             // 照片组信息
                             that.mounteImgArr = tempImgArr;
                             that.upLoadImgList = tempImgArr;
-
-
                             let is_main = {};
                             for(let i = 0; i < res.data.data.img.length; i++){
                                 if(res.data.data.img[i].is_main == 1){
                                     is_main = res.data.data.img[i];
                                     res.data.data.img[i] = res.data.data.img[0];
                                     res.data.data.img[0] = is_main;
-                                    
                                     // 主页索引
                                     that.homeImgNum = i;
                                 }
                             }
-                            
+                            // console.log(that.upLoadImgList);
                         }
                     })
                 },
-                
+                // 修改民宿数据处理
+                setReviseHomeStay(){
+                    if (!this.addName || !this.addDescriptive || !this.addCategory || !this.addHouse_name || !this.addTips || !this.addReason || !this.addHouse_wx || !this.addWifi || !this.addCable_network || !this.addParking || !this.addPosition || !this.addAddress) {
+                        this.noUploadInfoTip();
+                    } else if (this.addName.length > 10 || this.addName.length > 20 || this.addName.length >
+                        20 || this.addName.length > 10) {
+                        this.failInfoSizeTip();
+                    } else {
+                        for (let i = 0; i < this.checkList.length; i++) {
+                            let arr = [];
+                            for (let j = 0; j < this.checkList[i].content.length; j++) {
+                                for (let m = 0; m < this.addHomeStayInfoList.length; m++) {
+                                    if (this.addHomeStayInfoList[m] == this.checkList[i].content[j].name) {
+                                        arr.push(this.checkList[i].content[j].id.toString());
+                                    }
+                                }
+                            }
+                            if (this.checkList[i].title == '酒店服务') {
+                                this.addHotel = arr
+                            } else if (this.checkList[i].title == '餐饮服务') {
+                                this.addRestaurant = arr
+                            } else if (this.checkList[i].title == "公共区域设施") {
+                                this.addPublic = arr;
+                            } else if (this.checkList[i].title == "娱乐设施") {
+                                this.addEntertainment = arr
+                            }
+                        }
+                        this.setReviseHomeStayInfo();
+                    }
+                },
+                // 修改民宿请求
+                setReviseHomeStayInfo() {
+                    let tempCategory = this.addCategory == '自营' ? 0 : 1;
+                    let that = this;
+                    // console.log(this.reviseHomeStayId);
+                    // console.log(this.addName);
+                    // console.log(this.addDescriptive);
+                    // console.log(tempCategory);
+                    // console.log(this.addHouse_name);
+                    // console.log(this.addTips);
+                    // console.log(this.addReason);
+                    // console.log(this.addHouse_wx);
+                    // console.log(this.addWifi);
+                    // console.log(this.addCable_network);
+                    // console.log(this.addParking);
+                    // console.log(this.addRestaurant);
+                    // console.log(this.addHotel);
+                    // console.log(this.addPublic);
+                    // console.log(this.addEntertainment);
+                    // console.log(this.addPosition);
+                    // console.log(this.addAddress);
+                    $.ajax({
+                        url: setReviseHomeStayURL,
+                        type: 'POST',
+                        data: {
+                            id: this.reviseHomeStayId,
+                            name: this.addName,
+                            descriptive: this.addDescriptive,
+                            category: tempCategory,
+                            house_name: this.addHouse_name,
+                            tips: this.addTips,
+                            reason: this.addReason,
+                            house_wx: this.addHouse_wx,
+                            wifi: this.addWifi,
+                            cable_network: this.addCable_network,
+                            parking: this.addParking,
+                            restaurant: this.addRestaurant,
+                            hotel: this.addHotel,
+                            public: this.addPublic,
+                            entertainment: this.addEntertainment,
+                            position: this.addPosition,
+                            address: this.addAddress
+                        },
+                        dataType: 'json',
+                        success(res) {
+                            if(res.code == 200){
+                                that.addFlag = false;
+                                that.queryHomestayList();
+                            } else {
+                                that.failTip(res.msg);
+                            }
+                        }
+                    })
+                },
                 // 新建上传图片change
                 onUpload(file, fileList) {
                     this.uploadNum++;
@@ -640,33 +753,103 @@
                     }
                 },
                 // 修改上传图片change
-                onUploadRevise(){
+                onUploadRevise(file,fileList){
+                    // console.log(file);
                     this.uploadNum++;
                     if (this.uploadNum == 2) {
                         this.upLoadImgList = fileList;
-                        this.upLoadImgList.map((e, i) => {
-                            if(i == 0){
-                                return e.raw.flag = true;
-                            } else {
-                                return e.raw.flag = false;
-                            }
-                        })
+                        this.setUploadImg(file.raw);
                         this.uploadNum = 0;
-                        // console.log(this.upLoadImgList);
                     }
+                },
+                // 修改删除图片remove
+                onDeleRevise(file, fileList){
+                    // console.log(file);
+                    // console.log(file.name);
+                    // console.log(this.upLoadImgList)
+                    let deleNum = 0;
+                    for(let i = 0; i < this.upLoadImgList.length; i++){
+                        if( file.name ==  this.upLoadImgList[i].name){
+                            deleNum = i;
+                            break;
+                        }
+                    }
+                    // console.log(deleNum);
+                    // console.log(this.homeImgNum);
+                    if(this.homeImgNum == deleNum){
+                        this.homeImgNum = 0;
+                    }
+                    this.setDeleImg(file.name);
                 },
                 // 设为主页按钮
                 upLoadBtn(i) {
-                    
-                    if (i != 0) {
-                        this.upLoadImgList[0].raw.flag = false;
-                    }
-                    this.upLoadImgList.map(e => {
-                        return e.raw.flag = false;
-                    })
-                    this.upLoadImgList[i].raw.flag = true;
-                    console.log(this.upLoadImgList)
+                    // console.log(this.upLoadImgList)
                     this.homeImgNum = i;
+                    if(this.addBoxShow == false){
+                        this.setIsMainImg();
+                    }
+                },
+                // 详情设为主图请求
+                setIsMainImg() {
+                    // console.log(this.mounteImgArr);
+                    let that = this;
+                    let tempImg_id = this.mounteImgArr[this.homeImgNum].name
+                    $.ajax({
+                        url: setIsMainImgURL,
+                        data:{
+                            img_id: tempImg_id,
+                            homestay_id: this.reviseHomeStayId,
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success(res){
+                            // console.log(res);
+                            if(res.code == 200){
+                                that.successTip(res.msg);
+                            } else if (res.code == 302){
+                                that.failTip(res.msg);
+                            }
+                        }
+                    })
+                },
+                // 详情上传图片请求
+                setUploadImg(file){
+                    let that = this;
+                    // console.log(this.reviseHomeStayId);
+                    let formData = new FormData();
+                    formData.append('file', file);
+                    formData.append("homestay_id",this.reviseHomeStayId)
+                    // console.log(formData.get('file'));
+                    $.ajax({
+                        url: setUploadImgURL,
+                        data: formData,
+                        type: 'POST',
+                        processData:false,
+                        contentType:false, 
+                        success(res){
+                            if(res.code == 200){
+                                that.queryReviseHomeStay();
+                            }
+                        }
+                    })
+                },
+                // 详情删除图片请求
+                setDeleImg(img_id){
+                    let that = this;
+                    $.ajax({
+                        url: setDeleImgURL,
+                        type: 'POST',
+                        data: {
+                            img_id,
+                            homestay_id: this.reviseHomeStayId
+                        },
+                        success(res){
+                            console.log(res);
+                            if(res.code == 200){
+                                that.queryReviseHomeStay();
+                            }
+                        }
+                    })
                 },
                 // 图片上传个数提示
                 uploadImgTip() {
@@ -710,6 +893,20 @@
                         type: 'warning'
                     });
                 },
+                // 成功
+                successTip(msg) {
+                    this.$message({
+                        message: `${msg}`,
+                        type: 'success'
+                    });
+                },
+                // 失败
+                failTip(msg) {
+                    this.$message({
+                        message: `${msg}`,
+                        type: 'warning'
+                    });
+                },
                 // 接受子组件定位
                 setShowPosition(e) {
                     // console.log(e);
@@ -721,23 +918,24 @@
                 this.queryHomestayList();
                 this.queryHomeStayCheck();
             },
-            computed: {
-                
-            },
             watch: {
                 name() {
                     if (!this.name && !this.house_name && !this.tempCategory) {
                         this.queryHomestayList();
+                        this.currentPage = 1;
                     }
                 },
                 house_name() {
                     if (!this.name && !this.house_name && !this.tempCategory) {
                         this.queryHomestayList();
+                        this.currentPage = 1;
                     }
                 },
                 category() {
                     if (!this.name && !this.house_name && !this.tempCategory) {
                         this.queryHomestayList();
+                        this.currentPage = 1;
+
                     }
                 },
                 addFlag(){

@@ -1,4 +1,6 @@
-
+#roomRoot{
+    min-width: 1000px;
+}
 .cell {
     text-align: center;
 }
