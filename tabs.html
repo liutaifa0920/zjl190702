@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="tabs.css">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <title>房态房价房型维护</title>
@@ -15,79 +16,149 @@
 
 <body>
     <div id="roomRoot">
-        <el-tabs type="card" @tab-click="handleClick" id="">
-            <el-tab-pane label="房态维护">
-                <el-row>
-                    <el-button class="el-revise-btn revise-btn" type="primary" size="small"
-                        @click="reviseStateFrameClick">批量修改房态</el-button>
-                    <el-button class="el-revise-btn revise-btn" type="primary" size="small"
-                        @click="reviseNumFrameClick">批量修改房量</el-button>
-                </el-row>
-                <el-button-group style="margin-bottom: 15px;">
-
-                    <div id="dateChange">
-                        <el-button type="primary" icon="el-icon-arrow-left" @click="beforeDate">前七天</el-button>
-                        <el-date-picker v-model="roomStateStartValue" type="week" format="yyyy 第 WW 周"
-                            placeholder="选择周">
-                        </el-date-picker>
-                        <el-button type="primary" icon="el-icon-arrow-right" @click="nextDate">后七天</el-button>
-                    </div>
-
-                </el-button-group>
-                <el-table :data="tableData" border style="width: 100%">
-                    <el-table-column label="房型" :width="180">
-                        房型名称****
-                    </el-table-column>
-                    <el-table-column v-for="dayTil in week" :label="dayTil" width="201">
-                        <el-button type="text" @click="open">
-                            <el-button type="primary" size="mini">售3/5总</el-button>
-                            <el-button type="primary" size="mini">可售</el-button>
-                            <el-button type="info" size="mini">已关闭</el-button>
-                        </el-button>
-                    </el-table-column>
-                </el-table>
-            </el-tab-pane>
-            <el-tab-pane label="房价维护">
-                <el-table :data="tableData" border style="width: 100%">
-                    <el-table-column prop="date" label="房型" :width="180">
-                    </el-table-column>
-                    <el-table-column v-for="item,i in 7" :key="i" prop="name" label="111">
-                    </el-table-column>
-                </el-table>
-            </el-tab-pane>
-            <el-tab-pane label="房型维护">
-                <el-row>
-                    <el-button class="el-revise-btn revise-btn" type="primary" size="small">创建房型</el-button>
-                </el-row>
-                <el-form :inline="true" :model="formInline" class="demo-form-inline">
-                    <el-form-item label="房间名称">
-                        <el-input v-model="formInline.user" placeholder="房间名称"></el-input>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button type="primary" @click="onSubmit" class="el-revise-btn revise-btn" size="small">查询
-                        </el-button>
-                    </el-form-item>
-                </el-form>
-                <el-table :data="tableData" border style="width: 100%">
-                    <el-table-column label="房型ID">
-                    </el-table-column>
-                    <el-table-column label="房型名称">
-                    </el-table-column>
-                    <el-table-column label="面积">
-                    </el-table-column>
-                    <el-table-column label="床量">
-                    </el-table-column>
-                    <el-table-column label="窗户">
-                    </el-table-column>
-                    <el-table-column label="可入住人数">
-                    </el-table-column>
-                    <el-table-column label="排序">
-                    </el-table-column>
-                    <el-table-column label="操作">
-                    </el-table-column>
-                </el-table>
+        
+        <el-tabs tab-position="left" :width="500" @tab-click="homeStayTabs">
+            <el-tab-pane v-for="item,i in homeStayData" :label="item.name">
+                <el-tabs type="card" @tab-click="houseTabsClick" v-model="activeName">
+                    <el-tab-pane label="房态维护">
+                    </el-tab-pane>
+                    <el-tab-pane label="房价维护">
+                    </el-tab-pane>
+                
+                    <el-tab-pane label="房型维护" name="frist">
+                        <el-row>
+                            <el-button class="el-revise-btn revise-btn" type="primary" size="small">创建房型</el-button>
+                        </el-row>
+                        <el-form :inline="true" class="demo-form-inline">
+                            <el-form-item label="房间名称">
+                                <el-input v-model="houseName" placeholder="房间名称"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="houseSreachBtn" class="el-revise-btn revise-btn" size="small">查询
+                                </el-button>
+                            </el-form-item>
+                        </el-form>
+                        <el-table :data="houseData" border style="width: 100%">
+                            <el-table-column prop='id' label="房型ID">
+                            </el-table-column>
+                            <el-table-column prop='name' label="房型名称">
+                            </el-table-column>
+                            <el-table-column prop='size' label="面积">
+                            </el-table-column>
+                            <el-table-column prop='bed_info' label="床量">
+                            </el-table-column>
+                            <el-table-column prop='window' label="窗户">
+                            </el-table-column>
+                            <el-table-column prop='number' label="可入住人数">
+                            </el-table-column>
+                            <el-table-column prop='sort' label="排序">
+                            </el-table-column>
+                            <el-table-column label="操作">
+                            </el-table-column>
+                        </el-table>
+                        <div id="footer-page-box">
+                            <el-pagination
+                                @size-change="handleSizeChange"
+                                @current-change="handleCurrentChange"
+                                :current-page="currentPage"
+                                :page-sizes="[5, 10, 20, 50]"
+                                :page-size="100"
+                                layout="total, sizes, prev, pager, next, jumper"
+                                :total="allTotal">
+                            </el-pagination>
+                        </div>
+                        
+                    </el-tab-pane>
+                </el-tabs>
             </el-tab-pane>
         </el-tabs>
+
+        <div class="addHouseType" v-if="true">
+            <h2>基础信息</h2>
+            <label for="">房型名称</label>
+            <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseTypeName">
+                <!-- <template slot="prepend">房型名称</template> -->
+            </el-input>
+            <label for="">面积</label>
+            <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseTypeSize">
+                <!-- <template slot="prepend">面积</template> -->
+                <template slot="append">平方米</template>
+            </el-input>
+            <div class="seleLabel">
+                <label for="">几室</label>
+            </div>
+            <el-select class="addHouseTypeInp" v-model="addHouseSeveral_rooms" placeholder="几室">
+                <el-option v-for="item in several_roomsOptions" :key="item.value" :label="item.label" :value="item.value">
+                </el-option>
+            </el-select>
+            <div></div>
+            <div v-for="addHouseBed_infoItem, i in addHouseBed_info">
+                <div class="seleLabel">
+                    <label for="">床型{{i+1}}</label>
+                </div>
+                <el-select class="addHouseTypeInp" v-model="addHouseBed_infoItem.name" placeholder="床型">
+                    <el-option v-for="item in bed_infoNameOptions" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+                <div class="seleLabel">
+                    <label for="">床宽</label>
+                </div>
+                <el-select class="addHouseTypeInp" v-model="addHouseBed_infoItem.size" placeholder="床宽">
+                    <el-option v-for="item in bed_infoSizeOptions" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
+            <div>
+                <el-button type="primary" plain :width="500" @click="addBed"> + 床型</el-button>
+            </div>
+            <div>
+                <div class="seleLabel">
+                    <label for="">可入住人数</label>
+                </div>
+                <el-select class="addHouseTypeInp" v-model="addHouseNumber" placeholder="请选择">
+                    <el-option v-for="item in numberOptions" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
+            <div>
+                <div class="seleLabel">
+                    <label for="">窗户</label>
+                </div>
+                <el-select class="addHouseTypeInp" v-model="addHouseWindow" placeholder="请选择">
+                    <el-option v-for="item in windowOptions" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
+            <div>
+                <div class="seleLabel">
+                    <label for="">早餐</label>
+                </div>
+                <el-select class="addHouseTypeInp" v-model="addHousebreakfast" placeholder="请选择">
+                    <el-option v-for="item in breakfastOptions" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
+            <div>
+                <div class="seleLabel">
+                    <label for="">卫生间</label>
+                </div>
+                <el-select class="addHouseTypeInp" v-model="addHouseWc" placeholder="请选择">
+                    <el-option v-for="item in wcOptions" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
+            </div>
+            <div class="smallInput">
+                <label for="">房量</label>
+                <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseVolume">
+                    <!-- <template slot="prepend">面积</template> -->
+                    <template slot="append">间</template>
+                </el-input>
+            </div>
+            
+        
+        
+        
+        </div>
 
         <div v-if="reviseStateFrame" id="revise-state">
             <i class="el-icon-close" @click="closeReviseStateClick"></i>
@@ -153,83 +224,414 @@
                     </el-row>
             </div>
         </div>
-
-        <!-- <el-button :plain="true" @click="open2">成功</el-button>
-        <el-button :plain="true" @click="open4">警告</el-button> -->
     </div>
 
 
     <script>
-        const weekOptions = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+        // 左侧民宿列表
+        const queryHomeStayListURL = 'https://api.sdzhujialin.com/admin/Homestay/IndexData'
+        // 房型列表
+        const houseTypeListURL = 'https://api.sdzhujialin.com/admin/House/IndexData';
+        // 添加房型信息(除图)
+        const setAddhouseTypeInfoURL = 'https://api.sdzhujialin.com/admin/House/AddData';
+
         var temp = new Date();
         new Vue({
             el: "#roomRoot",
             data: {
-                tableData: [{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄',
-                    value: ''
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄',
-                    value: ''
-                }, {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄',
-                    value: ''
-                }, {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄',
-                    value: ''
-                }],
-                tabHighLight: '',
-                stateTime: "2017/07/01",
-                endTime: "2017/07/07",
-                formInline: {
-                    user: '',
-                    region: ''
-                },
-                checkAll: false,
-                checkedCities: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-                week: weekOptions,
-                isIndeterminate: true,
-                reviseNumber: '',
+                // 有限显示页
+                activeName: 'frist',
+                // ----------------- 房型----------------
+                // 分页当前页
+                currentPage: 1,
+                // 总条数
+                allTotal: 0,
+                // 房名
+                houseName: '',
+                // 民宿列表数据
+                homeStayData: [],
+                // 首个民宿ID
+                activeHomeStayID: '',
+                // 当前民宿名
+                currentHomeStayID: '',
+                // 房型列表数据
+                houseData: [],
+
+                // --------------- 新建房型 ---------------
+                // 绑定房型名称
+                addHouseTypeName: '',
+                // 绑定面积
+                addHouseTypeSize: '',
+                // 几室选项
+                several_roomsOptions: [
+                    {
+                        value: '1',
+                        label: '1'
+                    }, {
+                        value: '2',
+                        label: '2'
+                    }, {
+                        value: '3',
+                        label: '3'
+                    }, {
+                        value: '4',
+                        label: '4'
+                    }, {
+                        value: '5',
+                        label: '5'
+                    }, {
+                        value: '6',
+                        label: '6'
+                    }, {
+                        value: '7',
+                        label: '7'
+                    }, {
+                        value: '8',
+                        label: '8'
+                    }, {
+                        value: '9',
+                        label: '9'
+                    }, {
+                        value: '10',
+                        label: '10'
+                    }, {
+                        value: '11',
+                        label: '11'
+                    }, {
+                        value: '12',
+                        label: '12'
+                    }, {
+                        value: '13',
+                        label: '13'
+                    }, {
+                        value: '14',
+                        label: '14'
+                    }, {
+                        value: '15',
+                        label: '15'
+                    }, {
+                        value: '15+',
+                        label: '15+'
+                    }
+                ],
+                // 绑定几室 
+                addHouseSeveral_rooms: '',
+                // 床型选项
+                bed_infoNameOptions: [
+                    {
+                        value: '单人床',
+                        label: '单人床'
+                    }, {
+                        value: '大床',
+                        label: '大床'
+                    }, {
+                        value: '圆床',
+                        label: '圆床'
+                    }, {
+                        value: '水床',
+                        label: '水床'
+                    }, {
+                        value: '上下铺',
+                        label: '上下铺'
+                    }, {
+                        value: '榻榻米',
+                        label: '榻榻米'
+                    }, {
+                        value: '沙发床',
+                        label: '沙发床'
+                    }, {
+                        value: '炕',
+                        label: '炕'
+                    }, {
+                        value: '胶囊床',
+                        label: '胶囊床'
+                    }, {
+                        value: '儿童床',
+                        label: '儿童床'
+                    }, {
+                        value: '高低床',
+                        label: '高低床'
+                    }, {
+                        value: '帐篷床',
+                        label: '帐篷床'
+                    }, {
+                        value: '其他',
+                        label: '其他'
+                    }
+                ],
+                // 床宽选项
+                bed_infoSizeOptions: [
+                    {
+                        value: '1.1米',
+                        label: '1.1米'
+                    }, {
+                        value: '1.2米',
+                        label: '1.2米'
+                    }, {
+                        value: '1.3米',
+                        label: '1.3米'
+                    }, {
+                        value: '1.35米',
+                        label: '1.35米'
+                    }, {
+                        value: '1.5米',
+                        label: '1.5米'
+                    }, {
+                        value: '1.8米',
+                        label: '1.8米'
+                    }, {
+                        value: '2米',
+                        label: '2米'
+                    }, {
+                        value: '其他',
+                        label: '其他'
+                    }
+                ],
+                // 绑定床信息
+                addHouseBed_info: [
+                    {
+                        name: '',
+                        size: ''
+                    }
+                ],
+                // 可住人数选项(1-15+)
+                numberOptions:[
+                    {
+                        value: '1',
+                        label: '1'
+                    }, {
+                        value: '2',
+                        label: '2'
+                    }, {
+                        value: '3',
+                        label: '3'
+                    }, {
+                        value: '4',
+                        label: '4'
+                    }, {
+                        value: '5',
+                        label: '5'
+                    }, {
+                        value: '6',
+                        label: '6'
+                    }, {
+                        value: '7',
+                        label: '7'
+                    }, {
+                        value: '8',
+                        label: '8'
+                    }, {
+                        value: '9',
+                        label: '9'
+                    }, {
+                        value: '10',
+                        label: '10'
+                    }, {
+                        value: '11',
+                        label: '11'
+                    }, {
+                        value: '12',
+                        label: '12'
+                    }, {
+                        value: '13',
+                        label: '13'
+                    }, {
+                        value: '14',
+                        label: '14'
+                    }, {
+                        value: '15',
+                        label: '15'
+                    }, {
+                        value: '15+',
+                        label: '15+'
+                    }
+                ],
+                // 绑定可住人数
+                addHouseNumber: '',
+                // 窗户选项(有窗1无窗2)
+                windowOptions:[
+                    {
+                        value: '1',
+                        label: '有窗'
+                    },{
+                        value: '2',
+                        label: '无窗'
+                    }
+                ],
+                // 绑定有无窗
+                addHouseWindow: '',
+                // 早餐选项(不含早餐1含早餐2)
+                breakfastOptions:[
+                    {
+                        value: '1',
+                        label: '不含早餐'
+                    },{
+                        value: '2',
+                        label: '含早餐'
+                    }
+                ],
+                // 绑定早餐
+                addHousebreakfast: '',
+                // 卫生间选项(12345)
+                wcOptions:[
+                    {
+                        value: '1',
+                        label: '1'
+                    },{
+                        value: '2',
+                        label: '2'
+                    },{
+                        value: '3',
+                        label: '3'
+                    },{
+                        value: '4',
+                        label: '4'
+                    },{
+                        value: '5',
+                        label: '5'
+                    }
+                ],
+                // 绑定卫生间
+                addHouseWc: '',
+                // 绑定房量
+                addHouseVolume: '',
+
+                // 房型设施
+                addHouseCheckList: [],
+
+
+
+
+                // checkAll: false,
+                // reviseNumber: '',
                 reviseStateFrame: false,
                 reviseNumFrame: false,
-                roomStateStartValue: '',
-                beforeWeek: '',
-                nextWeek: '',
-                month: 0,
-                year: 0,
-                data: 0,
-                weeksNum: 0,
-                beforeWeeks: 0,
-                nextWeeks: 0,
+                // roomStateStartValue: '',
 
-                roomNumValue: '',
-                roomStateValue: '',
+                // roomNumValue: '',
+                // roomStateValue: '',
             },
             mounted() {
-                this.roomStateStartValue = new Date();
-                var myddy = this.roomStateStartValue.getDay();//获取存储当前日期
-                if (myddy == 0) {
-                    myddy = 7;
-                }
-                var weekday = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
-                console.log(this.roomStateStartValue);
-                console.log(weekday[myddy]);
+                // 左侧民宿列表
+                this.queryHomeStayList();
+                // 首个民宿房型
+                this.activeHouseTypeList();
             },
             methods: {
-                handleClick(tab, event) {
+                // 民宿列表选项卡
+                homeStayTabs(tab, event){
+                    // console.log(tab.label);
+                    this.currentHomeStayName = tab.label;
+                    this.HouseTypeList();
+
+                },
+                // 房型选项卡
+                houseTabsClick(tab, event) {
                     console.log(tab.label);
                 },
-                onSubmit() {
-                    console.log('submit!');
+                // 房型列表分页
+                handleSizeChange(val) {
+                    console.log(val);
                 },
+                handleCurrentChange(val) {
+                    console.log(val);
+                },
+
+                // 房型查询按钮
+                houseSreachBtn() {
+                    this.houseTypeNameSreach();
+                },
+                // 加床按钮
+                addBed(){
+                    let tempObj = {
+                        name: '',
+                        size: ''
+                    }
+                    this.addHouseBed_info.push(tempObj);
+                },
+
+                // 左侧民宿列表请求
+                queryHomeStayList(){
+                    let that = this;
+                    $.ajax({
+                        url: queryHomeStayListURL,
+                        type: 'POST',
+                        dataType: 'json',
+                        success(res){
+                            // console.log(res);
+                            if(res.code == 200){
+                                that.homeStayData = res.data;
+                                that.activeHomeStayID = res.data[0].id;
+                            } else{
+                                that.failTip(res.msg);
+                            }
+                        }
+                    })
+                },
+                // 首次民宿房型请求
+                activeHouseTypeList(){
+                    let that = this;
+                    $.ajax({
+                        url: houseTypeListURL,
+                        type: 'POST',
+                        data:{
+                            homestay_id: this.activeHomeStayID
+                        },
+                        dataType: 'json',
+                        success(res){
+                            if(res.code == 200){
+                                that.houseData = res.data.data;
+                                that.allTotal = res.data.total;
+                            } else {
+                                that.failTip(res.msg);
+                            }
+                        }
+                    })
+                },
+                // 民宿tab切换房型请求
+                HouseTypeList(){
+                    let that = this;
+                    $.ajax({
+                        url: houseTypeListURL,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            homestay_id: this.currentHomeStayID
+                        },
+                        success(res){
+                            if(res.code == 200){
+                                that.houseData = res.data.data;
+                                that.allTotal = res.data.total;
+                            }
+                            
+                        }
+                    })
+                },
+                // 房型查询请求
+                houseTypeNameSreach(){
+                    let that = this;
+                    $.ajax({
+                        url: houseTypeListURL,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            name: this.houseName,
+                            homestay_id: this.currentHomeStayID
+                        },
+                        success(res){
+                            if(res.code == 200){
+                                that.houseData = res.data.data;
+                                that.allTotal = res.data.total;
+                            } else {
+                                that.failTip(res.msg);
+                            }
+                        }
+                    })
+                },
+
+
+
+
                 // 房态弹出框
                 reviseStateFrameClick() {
                     this.reviseStateFrame = !this.reviseStateFrame;
@@ -244,82 +646,47 @@
                 closeReviseNumClick() {
                     this.reviseNumFrame = false;
                 },
-                handleCheckAllChange(val) {
-                    this.checkedCities = val ? weekOptions : [];
-                    this.isIndeterminate = false;
-                },
-                handleCheckedCitiesChange(value) {
-                    let checkedCount = value.length;
-                    this.checkAll = checkedCount === this.week.length;
-                    this.isIndeterminate = checkedCount > 0 && checkedCount < this.week.length;
-                },
-                // 上一周
-                beforeDate() {
-                    this.roomStateStartValue = new Date();
-                    this.nextWeeks -= 7;
-                    this.roomStateStartValue.setDate(this.roomStateStartValue.getDate() + this.nextWeeks);
-                    this.weeksNum--;
-                    console.log(this.roomStateStartValue);
-                    console.log(this.weeksNum);
-                },
-                // 下一周
-                nextDate() {
-                    this.roomStateStartValue = new Date();
-                    let currentDay = this.roomStateStartValue.getDate();
-                    if (this.weeksNum < 9) {
-                        this.weeksNum++;
-                        this.nextWeeks += 7;
-                        this.roomStateStartValue.setDate(this.nextWeeks + currentDay);
-                        console.log(this.roomStateStartValue);
 
-                    } else {
-                        this.roomStateStartValue.setDate(this.nextWeeks + currentDay);
-                        this.open4();
-                    }
-                    console.log(this.weeksNum);
-                },
-                open() {
-                    this.$alert('<strong>这是 <i>HTML</i> 片段</strong>', 'HTML 片段', {
-                        dangerouslyUseHTMLString: true
-                    });
-                },
+                // roomStateOpen() {
+                //     this.reviseStateFrame = false;
+                // },
+                // roomNumOpen() {
+                //     this.reviseNumFrame = false;
+                // },
+                // roomStateClose() {
+                //     this.reviseStateFrame = false;
+                // },
+                // roomNumClose() {
+                //     this.reviseNumFrame = false;
+                // },
+                
 
-                roomStateOpen() {
+                // 成功tip
+                successTip(msg) {
                     this.$message({
-                        showClose: true,
-                        message: '房态修改成功',
+                        message: `${msg}`,
                         type: 'success'
                     });
-                    this.reviseStateFrame = false;
                 },
-                roomNumOpen() {
+                // 失败tip
+                failTip(msg) {
                     this.$message({
-                        showClose: true,
-                        message: '房量修改成功',
-                        type: 'success'
+                        message: `${msg}`,
+                        type: 'warning'
                     });
-                    this.reviseNumFrame = false;
                 },
-                roomStateClose() {
-                    this.reviseStateFrame = false;
-                },
-                roomNumClose() {
-                    this.reviseNumFrame = false;
-                },
-                open4() {
-                    this.$message({
-                        showClose: true,
-                        message: '只能修改两个月的信息',
-                        type: 'error'
-                    });
-                }
-
 
                 
             },
-            computed: {
-
-            }
+            watch: {
+                houseName(){
+                    if(this.houseName == ''){
+                        this.HouseTypeList();
+                    } else {
+                        this.houseTypeNameSreach();
+                    }
+                }
+            },
         })
     </script>
 </body>

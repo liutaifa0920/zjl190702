@@ -1,5 +1,6 @@
 #roomRoot{
     min-width: 1000px;
+    position: relative;
 }
 .cell {
     text-align: center;
@@ -52,4 +53,43 @@
     margin-top: 35px;
     display: flex;
     justify-content: center;
+}
+
+#footer-page-box{
+    margin-top: 40px;
+    text-align: center;
+}
+.is-left{
+    text-align: center !important;
+}
+
+.addHouseType{
+    position: absolute;
+    margin: auto;
+    bottom: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 800px;
+    background-color: white;
+    border: 1px solid #ececec;
+    box-shadow: 0 0 15px #e4e4e4;
+    z-index: 100;
+    border-radius: 8px;
+    padding: 20px;
+    overflow-y: scroll;
+}
+
+.addHouseTypeInp{
+    margin: 5px 0;
+}
+.smallInput{
+    width: 300px;
+}
+.seleLabel{
+    display: inline-block;
+    width: 100px;
+    padding-right: 8px;
+    box-sizing: border-box;
+    text-align: center;
 }
