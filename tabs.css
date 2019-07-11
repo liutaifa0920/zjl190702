@@ -93,3 +93,22 @@
     box-sizing: border-box;
     text-align: center;
 }
+.smallerInput{
+    display: inline-block;
+    width: 150px;
+}
+.addBoxFooter{
+    margin: 18px;
+    text-align: center;
+}
+.add-uploadimgbtn:nth-of-type(1){
+    margin: 0 !important;
+}
+.add-uploadimgbtn{
+    width: 148px;
+    text-align: center;
+    position: relative !important;
+    top: -40px !important;
+    margin: 0 !important;
+    margin-left: 8px !important;
+}

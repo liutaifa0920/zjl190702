@@ -21,13 +21,28 @@
             <el-tab-pane v-for="item,i in homeStayData" :label="item.name">
                 <el-tabs type="card" @tab-click="houseTabsClick" v-model="activeName">
                     <el-tab-pane label="房态维护">
+                        <div>
+                            <el-button class="el-revise-btn revise-btn" type="primary" size="small" @click="">批量修改房态</el-button>
+                            <el-button class="el-revise-btn revise-btn" type="primary" size="small" @click="">批量修改房量</el-button>
+                        </div>
+                        <div>
+                            <el-button type="primary" icon="el-icon-arrow-left">前七天</el-button>
+                            <el-button type="primary">2017/09/20-2017/09/27</el-button>
+                            <el-button type="primary" icon="el-icon-arrow-right">后七天</el-button>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <el-table :data="tableData" border style="width: 100%">
+                                <el-table-column prop="date" label="日期" v-for="item in 7">
+                                </el-table-column>
+                            </el-table>
+                        </div>
                     </el-tab-pane>
                     <el-tab-pane label="房价维护">
                     </el-tab-pane>
                 
                     <el-tab-pane label="房型维护" name="frist">
                         <el-row>
-                            <el-button class="el-revise-btn revise-btn" type="primary" size="small">创建房型</el-button>
+                            <el-button class="el-revise-btn revise-btn" type="primary" size="small" @click="addHouseBtn">创建房型</el-button>
                         </el-row>
                         <el-form :inline="true" class="demo-form-inline">
                             <el-form-item label="房间名称">
@@ -54,6 +69,8 @@
                             <el-table-column prop='sort' label="排序">
                             </el-table-column>
                             <el-table-column label="操作">
+                                <el-button type="primary" icon="el-icon-edit" circle size="mini"></el-button>
+                                <el-button type="danger" icon="el-icon-delete" circle size="mini"></el-button>
                             </el-table-column>
                         </el-table>
                         <div id="footer-page-box">
@@ -73,7 +90,7 @@
             </el-tab-pane>
         </el-tabs>
 
-        <div class="addHouseType" v-if="true">
+        <div class="addHouseType" v-if="addBoxShow">
             <h2>基础信息</h2>
             <label for="">房型名称</label>
             <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseTypeName">
@@ -155,6 +172,114 @@
                 </el-input>
             </div>
             
+
+            <h2>客房设置</h2>
+            <div v-for="checkItem in addHouseCheckList">
+                <h4>{{checkItem.title}}</h4>
+                <div class="check-box">
+                    <el-checkbox-group v-model="addHouseInfoList">
+                        <el-checkbox v-for="check in checkItem.content" :label="check.name"></el-checkbox>
+                    </el-checkbox-group>
+                </div>
+            </div>
+
+            <h2>房屋详情</h2>
+            <h4>房屋详情</h4>
+            <div>
+                <el-input
+                    type="textarea"
+                    :rows="5"
+                    placeholder="请输入内容"
+                    v-model="addHouseTestera">
+                </el-input>
+            </div>
+            <div>
+                <span>加床服务</span>
+                <el-radio-group v-model="addHouseExtra_bed">
+                    <el-radio :label="1">不可加床</el-radio>
+                    <el-radio :label="2">无偿加床</el-radio>
+                    <el-radio :label="3">有偿加床</el-radio>
+                </el-radio-group>
+                <div class="smallerInput">
+                    <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseExtra_bed_money">
+                        <!-- <template slot="prepend">面积</template> -->
+                        <template slot="append">元/人</template>
+                    </el-input>
+                </div>
+            </div>
+            <h4>图片</h4>
+            <!-- 新建 -->
+            <div v-if="true" class="upLoadBigBox">
+                <el-upload action="https://api.sdzhujialin.com/admin/Index/IndexData" list-type="picture-card" :on-change="onUpload"
+                    :limit="10" accept="image/*">
+                    <i class="el-icon-plus"></i>
+                </el-upload>
+                <el-button type="primary" plain v-for="imgItem, i in addHouseList" class="add-uploadimgbtn" @click=""
+                    size="mini">{{homeImgNum == i?'主页':'设为主页'}}</el-button>
+            </div>
+            <h4>能否做饭</h4>
+            <el-radio-group v-model="addHouseIs_cook">
+                <el-radio :label="1">能</el-radio>
+                <el-radio :label="2">不能</el-radio>
+            </el-radio-group>
+            
+            <h2>入住须知</h2>
+            <h4>入住时间</h4>
+            <el-radio-group v-model="addHouseGo_time">
+                <el-radio :label="1">离店日当天12：00以后</el-radio>
+                <el-radio :label="2">入住日当天</el-radio>
+                <div class="smallerInput">
+                    <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseGo_timeText">
+                    </el-input>以后
+                </div>
+            </el-radio-group>
+            <h4>退房时间</h4>
+            <el-radio-group v-model="addHouseOut_time">
+                <el-radio :label="1">离店日当天12：00以后</el-radio>
+                <el-radio :label="2">离店日当天</el-radio>
+                <div class="smallerInput">
+                    <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseOut_timeText">
+                    </el-input>以后
+                </div>
+            </el-radio-group>
+            <h4>接待时间</h4>
+            <el-time-select placeholder="起始时间" v-model="addHouseStartTime" :picker-options="{
+                    start: '00:00',
+                    step: '00:30',
+                    end: '23:59',
+                }">
+            </el-time-select>
+            <el-time-select placeholder="结束时间" v-model="addHouseEndTime" :picker-options="{
+                  start: '00:00',
+                  step: '00:30',
+                  end: '23:59',
+                  minTime: addHouseStartTime
+                }">
+            </el-time-select>
+            <h4>发票</h4>
+            <el-radio-group v-model="addHouseInvoice">
+                <el-radio :label="1">可开发票</el-radio>
+                <el-radio :label="2">不可开发票</el-radio>
+            </el-radio-group>
+            <h4>押金</h4>
+            <el-radio-group v-model="addHouseDeposit">
+                <el-radio :label="0">无需押金</el-radio>
+                <el-radio :label="2">需</el-radio>
+                <div class="smallerInput">
+                    <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseExtra_bed_money">
+                    </el-input>押金
+                </div>
+            </el-radio-group>
+            <h4>房屋守则</h4>
+            
+            <h4>儿童入住</h4>
+            <p>不接受18岁以下未成年人在没有监护人陪同下入住</p>
+            <h4>退订政策</h4>
+            <p>入住日18：00点之前可以免费取消，超过18:00则需要收取全部房费作为违约金支付给房东</p>
+            <div class="addBoxFooter">
+                <el-button type="info" size="small" @click="closeAddBoxClick">取消</el-button>
+                <el-button type="primary" size="small" @click="UploadHouseInfo">提交</el-button>
+            </div>
         
         
         
@@ -232,6 +357,8 @@
         const queryHomeStayListURL = 'https://api.sdzhujialin.com/admin/Homestay/IndexData'
         // 房型列表
         const houseTypeListURL = 'https://api.sdzhujialin.com/admin/House/IndexData';
+        // 房型设施
+        const queryHouseCheckListURL = 'https://api.sdzhujialin.com/admin/Homestay/HouseData';
         // 添加房型信息(除图)
         const setAddhouseTypeInfoURL = 'https://api.sdzhujialin.com/admin/House/AddData';
 
@@ -239,7 +366,7 @@
         new Vue({
             el: "#roomRoot",
             data: {
-                // 有限显示页
+                // 优先显示页
                 activeName: 'frist',
                 // ----------------- 房型----------------
                 // 分页当前页
@@ -258,6 +385,8 @@
                 houseData: [],
 
                 // --------------- 新建房型 ---------------
+                // addShow
+                addBoxShow: false,
                 // 绑定房型名称
                 addHouseTypeName: '',
                 // 绑定面积
@@ -498,6 +627,57 @@
 
                 // 房型设施
                 addHouseCheckList: [],
+                // 房型设置绑定
+                addHouseInfoList: [],
+                
+                //房屋详情输入
+                addHouseTestera: '', 
+                // 加床服务(123)
+                addHouseExtra_bed: '',
+                // 有偿加床
+                addHouseExtra_bed_money: '',
+                // 图片上传
+                addHouseList: [],
+                // 图片主页索引
+                homeImgNum: 0,
+                // 能否做饭(12)
+                addHouseIs_cook: '',
+
+                // 入住时间
+                addHouseGo_time: '',
+                addHouseGo_timeText: '',
+                // 离店时间
+                addHouseOut_time: '',
+                addHouseOut_timeText: '',
+                // 接待起始时间
+                addHouseStartTime: '',
+                // 接待结束时间
+                addHouseEndTime: '',
+                // 发票
+                addHouseInvoice: '',
+                // 押金
+                addHouseDeposit: '',
+
+
+                // --------------房态----------------
+                tableData: [{
+                    date: '2016-05-02',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄'
+                }, {
+                    date: '2016-05-04',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1517 弄'
+                }, {
+                    date: '2016-05-01',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1519 弄'
+                }, {
+                    date: '2016-05-03',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1516 弄'
+                }],
+
 
 
 
@@ -528,6 +708,7 @@
                 // 房型选项卡
                 houseTabsClick(tab, event) {
                     console.log(tab.label);
+                    this.addBoxShow = false;
                 },
                 // 房型列表分页
                 handleSizeChange(val) {
@@ -541,6 +722,11 @@
                 houseSreachBtn() {
                     this.houseTypeNameSreach();
                 },
+                // 新建房型按钮
+                addHouseBtn(){
+                    this.addBoxShow = !this.addBoxShow;
+                    this.queryHouseCheckList();
+                },
                 // 加床按钮
                 addBed(){
                     let tempObj = {
@@ -549,7 +735,21 @@
                     }
                     this.addHouseBed_info.push(tempObj);
                 },
+                // 取消关闭add
+                closeAddBoxClick(){
+                    this.addBoxShow = false;
+                },
+                // add确认
+                UploadHouseInfo(){
 
+                },
+
+                // 新建图片上传change
+                onUpload(file, fileList){
+                    this.addHouseList = fileList;
+                },
+                
+                
                 // 左侧民宿列表请求
                 queryHomeStayList(){
                     let that = this;
@@ -624,6 +824,21 @@
                                 that.allTotal = res.data.total;
                             } else {
                                 that.failTip(res.msg);
+                            }
+                        }
+                    })
+                },
+                // 房型设施请求
+                queryHouseCheckList(){
+                    let that = this;
+                    $.ajax({
+                        url: queryHouseCheckListURL,
+                        type: 'POST',
+                        dataType: 'json',
+                        success(res){
+                            // console.log(res);
+                            if(res.code == 200){
+                                that.addHouseCheckList = res.data;
                             }
                         }
                     })
