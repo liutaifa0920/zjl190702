@@ -122,3 +122,14 @@
     width: 2000px;
     height: 170px;
 }
+.footer-check-box{
+    width: 200px;
+}
+.el-icon-close {
+    position: absolute;
+    top: 5px;
+    right: 25px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 30px;
+}
