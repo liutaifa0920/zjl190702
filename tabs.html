@@ -342,7 +342,7 @@
             <!-- 详情 -->
             <div v-if="!currentAddbox" class="addBoxFooter">
                 <el-button type="info" size="small" @click="closeAddBoxClick">取消</el-button>
-                <el-button type="primary" size="small" @click="">提交</el-button>
+                <el-button type="primary" size="small" @click="ReviseHouseTypeInfoBtn">提交</el-button>
             </div>
         
         
@@ -433,6 +433,8 @@
         const queryHouseTypeAllURL = 'https://api.sdzhujialin.com/admin/House/Details';
         // 详情设为主图
         const setReviseHouseTypeIsMainImgURL = 'https://api.sdzhujialin.com/admin/House/ImgOne';
+        // 修改房型请求
+        const setReviseHouseTypeInfoURL = 'https://api.sdzhujialin.com/admin/House/Updata';
 
         var temp = new Date();
         new Vue({
@@ -955,6 +957,10 @@
                     this.homeImgNum = i;
                     this.setReviseHouseTypeIsMainImg();
                 },
+                // 修改房型确认按钮
+                ReviseHouseTypeInfoBtn(){
+                    this.setReviseHouseTypeInfo();
+                },
 
 
 
@@ -1083,6 +1089,7 @@
                             if(res.code == 200){
                                 that.houseData = res.data.data;
                                 that.allTotal = res.data.total;
+                                this.addBoxShow = false;
                             }
                             
                         }
@@ -1340,6 +1347,80 @@
                         }
                     })
                 },
+                // 修改房型请求
+                setReviseHouseTypeInfo(){
+                    let that = this;
+                    for(let i = 0; i < this.addHouseHousing_code.length; i++){
+                        if(this.addHouseHousing_code[i] == '接待儿童'){
+                            this.addHouseHousing_code[i] = 1;
+                        } else if(this.addHouseHousing_code[i] == '接待老人'){
+                            this.addHouseHousing_code[i] = 2;
+                        } else if(this.addHouseHousing_code[i] == '抽烟'){
+                            this.addHouseHousing_code[i] = 3;
+                        } else if(this.addHouseHousing_code[i] == '带宠物'){
+                            this.addHouseHousing_code[i] = 4;
+                        } else if(this.addHouseHousing_code[i] == '商业拍摄'){
+                            this.addHouseHousing_code[i] = 5;
+                        } else if(this.addHouseHousing_code[i] == '聚会'){
+                            this.addHouseHousing_code[i] = 6;
+                        } else if(this.addHouseHousing_code[i] == '额外加人'){
+                            this.addHouseHousing_code[i] = 7;
+                        } else if(this.addHouseHousing_code[i] == '接待外宾'){
+                            this.addHouseHousing_code[i] = 8;
+                        }
+                    }
+                    if(this.addHouseGo_time == 2){
+                        this.addHouseGo_time = this.addHouseGo_timeText;
+                    }
+                    if(this.addHouseOut_time == 2){
+                        this.addHouseOut_time = this.addHouseOut_timeText;
+                    }
+                    if(this.addHouseDeposit == 2){
+                        this.addHouseDeposit = this.addHouseDeposit_money;
+                    }
+                    $.ajax({
+                        url: setReviseHouseTypeInfoURL,
+                        data:{
+                            id: this.deleHouseID,
+                            name:this.addHouseTypeName,
+                            size:this.addHouseTypeSize,
+                            several_rooms:this.addHouseSeveral_rooms,
+                            bed_info:this.addHouseBed_info,
+                            number:this.addHouseNumber,
+                            window:this.addHouseWindow,
+                            breakfast:this.addHousebreakfast,
+                            wc:this.addHouseWc,
+                            volume:this.addHouseVolume,
+                            room_facilities:this.addHouseRoom_facilities,
+                            infrastructure:this.addHouseInfrastructure,
+                            communication:this.addHouseCommunication,
+                            bathroom:this.addHouseBathroom,
+                            food:this.addHouseFood,
+                            housing_details:this.addHouseTestera,
+                            extra_bed:this.addHouseExtra_bed,
+                            extra_bed_money:this.addHouseExtra_bed_money,
+                            is_cook:this.addHouseIs_cook,
+                            go_time:this.addHouseGo_time,
+                            out_time:this.addHouseOut_time,
+                            reception_start_time:this.addHouseStartTime,
+                            reception_end_time:this.addHouseEndTime,
+                            invoice:this.addHouseInvoice,
+                            deposit:this.addHouseDeposit,
+                            housing_code: this.addHouseHousing_code,
+                            homestay_id: this.currentHomeStayID
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success(res){
+                            if(res.code == 200){
+                                console.log(res);
+                                this.addBoxShow = false;
+                                this.HouseTypeList();
+                            }
+                            
+                        }
+                    })
+                },
 
 
                 // 房态弹出框
@@ -1390,7 +1471,7 @@
             },
             watch: {
                 addBoxShow(){
-                    if(this.addBoxShow == false){
+                    if(this.addBoxShow == false || this.currentAddbox == true){
                         this.addHouseTypeName = '';
                         this.addHouseTypeSize = '';
                         this.addHouseSeveral_rooms = '';
@@ -1417,7 +1498,9 @@
                         this.addHouseList = [];
                         this.addHouseIs_cook = '';
                         this.addHouseGo_time = '';
+                        this.addHouseGo_timeText = '';
                         this.addHouseOut_time = '';
+                        this.addHouseOut_timeText = '';
                         this.addHouseStartTime = '';
                         this.addHouseEndTime = '';
                         this.addHouseInvoice = '';
@@ -1463,29 +1546,25 @@
                 addHouseGo_time(){
                     if(this.addHouseGo_time == '12:00'){
                         this.addHouseGo_timeText = '';
-                    } else {
-                        this.addHouseGo_time = 2
                     }
                 },
                 addHouseOut_time(){
                     if(this.addHouseOut_time == '12:00'){
                         this.addHouseOut_timeText = '';
-                    } else {
-                        this.addHouseOut_time = 2
                     }
                 },
                 addHouseDeposit(){
                     if(this.addHouseDeposit*1 == 0){
                         this.addHouseDeposit_money = '';
-                        this.addHouseDeposit = 0;
-                    } else {
+                        this.addHouseDeposit = '';
+                    } else if(this.addHouseDeposit*1 != 0 && this.currentAddbox == false ) {
                         this.addHouseDeposit = 2;
                     }
                 },
                 addHouseExtra_bed(){
                     if(this.addHouseExtra_bed*1 == 1 || this.addHouseExtra_bed*1 == 2){
                         this.addHouseExtra_bed_money = '';
-                    } else {
+                    } else if(this.addHouseExtra_bed*1 != 1 && this.addHouseExtra_bed*1 != 2 && this.currentAddbox == false) {
                         this.addHouseExtra_bed = 3;
                     }
                 },
