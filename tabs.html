@@ -34,7 +34,19 @@
                             <el-table :data="tableData" border style="width: 100%">
                                 <el-table-column prop="date" label="房型">
                                 </el-table-column>
-                                <el-table-column :label="'日期'" v-for="item in 7">
+                                <el-table-column prop="date" :label="houseStateTabTitle[0]">
+                                </el-table-column>
+                                <el-table-column prop="date" :label="houseStateTabTitle[1]">
+                                </el-table-column>
+                                <el-table-column prop="date" :label="houseStateTabTitle[2]">
+                                </el-table-column>
+                                <el-table-column prop="date" :label="houseStateTabTitle[3]">
+                                </el-table-column>
+                                <el-table-column prop="date" :label="houseStateTabTitle[4]">
+                                </el-table-column>
+                                <el-table-column prop="date" :label="houseStateTabTitle[5]">
+                                </el-table-column>
+                                <el-table-column prop="date" :label="houseStateTabTitle[6]">
                                 </el-table-column>
                             </el-table>
                         </div>
@@ -42,14 +54,26 @@
                     <el-tab-pane label="房价维护">
                         <div>
                             <el-button type="primary" icon="el-icon-arrow-left" @click="deforePriceWeek">前七天</el-button>
-                            <el-button type="primary">{{startHousestatedate}}-{{endHousestatedate}}</el-button>
+                            <el-button type="primary">{{startHousePricedate}}-{{endHousePricedate}}</el-button>
                             <el-button type="primary" icon="el-icon-arrow-right" @click="afterPriceWeek">后七天</el-button>
                         </div>
                         <div style="margin-top: 20px;">
                             <el-table :data="tableData" border style="width: 100%">
                                 <el-table-column prop="date" label="房型">
                                 </el-table-column>
-                                <el-table-column prop="date" label="日期" v-for="item in 7">
+                                <el-table-column :label="housePriceTabTitle[0]">
+                                </el-table-column>
+                                <el-table-column :label="housePriceTabTitle[1]">
+                                </el-table-column>
+                                <el-table-column :label="housePriceTabTitle[2]">
+                                </el-table-column>
+                                <el-table-column :label="housePriceTabTitle[3]">
+                                </el-table-column>
+                                <el-table-column :label="housePriceTabTitle[4]">
+                                </el-table-column>
+                                <el-table-column :label="housePriceTabTitle[5]">
+                                </el-table-column>
+                                <el-table-column :label="housePriceTabTitle[6]">
                                 </el-table-column>
                             </el-table>
                         </div>
@@ -771,13 +795,24 @@
                     }
                 ],
                 // 房态日期
+                houseStateTabTitle:[],
                 startHousestatedate: '' ,
                 endHousestatedate: '',
-                stateNum: 0,
+                stateDateNum: 0,
                 stateYear: '',
                 stateMonth: '',
                 stateDate: '',
                 stateDay: '',
+
+                // 房价日期
+                housePriceTabTitle:[],
+                startHousePricedate: '' ,
+                endHousePricedate: '',
+                priceDateNum: 0,
+                priceYear: '',
+                priceMonth: '',
+                priceDate: '',
+                priceDay: '',
 
 
 
@@ -794,10 +829,10 @@
             mounted() {
                 // 左侧民宿列表
                 this.queryHomeStayList();
-                // 首个民宿房型
-                // this.activeHouseTypeList();
                 // 房态日期
                 this.houseStateDate();
+                // 房价日期
+                this.housePriceDate();
             },
             methods: {
                 // 民宿列表选项卡
@@ -966,71 +1001,96 @@
 
                 // 房态前七天 
                 deforeStateWeek(){
-                    this.stateNum--;
-                    console.log(this.stateNum);
-                    let date = new Date();
-                    date.setFullYear(this.stateYear);
-                    date.setMonth(this.stateMonth);
-                    date.setDate(this.stateDate - 7 + this.stateNum * -7);
-                    this.stateYear = date.getFullYear();
-                    this.stateMonth = date.getMonth();
-                    this.stateDate = date.getDate();
-                    this.stateDay = date.getDay();
-                    this.startHousestatedate = `${this.stateYear}/${this.stateMonth+1}/${this.stateDate}`;
+                    this.stateDateNum--;
+                    this.houseStateDate();
                 },
                 // 房态后七天
                 afterStateWeek(){
-                    this.stateNum++;
-                    console.log(this.stateNum);
-                    let date = new Date();
-                    date.setDate(date.getDate() + 7 + (this.stateNum-1)*7);
-                    this.stateYear = date.getFullYear();
-                    this.stateMonth = date.getMonth();
-                    this.stateDate = date.getDate();
-                    this.stateDay = date.getDay();
-                    // console.log(this.stateYear,this.stateMonth,this.stateDate,this.stateDay);
-                    this.startHousestatedate = `${this.stateYear}/${this.stateMonth+1}/${this.stateDate}`;
-                    let endDate = new Date();
-                    endDate.setDate(endDate.getDate() + 6 + this.stateNum*7);
-                    this.stateYear = endDate.getFullYear();
-                    this.stateMonth = endDate.getMonth();
-                    this.stateDate = endDate.getDate();
-                    this.stateDay = endDate.getDay();
-                    // console.log(endDate);
-                    this.endHousestatedate = `${this.stateYear}/${this.stateMonth+1}/${this.stateDate}`;
+                    console.log(this.stateDateNum)
+                    this.stateDateNum++;
+                    if(this.stateDateNum < 5){
+                        this.houseStateDate();
+                    } else {
+                        this.stateDateNum = 4;
+                        this.failTip("最多查看两月信息");
+                    }
                 },
                 // 房态日期
                 houseStateDate(){
-                    let date = new Date();
-                    let endDate = new Date();
-                    // console.log(date);
-                    this.stateYear = date.getFullYear();
-                    this.stateMonth = date.getMonth();
-                    this.stateDate = date.getDate();
-                    this.stateDay = date.getDay();
-                    // console.log(this.stateYear,this.stateMonth,this.stateDate,this.stateDay);
-                    this.startHousestatedate = `${this.stateYear}/${this.stateMonth+1}/${this.stateDate}`;
-                    endDate.setDate(date.getDate()+7);
-                    this.stateYear = endDate.getFullYear();
-                    this.stateMonth = endDate.getMonth();
-                    this.stateDate = endDate.getDate();
-                    this.stateDay = endDate.getDay();
-                    // console.log(endDate);
-                    this.endHousestatedate = `${this.stateYear}/${this.stateMonth+1}/${this.stateDate}`;
+                    let startdate = new Date();
+                    let enddate = new Date();
+                    startdate.setDate(startdate.getDate() + this.stateDateNum*7);
+                    enddate.setDate(enddate.getDate() + 6 + this.stateDateNum*7);
+                    this.stateYear = startdate.getFullYear();
+                    this.stateMonth = startdate.getMonth() + 1;
+                    this.stateDate = startdate.getDate();
+                    this.startHousestatedate = this.stateYear + '/' + this.stateMonth + '/' + this.stateDate;
+                    this.stateYear = enddate.getFullYear();
+                    this.stateMonth = enddate.getMonth() + 1;
+                    this.stateDate = enddate.getDate();
+                    this.endHousestatedate = this.stateYear + '/' + this.stateMonth + '/' + this.stateDate;
+                    this.houseStateTabTitle = [];
+                    let str = '';
+                    for(let i = 0; i < 7; i++){
+                        if(i == 0){
+                            startdate.setDate(startdate.getDate());
+                            str = (startdate.getMonth()+1) + '.' +startdate.getDate();
+                            this.houseStateTabTitle.push(str);
+                        } else {
+                            startdate.setDate(startdate.getDate() + 1);
+                            str = (startdate.getMonth()+1) + '.' +startdate.getDate();
+                            this.houseStateTabTitle.push(str);
+                        }
+                        
+                    }
+                    
                 },
 
 
                 // 房价前七天 
                 deforePriceWeek() {
-
+                    this.priceDateNum--;
+                    this.housePriceDate();
                 },
                 // 房价后七天
                 afterPriceWeek() {
-
+                    console.log(this.priceDateNum)
+                    this.priceDateNum++;
+                    if(this.priceDateNum < 5){
+                        this.housePriceDate();
+                    } else {
+                        this.priceDateNum = 4;
+                        this.failTip("最多查看两月信息");
+                    }
                 },
-                // 房态日期
-                housePriceData(){
-
+                // 房价日期
+                housePriceDate(){
+                    let startdate = new Date();
+                    let enddate = new Date();
+                    startdate.setDate(startdate.getDate() + this.priceDateNum*7);
+                    enddate.setDate(enddate.getDate() + 6 + this.priceDateNum*7);
+                    this.priceYear = startdate.getFullYear();
+                    this.priceMonth = startdate.getMonth() + 1;
+                    this.priceDate = startdate.getDate();
+                    this.startHousePricedate = this.priceYear + '/' + this.priceMonth + '/' + this.priceDate;
+                    this.priceYear = enddate.getFullYear();
+                    this.priceMonth = enddate.getMonth() + 1;
+                    this.priceDate = enddate.getDate();
+                    this.endHousePricedate = this.priceYear + '/' + this.priceMonth + '/' + this.priceDate;
+                    this.housePriceTabTitle = [];
+                    let str = '';
+                    for(let i = 0; i < 7; i++){
+                        if(i == 0){
+                            startdate.setDate(startdate.getDate());
+                            str = (startdate.getMonth()+1) + '.' +startdate.getDate();
+                            this.housePriceTabTitle.push(str);
+                        } else {
+                            startdate.setDate(startdate.getDate() + 1);
+                            str = (startdate.getMonth()+1) + '.' +startdate.getDate();
+                            this.housePriceTabTitle.push(str);
+                        }
+                        
+                    }
                 },
 
                 
