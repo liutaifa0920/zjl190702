@@ -133,3 +133,6 @@
     cursor: pointer;
     font-size: 30px;
 }
+.housePricePLRevise{
+    display: inline-block !important;
+}
