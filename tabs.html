@@ -30,12 +30,12 @@
         #revise-number {
             background-color: white;
             width: 600px;
-            height: 650px;
             box-shadow: 0 0 10px #ccc;
             padding: 15px 80px;
             border-radius: 10px;
             box-sizing: border-box;
             z-index: 50;
+            overflow-y: scroll;
             position: absolute;
             top: 0;
             left: 0;
@@ -165,6 +165,52 @@
         .housePricePLRevise {
             display: inline-block !important;
         }
+
+        /* .priceTitleTh{
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        .tableClass{
+            border: 1px solid #eeeeee;
+        } */
+        .reviseOneNoborder input {
+            border: 0 !important;
+        }
+
+        #revisePriceFrameid {
+            position: absolute;
+            margin: auto;
+            bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 800px;
+            background-color: white;
+            border: 1px solid #ececec;
+            box-shadow: 0 0 15px #e4e4e4;
+            z-index: 100;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: scroll;
+        }
+
+        .stateSmall {
+            position: absolute;
+            margin: auto;
+            bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 500px;
+            background-color: white;
+            border: 1px solid #ececec;
+            box-shadow: 0 0 15px #e4e4e4;
+            z-index: 100;
+            border-radius: 8px;
+            padding: 20px;
+            overflow: hidden;
+        }
     </style>
 
     <title>房态房价房型维护</title>
@@ -176,74 +222,193 @@
         <el-tabs tab-position="left" :width="500" @tab-click="homeStayTabs">
             <el-tab-pane v-for="item,i in homeStayData" :label="item.name">
                 <el-tabs type="card" @tab-click="houseTabsClick" v-model="activeName">
-                    <el-tab-pane label="房态维护">
+                    <el-tab-pane label="房态维护" name="frist">
                         <div>
-                            <el-button class="el-revise-btn revise-btn" type="primary" size="small" @click="">批量修改房态
+                            <el-button class="el-revise-btn revise-btn" type="primary" size="small"
+                                @click="reviseStateFrameClick">批量修改房态
                             </el-button>
-                            <el-button class="el-revise-btn revise-btn" type="primary" size="small" @click="">批量修改房量
+                            <el-button class="el-revise-btn revise-btn" type="primary" size="small"
+                                @click="reviseNumFrameClick">批量修改房量
                             </el-button>
                         </div>
                         <div>
-                            <el-button type="primary" icon="el-icon-arrow-left" @click="deforeStateWeek">前七天</el-button>
-                            <el-button type="primary">{{startHousestatedate}}-{{endHousestatedate}}</el-button>
-                            <el-button type="primary" icon="el-icon-arrow-right" @click="afterStateWeek">后七天</el-button>
+                            <el-button v-show="stateAfterDateFlag" type="primary" icon="el-icon-arrow-left"
+                                @click="deforeStateWeek">前七天</el-button>
+                            <el-button type="primary">{{startHouseStatedate}}/{{endHouseStatedate}}</el-button>
+                            <el-button v-show="stateNextDateFlag" type="primary" icon="el-icon-arrow-right"
+                                @click="afterStateWeek">后七天</el-button>
                         </div>
                         <div style="margin-top: 20px;">
-                            <el-table :data="tableData" border style="width: 100%">
-                                <el-table-column prop="date" label="房型">
+                            <el-table :data="houseStateTabData" border width="100%" @cell-click='stateTabClick'>
+                                <el-table-column prop="house_name" label="房型">
                                 </el-table-column>
-                                <el-table-column prop="date" label="">
+
+                                <el-table-column :prop="houseStateTabWeek[0]" :label="houseStateTabWeek[0]">
+                                    <template scope="scope">
+                                        <el-button v-show="scope.row[houseStateTabWeek[0]][2]==2" type="primary"
+                                            @click="stateNumbtn">
+                                            售{{scope.row[houseStateTabWeek[0]][1]}}/总{{scope.row[houseStateTabWeek[0]][0]}}
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[0]][2]==2" type="primary"
+                                            @click="stateOpenBtn">可售
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[0]][2]==1" type="info"
+                                            @click="stateCloseBtn">已关闭
+                                        </el-button>
+                                    </template>
                                 </el-table-column>
-                                <el-table-column prop="date" label="">
+
+                                <el-table-column :prop="houseStateTabWeek[1]" :label="houseStateTabWeek[1]">
+                                    <template scope="scope">
+                                        <el-button v-show="scope.row[houseStateTabWeek[1]][2]==2" type="primary"
+                                            @click="stateNumbtn">
+                                            售{{scope.row[houseStateTabWeek[1]][1]}}/总{{scope.row[houseStateTabWeek[1]][0]}}
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[1]][2]==2" type="primary"
+                                            @click="stateOpenBtn" @click="stateOpenBtn">可售
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[1]][2]==1" type="info"
+                                            @click="stateCloseBtn">已关闭
+                                        </el-button>
+                                    </template>
                                 </el-table-column>
-                                <el-table-column prop="date" label="">
+                                <el-table-column :prop="houseStateTabWeek[2]" :label="houseStateTabWeek[2]">
+                                    <template scope="scope">
+                                        <el-button v-show="scope.row[houseStateTabWeek[2]][2]==2" type="primary"
+                                            @click="stateNumbtn">
+                                            售{{scope.row[houseStateTabWeek[2]][1]}}/总{{scope.row[houseStateTabWeek[2]][0]}}
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[2]][2]==2" type="primary"
+                                            @click="stateOpenBtn">可售
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[2]][2]==1" type="info"
+                                            @click="stateCloseBtn">已关闭
+                                        </el-button>
+                                    </template>
                                 </el-table-column>
-                                <el-table-column prop="date" label="">
+                                <el-table-column :prop="houseStateTabWeek[3]" :label="houseStateTabWeek[3]">
+                                    <template scope="scope">
+                                        <el-button v-show="scope.row[houseStateTabWeek[3]][2]==2" type="primary"
+                                            @click="stateNumbtn">
+                                            售{{scope.row[houseStateTabWeek[3]][1]}}/总{{scope.row[houseStateTabWeek[3]][0]}}
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[3]][2]==2" type="primary"
+                                            @click="stateOpenBtn">可售
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[3]][2]==1" type="info"
+                                            @click="stateCloseBtn">已关闭
+                                        </el-button>
+                                    </template>
                                 </el-table-column>
-                                <el-table-column prop="date" label="">
+                                <el-table-column :prop="houseStateTabWeek[4]" :label="houseStateTabWeek[4]">
+                                    <template scope="scope">
+                                        <el-button v-show="scope.row[houseStateTabWeek[4]][2]==2" type="primary"
+                                            @click="stateNumbtn">
+                                            售{{scope.row[houseStateTabWeek[4]][1]}}/总{{scope.row[houseStateTabWeek[4]][0]}}
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[4]][2]==2" type="primary"
+                                            @click="stateOpenBtn">可售
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[4]][2]==1" type="info"
+                                            @click="stateCloseBtn">已关闭
+                                        </el-button>
+                                    </template>
                                 </el-table-column>
-                                <el-table-column prop="date" label="">
+                                <el-table-column :prop="houseStateTabWeek[5]" :label="houseStateTabWeek[5]">
+                                    <template scope="scope">
+                                        <el-button v-show="scope.row[houseStateTabWeek[5]][2]==2" type="primary"
+                                            @click="stateNumbtn">
+                                            售{{scope.row[houseStateTabWeek[5]][1]}}/总{{scope.row[houseStateTabWeek[5]][0]}}
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[5]][2]==2" type="primary"
+                                            @click="stateOpenBtn">可售
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[5]][2]==1" type="info"
+                                            @click="stateCloseBtn">已关闭
+                                        </el-button>
+                                    </template>
                                 </el-table-column>
-                                <el-table-column prop="date" label="">
+                                <el-table-column :prop="houseStateTabWeek[6]" :label="houseStateTabWeek[6]">
+                                    <template scope="scope">
+                                        <el-button v-show="scope.row[houseStateTabWeek[6]][2]==2" type="primary"
+                                            @click="stateNumbtn">
+                                            售{{scope.row[houseStateTabWeek[6]][1]}}/总{{scope.row[houseStateTabWeek[6]][0]}}
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[6]][2]==2" type="primary"
+                                            @click="stateOpenBtn">可售
+                                        </el-button>
+                                        <el-button v-show="scope.row[houseStateTabWeek[6]][2]==1" type="info"
+                                            @click="stateCloseBtn">已关闭
+                                        </el-button>
+                                    </template>
                                 </el-table-column>
+
                             </el-table>
                         </div>
+
                     </el-tab-pane>
-                    <el-tab-pane label="房价维护" name="frist">
+                    <el-tab-pane label="房价维护">
                         <div>
-                            <el-button type="primary" icon="el-icon-arrow-left" @click="deforePriceWeek">前七天</el-button>
+                            <el-button v-show="priceAfterDateFlag" type="primary" icon="el-icon-arrow-left"
+                                @click="deforePriceWeek">前七天</el-button>
                             <el-button type="primary">{{startHousePricedate}}/{{endHousePricedate}}</el-button>
-                            <el-button type="primary" icon="el-icon-arrow-right" @click="afterPriceWeek">后七天</el-button>
+                            <el-button v-show="priceNextDateFlag" type="primary" icon="el-icon-arrow-right"
+                                @click="afterPriceWeek">后七天</el-button>
                         </div>
                         <div style="margin-top: 20px;">
-                            <el-table :data="housePriceTabData" border width="100%">
+                            <el-table :data="housePriceTabData" border width="100%" @cell-click='priceTabClick'>
                                 <el-table-column prop="house_name" label="房型/产品">
                                 </el-table-column>
+
                                 <el-table-column label="批量修改">
                                     <el-button class="housePricePLRevise" type="primary" size="mini" @click="">批量改价
                                     </el-button>
                                 </el-table-column>
-                                <el-table-column prop="price"
-                                    :label="housePriceTabData[0].data+' '+housePriceTabData[0].week_name">
+
+                                <el-table-column :prop="housePriceTabWeek[0]" :label="housePriceTabWeek[0]">
+                                    <template scope="scope">
+                                        <el-input class="reviseOneNoborder" style="width: 90px !important;"
+                                            v-model="scope.row[housePriceTabWeek[0]]"></el-input>
+                                    </template>
                                 </el-table-column>
-                                <el-table-column prop="price"
-                                    :label="housePriceTabData[1].data+' '+housePriceTabData[1].week_name">
+
+                                <el-table-column :prop="housePriceTabWeek[1]" :label="housePriceTabWeek[1]">
+                                    <template scope="scope">
+                                        <el-input class="reviseOneNoborder" style="width: 90px !important;"
+                                            v-model="scope.row[housePriceTabWeek[1]]"></el-input>
+                                    </template>
                                 </el-table-column>
-                                <el-table-column prop="price"
-                                    :label="housePriceTabData[2].data+' '+housePriceTabData[2].week_name">
+                                <el-table-column :prop="housePriceTabWeek[2]" :label="housePriceTabWeek[2]">
+                                    <template scope="scope">
+                                        <el-input class="reviseOneNoborder" style="width: 90px !important;"
+                                            v-model="scope.row[housePriceTabWeek[2]]"></el-input>
+                                    </template>
                                 </el-table-column>
-                                <el-table-column prop="price"
-                                    :label="housePriceTabData[3].data+' '+housePriceTabData[3].week_name">
+                                <el-table-column :prop="housePriceTabWeek[3]" :label="housePriceTabWeek[3]">
+                                    <template scope="scope">
+                                        <el-input class="reviseOneNoborder" style="width: 90px !important;"
+                                            v-model="scope.row[housePriceTabWeek[3]]"></el-input>
+                                    </template>
                                 </el-table-column>
-                                <el-table-column prop="price"
-                                    :label="housePriceTabData[4].data+' '+housePriceTabData[4].week_name">
+                                <el-table-column :prop="housePriceTabWeek[4]" :label="housePriceTabWeek[4]">
+                                    <template scope="scope">
+                                        <el-input class="reviseOneNoborder" style="width: 90px !important;"
+                                            v-model="scope.row[housePriceTabWeek[4]]"></el-input>
+                                    </template>
                                 </el-table-column>
-                                <el-table-column prop="price"
-                                    :label="housePriceTabData[5].data+' '+housePriceTabData[5].week_name">
+                                <el-table-column :prop="housePriceTabWeek[5]" :label="housePriceTabWeek[5]">
+                                    <template scope="scope">
+                                        <el-input class="reviseOneNoborder" style="width: 90px !important;"
+                                            v-model="scope.row[housePriceTabWeek[5]]"></el-input>
+                                    </template>
                                 </el-table-column>
-                                <el-table-column prop="price"
-                                    :label="housePriceTabData[6].data+' '+housePriceTabData[6].week_name">
+                                <el-table-column :prop="housePriceTabWeek[6]" :label="housePriceTabWeek[6]">
+                                    <template scope="scope">
+                                        <el-input class="reviseOneNoborder" style="width: 90px !important;"
+                                            v-model="scope.row[housePriceTabWeek[6]]"></el-input>
+                                    </template>
                                 </el-table-column>
+
                             </el-table>
                         </div>
                     </el-tab-pane>
@@ -535,69 +700,126 @@
 
 
         </div>
-
+        <!-- 修改房态弹出框 -->
         <div v-if="reviseStateFrame" id="revise-state">
             <i class="el-icon-close" @click="closeReviseStateClick"></i>
             <h4 class="revise-state-title">批量修改房态</h4>
             <p>房型:</p>
             <div id="revise-state-name">
-                <div v-for="n in 10">
-                    <el-checkbox>备选项</el-checkbox>
-                </div>
+                <el-checkbox-group v-model="checkedStateHousenameList">
+                    <el-checkbox style="display: block;" v-for="item,i in reviseStateCurrNameArr" :label="reviseStateCurrIDArr[i]">{{item}}
+                    </el-checkbox>
+                </el-checkbox-group>
             </div>
             <div>
                 <span>房态设置</span>
-                <el-button class="el-revise-btn revise-btn" type="primary" size="small">开房</el-button>
-                <el-button class="el-revise-btn revise-btn" type="primary" size="small">关房</el-button>
+                <el-button class="el-revise-btn revise-btn" type="primary" size="small" @click="stateOpenHouseBtn">开房</el-button>
+                <el-button class="el-revise-btn revise-btn" type="primary" size="small" @click="stateCloseHouseBtn">关房</el-button>
             </div>
             <div>
                 <span>修改日期</span>
+                <!-- {{roomStateValue}} -->
                 <el-date-picker v-model="roomStateValue" type="daterange" start-placeholder="开始日期"
-                    end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']" size="mini">
+                    end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']" size="mini" format="yyyy 年 MM 月 dd 日"
+                    value-format="yyyy-MM-dd">
                 </el-date-picker>
                 <p>可修改60天房态</p>
-                <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选
-                </el-checkbox>
+                <el-checkbox :indeterminate="isIndeterminateState" v-model="checkAllState"
+                    @change="reviseHouseStateCheckAllChange">全选</el-checkbox>
                 <div style="margin: 15px 0;"></div>
-                <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                    <el-checkbox v-for="day,i in week" :label="day" :key="i">{{day}}</el-checkbox>
+                <el-checkbox-group v-model="checkedCitiesState" @change="reviseHouseStateCheckedCitiesChange">
+                    <el-checkbox v-for="city,i in cities" :label="city.label" :key="i">{{city.weekName}}</el-checkbox>
                 </el-checkbox-group>
                 <el-row class="revise-bot-btn">
-                    <el-button type="primary" size="small" @click="roomStateOpen">确认</el-button>
                     <el-button type="warning" size="small" @click="roomStateClose">取消</el-button>
+                    <el-button type="primary" size="small" @click="roomStateOpen">确认</el-button>
                 </el-row>
             </div>
         </div>
+        <!-- 修改房量弹出框 -->
         <div v-if="reviseNumFrame" id="revise-number">
             <i class="el-icon-close" @click="closeReviseNumClick"></i>
             <h4 class="revise-state-title">批量修改房量</h4>
             <p>房型</p>
             <div id="revise-number-name">
-                <div v-for="n in tableData">
-                    <el-checkbox>备选项</el-checkbox>
-                    <el-input v-model="n.value" size="mini" placeholder="请输入" clearable
-                        style="display: inline-block;width: 80px;">
+                <div v-for="item,i in reviseStateCurrNameArr" style="display: flex;padding: 5px 0;line-height: 2vw">
+                    <el-checkbox-group v-model="checkedStateHousenameList">
+                        <el-checkbox :label="reviseStateCurrIDArr[i]">{{item}}
+                        </el-checkbox>
+                    </el-checkbox-group>
+                    <el-input style="width: 100px;margin-left: 5px;" v-model="checkedNumHousenameInput[i]" placeholder="请输入">
                     </el-input>间
                 </div>
-
             </div>
             <div>
                 <span>修改日期</span>
-
                 <el-date-picker v-model="roomNumValue" type="daterange" start-placeholder="开始日期" end-placeholder="结束日期"
-                    :default-time="['00:00:00', '23:59:59']" size="mini">
+                    :default-time="['00:00:00', '23:59:59']" size="mini" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
                 </el-date-picker>
                 <p>可修改60天房态</p>
-                <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选
+                <el-checkbox :indeterminate="isIndeterminateNum" v-model="checkAllNum"
+                    @change="reviseHouseNumCheckAllChange">全选</el-checkbox>
+                <div style="margin: 15px 0;"></div>
+                <el-checkbox-group v-model="checkedCitiesNum" @change="reviseHouseNumCheckedCitiesChange">
+                    <el-checkbox v-for="city,i in cities" :label="city.label" :key="i">{{city.weekName}}</el-checkbox>
+                </el-checkbox-group>
+                <el-row class="revise-bot-btn">
+                    <el-button type="warning" size="small" @click="roomNumClose">取消</el-button>
+                    <el-button type="primary" size="small" @click="roomNumOpen">确认</el-button>
+                </el-row>
+            </div>
+        </div>
+
+        <div v-show="revisePriceFrame" id="revisePriceFrameid">
+            <h3 style="background-color: #dddddd;padding: 5px;font-size: 1vw;">修改房价</h3>
+            <p>房型:{{revisePriceCurrName}}</p>
+            <label for="">房价</label>
+            <el-input style="width: 100px !important;" v-model="revisePriceFrameInp" placeholder="请输入价格"></el-input>元
+            <div class="block" style="margin-top: 10px;">
+                <span class="demonstration">修改日期</span>
+                <el-date-picker v-model="revisePriceFrameDate" type="daterange" range-separator="至"
+                    start-placeholder="开始日期" end-placeholder="结束日期" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
+                </el-date-picker>
+                <div style="margin: 15px 0;"></div>
+                <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="revisePriceCheckAll">全选
                 </el-checkbox>
                 <div style="margin: 15px 0;"></div>
-                <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                    <el-checkbox v-for="day,i in week" :label="day" :key="i">{{day}}</el-checkbox>
-                    </el-chFeckbox-group>
-                    <el-row class="revise-bot-btn">
-                        <el-button type="primary" size="small" @click="roomNumOpen">确认</el-button>
-                        <el-button type="warning" size="small" @click="roomNumClose">取消</el-button>
-                    </el-row>
+                <el-checkbox-group v-model="checkedCities" @change="revisePriceCheckedCitiesChange">
+                    <el-checkbox v-for="city,i in cities" :label="city.label" :key="i">{{city.weekName}}</el-checkbox>
+                </el-checkbox-group>
+                <div style="width: 100%;text-align: center;margin-top: 12px;">
+                    <el-button type="warning" size="small" @click="closeReviseAllPriceBox">取消</el-button>
+                    <el-button type="primary" size="small" @click="ReviseAllPriceBtn">确认</el-button>
+                </div>
+            </div>
+        </div>
+        <!-- 修改房量弹出框 -->
+        <div v-show="stateNumFlag" class="stateSmall">
+            <h3 style="background-color: #dddddd;font-size: 1vw">修改房量</h3>
+            <p>房型名称: {{reviseStateCurrName}}</p>
+            <label for="">房量</label>
+            <el-input style="width: 100px !important;" v-model="ReviseStateNum" placeholder="请输入房量"></el-input>间
+            <div style="width: 100%;text-align: center;margin-top: 20px;">
+                <el-button type="warning" size="small" @click="closeReviseStateNumBox">取消</el-button>
+                <el-button type="primary" size="small" @click="ReviseStateNumBtn">确认</el-button>
+            </div>
+        </div>
+        <!-- 可售转关房 -->
+        <div v-show="stateOpenFlag" class="stateSmall">
+            <p>房型名称: {{reviseStateCurrName}}</p>
+            <p>您是否需要关房操作？</p>
+            <div style="width: 100%;text-align: center;margin-top: 20px;">
+                <el-button type="warning" size="small" @click="closeReviseStateOpenBox">取消</el-button>
+                <el-button type="primary" size="small" @click="ReviseStateOpenBtn">确认</el-button>
+            </div>
+        </div>
+        <!-- 关房转开启 -->
+        <div v-show="stateCloseFlag" class="stateSmall">
+            <p>房型名称: {{reviseStateCurrName}}</p>
+            <el-input style="width: 100px !important;" v-model="ReviseStateCloseNum" placeholder="请输入房量"></el-input>间
+            <div style="width: 100%;text-align: center;margin-top: 20px;">
+                <el-button type="warning" size="small" @click="closeReviseStateCloseBox">取消</el-button>
+                <el-button type="primary" size="small" @click="ReviseStateCloseBtn">确认</el-button>
             </div>
         </div>
     </div>
@@ -629,7 +851,93 @@
         // ----------------房价-----------------
         // 房价列表
         const queryHousePriceListURL = 'https://api.sdzhujialin.com/admin/Housemoney/IndexData';
+        // 单个房价修改
+        const setOnePriceURL = 'https://api.sdzhujialin.com/admin/Housemoney/Price';
+        // 批量修改房价
+        const setAllPriceURL = 'https://api.sdzhujialin.com/admin/Housemoney/BatchPrice';
+        // -----------------房态房量-----------------
+        // 房态列表
+        const queryHouseStateListURL = 'https://api.sdzhujialin.com/admin/Houseroom/IndexData'
+        // 修改某天房量
+        const setReviseStateNumURL = 'https://api.sdzhujialin.com/admin/Houseroom/Closeouse';
+        // 开启转关房
+        const setReviseStateOpenURL = 'https://api.sdzhujialin.com/admin/Houseroom/Close';
+        // 关房转开启
+        const setReviseStateCloseURL = 'https://api.sdzhujialin.com/admin/Houseroom/Opne';
+        // 批量修改房态
+        const setReviseStateAllUrl = 'https://api.sdzhujialin.com/admin/Houseroom/Batch';
+        // 批量修改房量
+        const setReviseNumAllUrl = 'https://api.sdzhujialin.com/admin/Houseroom/BatchHouse';
 
+        const cityOptions = [
+            {
+                label: 1,
+                weekName: '周一'
+            }, {
+                label: 2,
+                weekName: '周二'
+            }, {
+                label: 3,
+                weekName: '周三'
+            }, {
+                label: 4,
+                weekName: '周四'
+            }, {
+                label: 5,
+                weekName: '周五'
+            }, {
+                label: 6,
+                weekName: '周六'
+            }, {
+                label: 0,
+                weekName: '周日'
+            }];
+        const cityOptionsState = [
+            {
+                label: 1,
+                weekName: '周一'
+            }, {
+                label: 2,
+                weekName: '周二'
+            }, {
+                label: 3,
+                weekName: '周三'
+            }, {
+                label: 4,
+                weekName: '周四'
+            }, {
+                label: 5,
+                weekName: '周五'
+            }, {
+                label: 6,
+                weekName: '周六'
+            }, {
+                label: 0,
+                weekName: '周日'
+            }];
+        const cityOptionsNum = [
+            {
+                label: 1,
+                weekName: '周一'
+            }, {
+                label: 2,
+                weekName: '周二'
+            }, {
+                label: 3,
+                weekName: '周三'
+            }, {
+                label: 4,
+                weekName: '周四'
+            }, {
+                label: 5,
+                weekName: '周五'
+            }, {
+                label: 6,
+                weekName: '周六'
+            }, {
+                label: 0,
+                weekName: '周日'
+            }];
         var temp = new Date();
         new Vue({
             el: "#roomRoot",
@@ -955,53 +1263,107 @@
                 mounteImgArr: [],
 
                 // --------------房态----------------
-                tableData: [
-                    {
-                        date: '房型名称房型名称'
-                    }, {
-                        date: '房型名称房型名称'
-                    }, {
-                        date: '房型名称房型名称'
-                    }, {
-                        date: '房型名称房型名称'
-                    }
-                ],
+                checkedStateHousenameList: [],
+                reviseStateCurrNameArr: [],
+                reviseStateCurrIDArr: [],
+                // 房态批量修改开房按钮
+                stateOpenHouse: '',
+                // 房态批量修改关房按钮
+                stateCloseHouse: '',
+                // 房量批量修改inp
+                checkedNumHousenameInput: [],
+                // 房量有效inp
+                currentCheckedNumHousenameInput: [],
+                // 小弹框
+                stateNumFlag: false,
+                stateOpenFlag: false,
+                stateCloseFlag: false,
+                // 弹框修改房量
+                ReviseStateNum: 0,
+                // 房态当前房型名
+                reviseStateCurrName: '',
+                // 房态当前房型ID
+                reviseStateCurrID: '',
+                // 房态当前日期
+                reviseStateCurrDate: '',
+                // 房态修改单个房量已售量
+                reviseStateOverNum: 0,
+                // 房态关闭转开启房量
+                ReviseStateCloseNum: 0,
                 // 房态日期
                 houseStateTabTitle: [],
                 startHousestatedate: '',
                 endHousestatedate: '',
                 stateDateNum: 0,
+                stateAfterDateFlag: false,
+                stateNextDateFlag: true,
                 stateYear: '',
                 stateMonth: '',
                 stateDate: '',
                 stateDay: '',
+                // 房态列表
+                houseStateTabData: [],
+                houseStateTabWeek: [],
+                startHouseStatedate: '',
+                endHouseStatedate: '',
+
+                checkAll: false,
+                reviseNumber: '',
+                reviseStateFrame: false,
+                reviseNumFrame: false,
+                roomStateStartValue: '',
+
+                roomNumValue: '',
+                roomStateValue: '',
+
+                checkAllState: false,
+                checkedCitiesState: [],
+                citiesState: cityOptionsState,
+                isIndeterminateState: true,
+
+                checkAllNum: false,
+                checkedCitiesNum: [],
+                citiesNum: cityOptionsNum,
+                isIndeterminateNum: true,
 
                 // ------------------房价------------------
                 // 房价前7后7
                 housePriceDataType: 1,
+                // ReviseOneTempPrice
+                currentRevisePrice: 0,
+                // 单个修改状态
+                reviseOneInput: true,
+                // 房价弹窗
+                revisePriceFrame: false,
+                // 批量修改房价
+                revisePriceFrameInp: 0,
+                // 弹窗中日期修改
+                revisePriceFrameDate: '',
+                // 房价弹框房型ID
+                revisePriceCurrID: '',
+                // 房价弹框星期复选
+                checkAll: false,
+                checkedCities: [],
+                cities: cityOptions,
+                isIndeterminate: true,
+                // 当前房型名称
+                revisePriceCurrName: '',
                 // 房价列表
-
-                // 房价日期
                 housePriceTabData: [],
+                housePriceTabWeek: [],
                 startHousePricedate: '',
                 endHousePricedate: '',
                 priceDateNum: 0,
+                priceAfterDateFlag: false,
+                priceNextDateFlag: true,
                 priceYear: '',
                 priceMonth: '',
                 priceDate: '',
                 priceDay: '',
-
-
-
-
-                // checkAll: false,
-                // reviseNumber: '',
-                reviseStateFrame: false,
-                reviseNumFrame: false,
-                // roomStateStartValue: '',
-
-                // roomNumValue: '',
-                // roomStateValue: '',
+            },
+            created() {
+                this.queryHousePriceList();
+                this.queryHouseStateList();
             },
             mounted() {
                 // 左侧民宿列表
@@ -1009,11 +1371,12 @@
                 // 首次民宿房型请求
                 this.activeHouseTypeList();
                 // 房态日期
-                this.houseStateDate();
+                // this.houseStateDate();
                 // 房价日期
-                this.housePriceDate();
+                // this.housePriceDate();
                 // 房价列表请求
-                this.queryHousePriceList();
+                // this.queryHousePriceList();
+                // 
             },
             methods: {
                 // 民宿列表选项卡
@@ -1025,13 +1388,21 @@
                         }
                     }
                     this.addBoxShow = false;
+                    this.revisePriceFrame = false;
+                    this.reviseNumFrame = false;
+                    this.priceDateNum = 0;
+                    this.stateDateNum = 0;
                     this.HouseTypeList();
-
+                    this.queryHousePriceList();
+                    this.queryHouseStateList();
                 },
                 // 房型选项卡
                 houseTabsClick(tab, event) {
-                    console.log(tab.label);
+                    // console.log(tab.label);
+                    this.queryHousePriceList();
                     this.addBoxShow = false;
+                    this.revisePriceFrame = false;
+                    this.reviseNumFrame = false;
                 },
                 // 房型列表分页
                 currentSizeChange(val) {
@@ -1149,13 +1520,13 @@
 
                     if (!this.addHouseTypeName || !this.addHouseTypeSize || !this.addHouseSeveral_rooms || !this.addHouseBed_info[0].name || !this.addHouseBed_info[0].size || !this.addHouseNumber || !this.addHouseWindow || !this.addHousebreakfast || !this.addHouseWc || !this.addHouseVolume || !this.addHouseTestera || !this.addHouseList || !this.addHouseIs_cook || !this.addHouseGo_time || !this.addHouseOut_time || !this.addHouseStartTime || !this.addHouseEndTime || !this.addHouseInvoice || !this.addHouseHousing_code) {
                         this.failTip("信息填写不完整");
-                    } else if(this.addHouseGo_time != '12:00' && this.addHouseGo_timeText == ''){
+                    } else if (this.addHouseGo_time != '12:00' && this.addHouseGo_timeText == '') {
                         this.failTip("信息填写不完整");
-                    } else if(this.addHouseOut_time != '12:00' && this.addHouseOut_timeText == ''){
+                    } else if (this.addHouseOut_time != '12:00' && this.addHouseOut_timeText == '') {
                         this.failTip("信息填写不完整");
-                    } else if(this.addHouseExtra_bed == 3 && this.addHouseExtra_bed_money == ''){
+                    } else if (this.addHouseExtra_bed == 3 && this.addHouseExtra_bed_money == '') {
                         this.failTip("信息填写不完整");
-                    } else if(this.addHouseDeposit != 0 && this.addHouseDeposit_money == ''){
+                    } else if (this.addHouseDeposit != 0 && this.addHouseDeposit_money == '') {
                         this.addHouseDeposit = 0;
                     } else {
                         this.setAddhouseTypeInfo();
@@ -1253,99 +1624,101 @@
 
 
 
-                // 房态前七天 
-                deforeStateWeek() {
-                    this.stateDateNum--;
-                    this.houseStateDate();
-                },
-                // 房态后七天
-                afterStateWeek() {
-                    console.log(this.stateDateNum)
-                    this.stateDateNum++;
-                    if (this.stateDateNum < 5) {
-                        this.houseStateDate();
-                    } else {
-                        this.stateDateNum = 4;
-                        this.failTip("最多查看两月信息");
-                    }
-                },
-                // 房态日期
-                houseStateDate() {
-                    let startdate = new Date();
-                    let enddate = new Date();
-                    startdate.setDate(startdate.getDate() + this.stateDateNum * 7);
-                    enddate.setDate(enddate.getDate() + 6 + this.stateDateNum * 7);
-                    this.stateYear = startdate.getFullYear();
-                    this.stateMonth = startdate.getMonth() + 1;
-                    this.stateDate = startdate.getDate();
-                    this.startHousestatedate = this.stateYear + '/' + this.stateMonth + '/' + this.stateDate;
-                    this.stateYear = enddate.getFullYear();
-                    this.stateMonth = enddate.getMonth() + 1;
-                    this.stateDate = enddate.getDate();
-                    this.endHousestatedate = this.stateYear + '/' + this.stateMonth + '/' + this.stateDate;
-                    this.houseStateTabTitle = [];
-                    let str = '';
-                    for (let i = 0; i < 7; i++) {
-                        if (i == 0) {
-                            startdate.setDate(startdate.getDate());
-                            str = (startdate.getMonth() + 1) + '.' + startdate.getDate();
-                            this.houseStateTabTitle.push(str);
-                        } else {
-                            startdate.setDate(startdate.getDate() + 1);
-                            str = (startdate.getMonth() + 1) + '.' + startdate.getDate();
-                            this.houseStateTabTitle.push(str);
-                        }
-
-                    }
-
-                },
-
 
                 // 房价前七天 
                 deforePriceWeek() {
                     this.priceDateNum--;
-                    this.housePriceDate();
+                    let that = this;
+                    $.ajax({
+                        url: queryHousePriceListURL,
+                        data: {
+                            id: this.currentHomeStayID,
+                            datatype: 2,
+                            data: this.startHousePricedate
+                        },
+                        type: 'POST',
+                        Frontdata: 'json',
+                        success(res) {
+                            if (res.code == 200) {
+                                let tempDataArr = res.data.data;
+                                let tempArr = [];
+                                let tempWeekArr = [];
+                                if (res.code == 200) {
+                                    for (let i = 0; i < tempDataArr.length; i++) {
+                                        let tempObj = {};
+                                        tempObj.house_id = tempDataArr[i].house_id;
+                                        tempObj.house_name = tempDataArr[i].house_name;
+
+                                        for (let j = 0; j < tempDataArr[i].name.length; j++) {
+                                            tempObj[tempDataArr[i].name[j].data] = tempDataArr[i].name[j].price;
+                                            tempObj.homestay_id = tempDataArr[i].name[j].homestay_id;
+                                            tempObj.id = tempDataArr[i].name[j].id;
+                                            tempObj.week = tempDataArr[i].name[j].week;
+
+                                        }
+                                        tempArr.push(tempObj);
+
+
+                                    }
+                                    for (let i = 0; i < tempDataArr[0].name.length; i++) {
+                                        tempWeekArr.push(tempDataArr[0].name[i].data);
+                                    }
+                                    that.housePriceTabWeek = tempWeekArr;
+                                    that.housePriceTabData = tempArr;
+                                    that.startHousePricedate = res.data.frontdata;
+                                    that.endHousePricedate = res.data.afterdata;
+                                }
+                            }
+                        }
+                    });
+
+                    // this.housePriceDate();
                 },
                 // 房价后七天
                 afterPriceWeek() {
-                    console.log(this.priceDateNum)
-                    this.priceDateNum++;
-                    if (this.priceDateNum < 5) {
-                        this.housePriceDate();
-                    } else {
-                        this.priceDateNum = 4;
-                        this.failTip("最多查看两月信息");
-                    }
-                },
-                // 房价日期
-                housePriceDate() {
-                    let startdate = new Date();
-                    let enddate = new Date();
-                    startdate.setDate(startdate.getDate() + this.priceDateNum * 7);
-                    enddate.setDate(enddate.getDate() + 6 + this.priceDateNum * 7);
-                    this.priceYear = startdate.getFullYear();
-                    this.priceMonth = startdate.getMonth() + 1;
-                    this.priceDate = startdate.getDate();
-                    this.startHousePricedate = this.priceYear + '-' + this.priceMonth + '-' + this.priceDate;
-                    this.priceYear = enddate.getFullYear();
-                    this.priceMonth = enddate.getMonth() + 1;
-                    this.priceDate = enddate.getDate();
-                    this.endHousePricedate = this.priceYear + '-' + this.priceMonth + '-' + this.priceDate;
-                    // this.housePriceTabTitle = [];
-                    // let str = '';
-                    // for(let i = 0; i < 7; i++){
-                    //     if(i == 0){
-                    //         startdate.setDate(startdate.getDate());
-                    //         str = (startdate.getMonth()+1) + '.' +startdate.getDate();
-                    //         this.housePriceTabTitle.push(str);
-                    //     } else {
-                    //         startdate.setDate(startdate.getDate() + 1);
-                    //         str = (startdate.getMonth()+1) + '.' +startdate.getDate();
-                    //         this.housePriceTabTitle.push(str);
-                    //     }
-                    // }
-                },
 
+                    this.priceDateNum++;
+                    let that = this;
+                    $.ajax({
+                        url: queryHousePriceListURL,
+                        data: {
+                            id: this.currentHomeStayID,
+                            datatype: 1,
+                            data: this.endHousePricedate
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success(res) {
+                            if (res.code == 200) {
+                                let tempDataArr = res.data.data;
+                                let tempArr = [];
+                                let tempWeekArr = [];
+                                if (res.code == 200) {
+                                    for (let i = 0; i < tempDataArr.length; i++) {
+                                        let tempObj = {};
+                                        tempObj.house_id = tempDataArr[i].house_id;
+                                        tempObj.house_name = tempDataArr[i].house_name;
+
+                                        for (let j = 0; j < tempDataArr[i].name.length; j++) {
+                                            tempObj[tempDataArr[i].name[j].data] = tempDataArr[i].name[j].price;
+                                            tempObj.homestay_id = tempDataArr[i].name[j].homestay_id;
+                                            tempObj.id = tempDataArr[i].name[j].id;
+                                            tempObj.week = tempDataArr[i].name[j].week;
+                                        }
+                                        tempArr.push(tempObj);
+                                    }
+                                    for (let i = 0; i < tempDataArr[0].name.length; i++) {
+                                        tempWeekArr.push(tempDataArr[0].name[i].data);
+                                    }
+                                    that.housePriceTabWeek = tempWeekArr;
+                                    that.housePriceTabData = tempArr;
+                                    that.startHousePricedate = res.data.frontdata;
+                                    that.endHousePricedate = res.data.afterdata;
+                                }
+                            }
+                        }
+                    })
+                },
 
                 // 左侧民宿列表请求
                 queryHomeStayList() {
@@ -1531,11 +1904,11 @@
                         type: 'POST',
                         success(res) {
                             if (res.code == 200) {
-                                if(that.currentPage != 1 && that.allTotal % 5 == 1){
+                                if (that.currentPage != 1 && that.allTotal % 5 == 1) {
                                     that.currentPage--;
                                     console.log(that.currentPage);
                                 }
-                                
+
                                 that.HouseTypeList();
                             } else {
                                 that.failTip(res.msg);
@@ -1619,12 +1992,13 @@
                                 console.log(res.data.data.deposit);
                                 that.addHouseDeposit = res.data.data.deposit;
                                 that.addHouseDeposit_money = res.data.data.deposit;
-                                if(res.data.data.deposit != 0 && that.addHouseDeposit_money == ''){
+                                if (res.data.data.deposit != 0 && that.addHouseDeposit_money == '') {
                                     that.addHouseDeposit = 0;
-                                } else if(res.data.data.deposit != 0 && that.addHouseDeposit_money == 0){
+                                } else if (res.data.data.deposit != 0 && that.addHouseDeposit_money == 0) {
                                     that.addHouseDeposit = 0;
                                 }
                                 if (res.data.data.deposit != 0) {
+                                    that.addHouseDeposit = 2;
                                     that.addHouseDeposit_money = res.data.data.deposit;
                                 }
                                 let tempaddHouseHousing_code = res.data.data.housing_code.split(',');
@@ -1699,14 +2073,19 @@
                         }
                     }
                     if (this.addHouseGo_time == 2) {
+                        // let tempGo = 
                         this.addHouseGo_time = this.addHouseGo_timeText;
                     }
                     if (this.addHouseOut_time == 2) {
+                        // let tempOut = 
                         this.addHouseOut_time = this.addHouseOut_timeText;
                     }
-                    // if (this.addHouseDeposit == 2) {
-                    //     this.addHouseDeposit = this.addHouseDeposit_money;
-                    // }
+                    if (this.addHouseDeposit == 2 && this.addHouseDeposit_money == '') {
+                        this.addHouseDeposit = 0;
+                    }
+                    if (this.addHouseDeposit == 2 && this.addHouseDeposit_money == 0) {
+                        this.addHouseDeposit = 0;
+                    }
                     $.ajax({
                         url: setReviseHouseTypeInfoURL,
                         data: {
@@ -1753,7 +2132,145 @@
                     })
                 },
 
+                // 房价表格点击
+                priceTabClick(row, column, cell, event) {
+                    this.reviseOneInput = false;
+                    this.revisePriceCurrName = row['house_name'];
+                    this.revisePriceCurrID = row['house_id'];
+                    // console.log(row[column.property]*1)
+                    this.setOnePrice(row['house_id'] * 1, row[column.property] * 1, column.property);
 
+                    if (cell.className.split('')[18] + cell.className.split('')[19] == '10') {
+                        this.revisePriceFrameBtn();
+                    }
+                },
+
+                // 房价列表请求
+                queryHousePriceList() {
+                    let that = this;
+                    console.log(this.currentHomeStayID);
+                    $.ajax({
+                        url: queryHousePriceListURL,
+                        data: {
+                            id: this.currentHomeStayID,
+                            datatype: 3
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success(res) {
+                            let tempDataArr = res.data.data;
+                            let tempArr = [];
+                            let tempWeekArr = [];
+                            // console.log(res.data.data.length);
+                            if (res.code == 200) {
+                                if (res.data.data.length != 0) {
+                                    for (let i = 0; i < tempDataArr.length; i++) {
+                                        let tempObj = {};
+                                        // that.reviseStateCurrNameArr.push(tempDataArr[i].house_name);
+                                        // that.reviseStateCurrIDArr.push(tempDataArr[i].house_id);
+                                        tempObj.house_id = tempDataArr[i].house_id;
+                                        tempObj.house_name = tempDataArr[i].house_name;
+                                        for (let j = 0; j < tempDataArr[i].name.length; j++) {
+                                            tempObj[tempDataArr[i].name[j].data] = tempDataArr[i].name[j].price;
+                                            tempObj.homestay_id = tempDataArr[i].name[j].homestay_id;
+                                            tempObj.id = tempDataArr[i].name[j].id;
+                                            tempObj.week = tempDataArr[i].name[j].week;
+                                        }
+                                        tempArr.push(tempObj);
+                                    }
+                                    for (let i = 0; i < tempDataArr[0].name.length; i++) {
+                                        tempWeekArr.push(tempDataArr[0].name[i].data);
+                                    }
+                                    that.housePriceTabWeek = tempWeekArr;
+                                    that.housePriceTabData = tempArr;
+                                    that.startHousePricedate = res.data.frontdata;
+                                    that.endHousePricedate = res.data.afterdata;
+                                } else {
+                                    // that.reviseStateCurrNameArr = [];
+                                    // that.reviseStateCurrIDArr = [];
+                                    that.housePriceTabWeek = [];
+                                    that.housePriceTabData = [];
+                                    that.startHousePricedate = '';
+                                    that.endHousePricedate = '';
+                                }
+                            }
+                        }
+                    })
+                },
+                // 单个房价修改
+                setOnePrice(id, price, data) {
+                    console.log()
+                    let that = this;
+                    $.ajax({
+                        url: setOnePriceURL,
+                        data: {
+                            id,
+                            data,
+                            price
+                        },
+                        type: 'POST',
+                        datatype: 'json',
+                        success(res) {
+                            console.log(res);
+                            if (res.code == 200) {
+
+                            } else {
+                                // that.failTip(res.msg);
+                            }
+                        }
+                    })
+                },
+                // 批量修改房价按钮
+                revisePriceFrameBtn() {
+                    this.revisePriceFrame = !this.revisePriceFrame
+                },
+                // 取消修改房量按钮
+                closeReviseAllPriceBox() {
+                    this.revisePriceFrame = false;
+                },
+                // 确认修改方量按钮
+                ReviseAllPriceBtn() {
+                    this.setAllPrice();
+                },
+                // 批量修改房量请求
+                setAllPrice() {
+                    let that = this;
+                    $.ajax({
+                        url: setAllPriceURL,
+                        data: {
+                            house_id: this.revisePriceCurrID,
+                            frontdata: this.revisePriceFrameDate[0],
+                            afterdata: this.revisePriceFrameDate[1],
+                            week: this.checkedCities,
+                            price: this.revisePriceFrameInp
+                        },
+                        type: "POST",
+                        datatype: 'json',
+                        success(res) {
+                            if (res.code == 200) {
+                                that.queryHousePriceList();
+                                that.revisePriceFrame = false;
+                            }
+                        }
+                    })
+                },
+                // 批量房价弹框复选
+                revisePriceCheckAll(val) {
+                    let tempArr = [];
+                    for (let i = 0; i < cityOptions.length; i++) {
+                        tempArr.push(cityOptions[i].label)
+                    }
+                    this.checkedCities = val ? tempArr : [];
+                    this.isIndeterminate = false;
+                },
+                // 批量房价弹框复选全选
+                revisePriceCheckedCitiesChange(value) {
+                    let checkedCount = value.length;
+                    this.checkAll = checkedCount === this.cities.length;
+                    this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
+                },
+
+                // ----------------------- 房态房量 ------------------------
                 // 房态弹出框
                 reviseStateFrameClick() {
                     this.reviseStateFrame = !this.reviseStateFrame;
@@ -1769,40 +2286,399 @@
                     this.reviseNumFrame = false;
                 },
 
-                // roomStateOpen() {
-                //     this.reviseStateFrame = false;
-                // },
-                // roomNumOpen() {
-                //     this.reviseNumFrame = false;
-                // },
-                // roomStateClose() {
-                //     this.reviseStateFrame = false;
-                // },
-                // roomNumClose() {
-                //     this.reviseNumFrame = false;
-                // },
-
-
-                // 房价列表请求
-                queryHousePriceList() {
+                roomStateOpen() {
+                    // this.reviseStateFrame = false;
+                    this.setReviseStateAll();
+                },
+                roomStateClose() {
+                    this.reviseStateFrame = false;
+                },
+                stateOpenHouseBtn(){
+                    this.stateOpenHouse = 2;
+                },
+                stateCloseHouseBtn(){
+                    this.stateOpenHouse = 1;
+                },
+                //房态批量修改请求
+                setReviseStateAll(){
                     let that = this;
                     $.ajax({
-                        url: queryHousePriceListURL,
-                        data: {
-                            id: this.currentHomeStayID
+                        url: setReviseStateAllUrl,
+                        data:{
+                            house_id: this.checkedStateHousenameList,
+                            frontdata: this.roomStateValue[0],
+                            afterdata: this.roomStateValue[1],
+                            status: this.stateOpenHouse,
+                            week: this.checkedCitiesState
                         },
                         type: 'POST',
                         dataType: 'json',
-                        success(res) {
-                            console.log(res.data.data);
-                            if (res.code == 200) {
-                                that.housePriceTabData = res.data.data;
-                                that.startHousePricedate = res.data.frontdata;
-                                that.endHousePricedate = res.data.afterdata;
+                        success(res){
+                            if(res.code == 200){
+                                that.reviseStateFrame = false; 
+                                that.queryHouseStateList();
                             }
                         }
                     })
                 },
+                roomNumOpen() {
+                    // this.reviseNumFrame = false;
+                    this.setReviseNumAll();
+                },
+                roomNumClose() {
+                    this.reviseNumFrame = false;
+                },
+                // 房量批量修改请求
+                setReviseNumAll(){
+                    let tempArr = [];
+                    for(let i = 0; i < this.currentCheckedNumHousenameInput.length; i++){
+                        let tempObj = {};
+                        if(this.checkedNumHousenameInput[this.currentCheckedNumHousenameInput[i]] && this.checkedStateHousenameList[this.currentCheckedNumHousenameInput[i]]){
+                            tempObj.house_id = this.checkedStateHousenameList[this.currentCheckedNumHousenameInput[i]];
+                            tempObj.house_num = this.checkedNumHousenameInput[this.currentCheckedNumHousenameInput[i]];
+                            tempArr.push(tempObj);
+                        }
+                        
+                    }
+                    let that = this;
+                    $.ajax({
+                        url: setReviseNumAllUrl,
+                        data:{
+                            house: tempArr,
+                            frontdata: this.roomNumValue[0],
+                            afterdata: this.roomNumValue[1],
+                            week: this.checkedCitiesNum
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success(res){
+                            console.log(res)
+                            if(res.code == 200){
+                                that.reviseNumFrame = false; 
+                                that.queryHouseStateList();
+                            }
+                        }
+                    })
+                },
+                // 房态表格点击
+                stateTabClick(row, column, cell, event) {
+                    // this.reviseOneInput = false;
+                    this.reviseStateCurrName = row['house_name'];
+                    this.reviseStateCurrID = row['house_id'];
+                    this.reviseStateCurrDate = column.property;
+                    this.reviseStateOverNum = row[column.property][1];
+                },
+                // 房态列表请求
+                queryHouseStateList() {
+                    let that = this;
+                    $.ajax({
+                        url: queryHouseStateListURL,
+                        data: {
+                            id: this.currentHomeStayID,
+                            datatype: 3
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success(res) {
+
+                            // console.log(res.data)
+                            let tempDataArr = res.data.data;
+                            let tempArr = [];
+                            let tempWeekArr = [];
+                            // console.log(res.data.data.length);
+                            if (res.code == 200) {
+                                if (res.data.data.length != 0) {
+                                    that.reviseStateCurrNameArr = [];
+                                    that.reviseStateCurrIDArr = [];
+                                    for (let i = 0; i < tempDataArr.length; i++) {
+                                        let tempObj = {};
+                                        that.reviseStateCurrNameArr.push(tempDataArr[i].house_name);
+                                        that.reviseStateCurrIDArr.push(tempDataArr[i].house_id);
+                                        tempObj.house_id = tempDataArr[i].house_id;
+                                        tempObj.house_name = tempDataArr[i].house_name;
+                                        for (let j = 0; j < tempDataArr[i].name.length; j++) {
+                                            let tempObjArr = tempObj[tempDataArr[i].name[j].data] = [];
+                                            tempObjArr.push(tempDataArr[i].name[j].house_num);
+                                            tempObjArr.push(tempDataArr[i].name[j].sold_num);
+                                            tempObjArr.push(tempDataArr[i].name[j].status);
+                                            tempObj.homestay_id = tempDataArr[i].name[j].homestay_id;
+                                            tempObj.status = tempDataArr[i].name[j].status;
+                                            tempObj.week = tempDataArr[i].name[j].week;
+                                        }
+                                        tempArr.push(tempObj);
+                                    }
+                                    for (let i = 0; i < tempDataArr[0].name.length; i++) {
+                                        tempWeekArr.push(tempDataArr[0].name[i].data);
+                                    }
+                                    // console.log(that.reviseStateCurrNameArr)
+                                    // console.log(that.reviseStateCurrIDArr)
+                                    that.houseStateTabWeek = tempWeekArr;
+                                    that.houseStateTabData = tempArr;
+                                    that.startHouseStatedate = res.data.frontdata;
+                                    that.endHouseStatedate = res.data.afterdata;
+                                } else {
+                                    that.reviseStateCurrNameArr = [];
+                                    that.reviseStateCurrIDArr = [];
+                                    that.houseStateTabWeek = [];
+                                    that.houseStateTabData = [];
+                                    that.startHouseStatedate = '';
+                                    that.endHouseStatedate = '';
+                                }
+                            }
+                        }
+                    })
+                },
+                // 房态前七天 
+                deforeStateWeek() {
+                    this.stateDateNum--;
+                    let that = this;
+                    $.ajax({
+                        url: queryHouseStateListURL,
+                        data: {
+                            id: this.currentHomeStayID,
+                            datatype: 2,
+                            data: this.startHouseStatedate
+                        },
+                        type: 'POST',
+                        Frontdata: 'json',
+                        success(res) {
+                            // console.log(res.data)
+                            if (res.code == 200) {
+                                let tempDataArr = res.data.data;
+                                let tempArr = [];
+                                let tempWeekArr = [];
+                                if (res.code == 200) {
+                                        that.reviseStateCurrNameArr = [];
+                                        that.reviseStateCurrIDArr = [];
+                                    for (let i = 0; i < tempDataArr.length; i++) {
+                                        let tempObj = {};
+                                        that.reviseStateCurrNameArr.push(tempDataArr[i].house_name);
+                                        that.reviseStateCurrIDArr.push(tempDataArr[i].house_id);
+                                        tempObj.house_id = tempDataArr[i].house_id;
+                                        tempObj.house_name = tempDataArr[i].house_name;
+
+                                        for (let j = 0; j < tempDataArr[i].name.length; j++) {
+                                            let tempObjArr = tempObj[tempDataArr[i].name[j].data] = [];
+                                            tempObjArr.push(tempDataArr[i].name[j].house_num);
+                                            tempObjArr.push(tempDataArr[i].name[j].sold_num);
+                                            tempObjArr.push(tempDataArr[i].name[j].status);
+                                            tempObj.homestay_id = tempDataArr[i].name[j].homestay_id;
+                                            tempObj.id = tempDataArr[i].name[j].id;
+                                            tempObj.week = tempDataArr[i].name[j].week;
+
+                                        }
+                                        tempArr.push(tempObj);
+                                    }
+                                    for (let i = 0; i < tempDataArr[0].name.length; i++) {
+                                        tempWeekArr.push(tempDataArr[0].name[i].data);
+                                    }
+                                    that.reviseStateCurrNameArr = [];
+                                    that.reviseStateCurrIDArr = [];
+                                    that.houseStateTabWeek = tempWeekArr;
+                                    that.houseStateTabData = tempArr;
+                                    that.startHouseStatedate = res.data.frontdata;
+                                    that.endHouseStatedate = res.data.afterdata;
+                                }
+                            }
+                        }
+                    })
+                },
+                // 房态后七天
+                afterStateWeek() {
+                    this.stateDateNum++;
+                    let that = this;
+                    $.ajax({
+                        url: queryHouseStateListURL,
+                        data: {
+                            id: this.currentHomeStayID,
+                            datatype: 1,
+                            data: this.endHouseStatedate
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success(res) {
+                            if (res.code == 200) {
+                                if (res.data.data.length != 0) {
+                                    let tempDataArr = res.data.data;
+                                    let tempArr = [];
+                                    let tempWeekArr = [];
+                                    that.reviseStateCurrNameArr = [];
+                                    that.reviseStateCurrIDArr = [];
+                                    for (let i = 0; i < tempDataArr.length; i++) {
+                                        let tempObj = {};
+                                        that.reviseStateCurrNameArr.push(tempDataArr[i].house_name);
+                                        that.reviseStateCurrIDArr.push(tempDataArr[i].house_id);
+                                        tempObj.house_id = tempDataArr[i].house_id;
+                                        tempObj.house_name = tempDataArr[i].house_name;
+
+                                        for (let j = 0; j < tempDataArr[i].name.length; j++) {
+                                            let tempObjArr = tempObj[tempDataArr[i].name[j].data] = [];
+                                            tempObjArr.push(tempDataArr[i].name[j].house_num);
+                                            tempObjArr.push(tempDataArr[i].name[j].sold_num);
+                                            tempObjArr.push(tempDataArr[i].name[j].status);
+                                            tempObj.homestay_id = tempDataArr[i].name[j].homestay_id;
+                                            tempObj.status = tempDataArr[i].name[j].status;
+                                            tempObj.week = tempDataArr[i].name[j].week;
+                                        }
+                                        tempArr.push(tempObj);
+                                    }
+                                    for (let i = 0; i < tempDataArr[0].name.length; i++) {
+                                        tempWeekArr.push(tempDataArr[0].name[i].data);
+                                    }
+                                    that.houseStateTabWeek = tempWeekArr;
+                                    that.houseStateTabData = tempArr;
+                                    that.startHouseStatedate = res.data.frontdata;
+                                    that.endHouseStatedate = res.data.afterdata;
+                                } else {
+                                    that.reviseStateCurrNameArr = [];
+                                    that.reviseStateCurrIDArr = [];
+                                    that.housePriceTabWeek = [];
+                                    that.housePriceTabData = [];
+                                    that.startHousePricedate = '';
+                                    that.endHousePricedate = '';
+                                }
+
+                            }
+                        }
+                    })
+                },
+                // 修改房量弹出框
+                stateNumbtn() {
+                    this.stateNumFlag = !this.stateNumFlag;
+                },
+                // 可售转关房
+                stateOpenBtn() {
+                    this.stateOpenFlag = !this.stateOpenFlag;
+                },
+                // 关房转开启
+                stateCloseBtn() {
+                    this.stateCloseFlag = !this.stateCloseFlag;
+                },
+                // 修改某天弹框取消
+                closeReviseStateNumBox() {
+                    this.stateNumFlag = false;
+                },
+                // 修改某天弹框确认
+                ReviseStateNumBtn() {
+                    this.setReviseStateNum();
+                },
+                // 修改某天房量请求
+                setReviseStateNum() {
+                    // console.log(this.reviseStateCurrID)
+                    // console.log(this.reviseStateOverNum)
+                    // console.log(this.ReviseStateNum)
+
+                    if (this.reviseStateOverNum > this.ReviseStateNum * 1) {
+                        this.failTip("修改房量应不能小于已售房量")
+                    } else {
+                        let that = this;
+                        $.ajax({
+                            url: setReviseStateNumURL,
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {
+                                id: this.reviseStateCurrID,
+                                data: this.reviseStateCurrDate,
+                                house_num: this.ReviseStateNum
+                            },
+                            success(res) {
+                                if (res.code == 200) {
+                                    that.queryHouseStateList();
+                                    that.stateNumFlag = false;
+                                }
+                            }
+                        })
+                    }
+                },
+                // 可售转关房确认
+                ReviseStateOpenBtn() {
+                    this.setReviseStateOpen();
+                },
+                // 可售转关房取消
+                closeReviseStateOpenBox() {
+                    this.stateOpenFlag = false;
+                },
+                // 可售转关房请求
+                setReviseStateOpen() {
+                    let that = this;
+                    $.ajax({
+                        url: setReviseStateOpenURL,
+                        data: {
+                            id: this.reviseStateCurrID,
+                            data: this.reviseStateCurrDate
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success(res) {
+                            // console.log(res);
+                            if (res.code == 200) {
+                                that.queryHouseStateList();
+                                that.stateOpenFlag = false;
+                            }
+                        }
+                    })
+                },
+                // 关房转开启确认
+                ReviseStateCloseBtn() {
+                    this.setReviseStateClose();
+                },
+                // 关房转开启取消
+                closeReviseStateCloseBox() {
+                    this.stateCloseFlag = false;
+                },
+                // 关房转开启请求
+                setReviseStateClose() {
+                    let that = this;
+                    $.ajax({
+                        url: setReviseStateCloseURL,
+                        data: {
+                            id: this.reviseStateCurrID,
+                            data: this.reviseStateCurrDate,
+                            house_num: this.ReviseStateCloseNum
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success(res) {
+                            // console.log(res);
+                            if (res.code == 200) {
+                                that.queryHouseStateList();
+                                that.stateCloseFlag = false;
+                            }
+                        }
+
+                    })
+                },
+
+                // 批量修改房态复选
+                reviseHouseStateCheckAllChange(val) {
+                    let tempArr = [];
+                    for (let i = 0; i < cityOptionsState.length; i++) {
+                        tempArr.push(cityOptionsState[i].label)
+                    }
+                    this.checkedCitiesState = val ? tempArr : [];
+                    this.isIndeterminateState = false;
+                },
+                reviseHouseStateCheckedCitiesChange(value) {
+                    let checkedCount = value.length;
+                    this.checkAllState = checkedCount === this.citiesState.length;
+                    this.isIndeterminateState = checkedCount > 0 && checkedCount < this.citiesState.length;
+                },
+                // 批量修改房量复选
+                reviseHouseNumCheckAllChange(val) {
+                    let tempArr = [];
+                    for (let i = 0; i < cityOptionsNum.length; i++) {
+                        tempArr.push(cityOptionsNum[i].label)
+                    }
+                    this.checkedCitiesNum = val ? tempArr : [];
+                    this.isIndeterminateNum = false;
+                },
+                reviseHouseNumCheckedCitiesChange(value) {
+                    let checkedCount = value.length;
+                    this.checkAllNum = checkedCount === this.citiesNum.length;
+                    this.isIndeterminateNum = checkedCount > 0 && checkedCount < this.citiesNum.length;
+                },
+
+
 
 
                 // 成功tip
@@ -1820,10 +2696,16 @@
                     });
                 },
 
-
             },
             watch: {
-                currentHomeStayID(){
+                revisePriceFrame() {
+                    if (!this.revisePriceFrame) {
+                        this.revisePriceFrameDate = [];
+                        this.checkedCities = [];
+                        this.revisePriceFrameInp = 0;
+                    }
+                },
+                currentHomeStayID() {
                     this.currentPage = 1;
                     this.HouseTypeList();
                 },
@@ -1917,10 +2799,11 @@
                     if (this.addHouseDeposit * 1 == 0) {
                         this.addHouseDeposit_money = '';
                         this.addHouseDeposit = 0;
-                    } else if (this.addHouseDeposit * 1 != 0 && this.currentAddbox == false) {
-                        this.addHouseDeposit_money = this.addHouseDeposit;
-                        this.addHouseDeposit = 2;
                     }
+                    // else if (this.addHouseDeposit * 1 != 0 && this.currentAddbox == false) {
+                    //     this.addHouseDeposit = this.addHouseDeposit_money
+                    //     // this.addHouseDeposit = 2;
+                    // }
                 },
                 addHouseExtra_bed() {
                     if (this.addHouseExtra_bed * 1 == 1 || this.addHouseExtra_bed * 1 == 2) {
@@ -1929,8 +2812,8 @@
                         this.addHouseExtra_bed = 3;
                     }
                 },
-                addHouseExtra_bed_money(){
-                    if(this.addHouseExtra_bed_money != 0){
+                addHouseExtra_bed_money() {
+                    if (this.addHouseExtra_bed_money != 0) {
                         this.addHouseExtra_bed = 3;
                     }
                 },
@@ -1944,7 +2827,99 @@
                         this.addHouseOut_time = 2;
                     }
                 },
-
+                priceDateNum() {
+                    if (this.priceDateNum <= 0) {
+                        this.priceAfterDateFlag = false;
+                        this.priceDateNum = 0;
+                    } else if (this.priceDateNum >= 8) {
+                        this.priceNextDateFlag = false;
+                        this.priceDateNum = 8;
+                    } else if (this.priceDateNum > 0 && this.priceDateNum < 9) {
+                        this.priceAfterDateFlag = true;
+                        this.priceNextDateFlag = true;
+                    }
+                },
+                stateDateNum() {
+                    if (this.stateDateNum <= 0) {
+                        this.stateAfterDateFlag = false;
+                        this.stateDateNum = 0;
+                    } else if (this.stateDateNum >= 8) {
+                        this.stateNextDateFlag = false;
+                        this.stateDateNum = 8;
+                    } else if (this.stateDateNum > 0 && this.stateDateNum < 9) {
+                        this.stateAfterDateFlag = true;
+                        this.stateNextDateFlag = true;
+                    }
+                },
+                currentRevisePrice() {
+                    let reg = /^[0-9]+$/;
+                    if (this.currentRevisePrice != '') {
+                        if (!reg.test(this.currentRevisePrice * 1)) {
+                            this.currentRevisePrice = '';
+                            this.failTip("请输入数字")
+                        }
+                    }
+                },
+                ReviseStateNum() {
+                    let reg = /^[0-9]+$/;
+                    if (this.ReviseStateNum != '') {
+                        if (!reg.test(this.ReviseStateNum * 1)) {
+                            this.ReviseStateNum = '';
+                            this.failTip("请输入数字")
+                        }
+                    }
+                    if (this.reviseStateOverNum > this.ReviseStateNum) {
+                        this.failTip("修改房量应不能小于已售房量")
+                    }
+                },
+                stateNumFlag() {
+                    if (this.stateNumFlag == false) {
+                        this.ReviseStateNum = 0;
+                    }
+                },
+                ReviseStateCloseNum() {
+                    let reg = /^[0-9]+$/;
+                    if (this.ReviseStateCloseNum != '') {
+                        if (!reg.test(this.ReviseStateCloseNum * 1)) {
+                            this.ReviseStateCloseNum = '';
+                            this.failTip("请输入数字")
+                        }
+                    }
+                },
+                stateCloseFlag() {
+                    if (this.stateCloseFlag == false) {
+                        this.ReviseStateCloseNum = 0;
+                    }
+                },
+                reviseStateFrame(){
+                    if(this.reviseStateFrame == false){
+                        // this.reviseStateCurrNameArr = [];
+                        // this.reviseStateCurrIDArr = [];
+                        this.stateOpenHouse = '';
+                        this.checkedCitiesState = [];
+                        this.roomStateValue = [];
+                    }
+                },
+                checkedStateHousenameList(){
+                    // console.log(this.checkedStateHousenameList);
+                    let tempArr = [];
+                    for(let i = 0;i < this.checkedStateHousenameList.length; i++){
+                        for(let j = 0; j < this.reviseStateCurrIDArr.length;j++){
+                            if(this.reviseStateCurrIDArr[j] == this.checkedStateHousenameList[i]){
+                                tempArr.push(j);
+                            }
+                        }
+                    }
+                    // console.log(tempArr);
+                    this.currentCheckedNumHousenameInput = tempArr;
+                },
+                reviseNumFrame(){
+                    if(this.reviseNumFrame == false){
+                        this.checkedCitiesNum = [];
+                        this.roomNumValue = [];
+                        this.checkedStateHousenameList = [];
+                    }
+                }
 
 
             },

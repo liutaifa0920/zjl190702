@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- <link rel="stylesheet" href="addHomeStay.css">
+    <link rel="stylesheet" href="index.css"> -->
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <style>
+        #workerTab{
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: #f0f2f5;
+        }
+        body, p, h2, h3, h4, h5{
+            margin: 0;
+            padding: 0;
+        }
+        ul, li{
+            list-style: none;
+        }
+        .workerTab-top{
+            padding: 8px;
+            background-color: white;
+            width: 60%;
+            position: relative;
+        }
+        .workerTab-top-title{
+            margin: 0;
+            font-size: 1vw;
+        }
+        .workerTab-top-title-sp{
+            position: absolute;
+            right: 15px;
+        }
+    </style>
+    <title>工作台</title>
+</head>
+
+<body>
+    <div id="workerTab">
+        <div class="workerTab-top">
+            <h3 class="workerTab-top-title">进行中的项目</h3>
+            <span class="workerTab-top-title-sp">全部项目</span>
+        </div>
+        <div>
+            <ul>
+                <li>
+                    <p>总间夜</p>
+                    <p>12间夜</p>
+                    <span>20分钟前</span>
+                </li>
+                <li>
+                    <p>总金额</p>
+                    <p>456456元</p>
+                    <span>45分钟前</span>
+                </li>
+                <li>
+                    <p>今日入住</p>
+                    <p>9间民宿待入住</p>
+                    <a>前往&nbsp;></a>
+                </li>
+                <li>
+                    <p>今日预订</p>
+                    <p>5间夜</p>
+                    <span></span>
+                </li>
+                <li>
+                    <p>今日收入</p>
+                    <p>9945848元</p>
+                    <span></span>
+                </li>
+                <li>
+                    <p>今日离店</p>
+                    <p>9间</p>
+                    <a>前往&nbsp;></a>
+                </li>
+            </ul>
+        </div>
+
+        <div v-for="item in 5">
+            <h2>新动态</h2>
+            <div>
+                <div>
+                    <img src="../u=276772730,3789231562&fm=27&gp=0.jpg">   
+                </div>
+                <div>
+                    <p>林东东 预订了 民宿名称 丨房型名称    6.23号入住   ＞</p>
+                    <p>06.22  15:36</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: "#workerTab",
+            data: {
+
+            },
+            methods: {
+
+
+            },
+        })
+    </script>
+</body>
+
+</html>
