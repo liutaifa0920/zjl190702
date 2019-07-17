@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <style>
+        .addTipBox {
+            text-align: left;
+            background-color: white;
+            width: 800px;
+            height: 50vh;
+            box-shadow: 0 0 10px #ccc;
+            padding: 15px 80px;
+            border-radius: 10px;
+            box-sizing: border-box;
+            z-index: 50;
+            overflow-y: scroll;
+            position: absolute;
+            top: 230px;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            margin: auto;
+        }
+
+        #hsTipRoot {
+            width: 40vw;
+            border: 1px solid #CCCCCC;
+            border-radius: 8px;
+            padding-bottom: 40px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .contentBox{
+            width: 100%;
+        }
+        .closeAddBox {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        .tipTitle{
+            color: white;
+            border-radius: 4px;
+            background-color: #18bc9c;
+            padding: 8px;
+            margin-top: 0px;
+        }
+
+    </style>
+    <title>Document</title>
+</head>
+
+<body>
+<div id="hsTipRoot">
+
+    <div class="contentBox" v-for="tipitems,i in hsTipTableData">
+        <h2 class="tipTitle">{{tipitems.tag_name}}</h2>
+        <div v-for='tipitem,j in tipitems.house_name' style="margin: 5px 0;">
+                <span
+                        style="display: inline-block;margin-right: 10px;">民宿&nbsp;:&nbsp;{{tipitem.homestay_name}}&nbsp;&nbsp;&nbsp;&nbsp;房型&nbsp;:&nbsp;{{tipitem.house_name}}</span>
+            <el-button type="danger" icon="el-icon-delete" circle size="mini" @click="deleTiphsBtn(i,j)">
+            </el-button>
+        </div>
+        <div style="text-align: center;margin-bottom: 20px;">
+            <el-button v-if="!(tipitems.house_name.length >= 5)" size="small" style="width: 280px;" icon="el-icon-plus" @click="addTipBtn(i)">
+            </el-button>
+        </div>
+    </div>
+
+    <div v-show="addTipBoxFlag" class="addTipBox">
+        <i class="el-icon-close closeAddBox" @click="closeAddBoxBtn"></i>
+        <div v-for="infoItems,i in allTipInfo">
+            <h3>民宿: &nbsp;&nbsp;{{infoItems.homestay_name}}</h3>
+            <el-radio-group v-model="radio">
+                <el-radio v-for="infoItem,j in infoItems.house_name" :label="infoItem.id + ',' + infoItem.name + ',' + infoItems.homestay_name + ',' + infoItems.homestay_id">{{infoItem.name}}</el-radio>
+            </el-radio-group>
+        </div>
+        <!-- {{radio}} -->
+        <div style="text-align: center;margin-top: 30px;">
+            <el-button type="warning" size="mini" @click="closeaddBox">取消</el-button>
+            <el-button type="primary" size="mini" @click="addReviseBtn">确认</el-button>
+        </div>
+    </div>
+    <!-- <div style="text-align: center;margin-top: 20px;">
+        <el-pagination
+            @size-change="hsTipSizeChange"
+            @current-change="hsTipCurrentChange"
+            :current-page="hsTipcurrentPage"
+            :page-sizes="[15, 30, 50, 100]"
+            :page-size="15"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="400">
+        </el-pagination>
+    </div> -->
+
+
+</div>
+
+<script>
+    const queryHSTipListURL = 'https://api.sdzhujialin.com/admin/Housetag/IndexData';
+    const queryReviseTipURL = 'https://api.sdzhujialin.com/admin/Housetag/house';
+    const setReviseTipURL = 'https://api.sdzhujialin.com/admin/Housetag/AddTag';
+    const setDeleTipURL = 'https://api.sdzhujialin.com/admin/Housetag/DelTag';
+    new Vue({
+        el: '#hsTipRoot',
+        data: {
+            hsTipTableData: [],
+            // // 当前页
+            // hsTipcurrentPage: 1,
+            // // pageSize
+            // hsTipcurrentSize: 15,
+            // // 总条数
+            // hsTipcurrentTotal: 0,
+
+            // 当前标签ID
+            hsTipcurrentTipID: '',
+            // 当前民宿ID
+            hsTipcurrentHSID: '',
+            // 当前房型ID
+            hsTipcurrentHTID: '',
+            // 当前民宿name
+            hsTipcurrentHSName: '',
+            // 当前房型name
+            hsTipcurrentHTName: '',
+            // 弹框reviseTipFlag
+            addTipBoxFlag: false,
+            // 单选默认值
+            radio: '',
+            // 选项数据
+            allTipInfo: [],
+        },
+        mounted() {
+            this.queryHSTipList();
+            this.queryReviseTip();
+        },
+        methods: {
+            hsTipSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+            },
+            hsTipCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+            },
+            // 标签页列表请求
+            queryHSTipList() {
+                let that = this;
+                $.ajax({
+                    url: queryHSTipListURL,
+                    type: 'POST',
+                    dataType: 'json',
+                    success(res) {
+                        // console.log(res);
+                        if (res.code == 200) {
+                            that.hsTipTableData = res.data;
+                        }
+                    }
+                })
+            },
+            // 标签选项请求
+            queryReviseTip(){
+                let that = this;
+                $.ajax({
+                    url: queryReviseTipURL,
+                    type: 'POST',
+                    dataType: 'json',
+                    success(res){
+                        // console.log(res.data);
+                        if(res.code == 200){
+                            that.allTipInfo = res.data;
+                        }
+                    }
+                })
+            },
+            deleTiphsBtn(i, j) {
+                // console.log(this.hsTipTableData[i].house_name[j].id);
+                this.setDeleTip(this.hsTipTableData[i].house_name[j].id);
+            },
+            // 删除请求
+            setDeleTip(id) {
+                let that = this;
+                $.ajax({
+                    url: setDeleTipURL,
+                    data: {
+                        id
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    success(res) {
+                        // console.log(res);
+                        that.queryHSTipList();
+                    }
+                })
+            },
+            // 添加按钮
+            addTipBtn(i) {
+                this.addTipBoxFlag = !this.addTipBoxFlag;
+                this.hsTipcurrentTipID = this.hsTipTableData[i].tag_id
+                // this.hsTipTableData[i].house_name.push([]);
+            },
+            // 弹窗关闭
+            closeAddBoxBtn() {
+                this.addTipBoxFlag = false;
+            },
+            // 弹窗确认按钮
+            addReviseBtn(){
+                this.hsTipcurrentHTID = this.radio.split(',')[0];
+                this.hsTipcurrentHTName = this.radio.split(',')[1];
+                this.hsTipcurrentHSID = this.radio.split(',')[3];
+                this.hsTipcurrentHSName = this.radio.split(',')[2];
+                let that = this;
+                $.ajax({
+                    url: setReviseTipURL,
+                    data:{
+                        tag_id: this.hsTipcurrentTipID,
+                        house_id: this.hsTipcurrentHTID,
+                        house_name: this.hsTipcurrentHTName,
+                        homestay_id: this.hsTipcurrentHSID,
+                        homestay_name: this.hsTipcurrentHSName
+                    },
+                    type: 'POST',
+                    dataType: 'json',
+                    success(res){
+                        // console.log(res);
+                        if(res.code == 200){
+                            that.queryHSTipList();
+                            that.addTipBoxFlag = false;
+                        }
+                    }
+                })
+            },
+            // 弹窗关闭
+            closeaddBox(){
+                this.addTipBoxFlag = false;
+            },
+        },
+        watch: {
+            addTipBoxFlag(){
+                if(!this.addTipBoxFlag){
+                    this.radio = '';
+                }
+            }
+        },
+    })
+</script>
+</body>
+
+</html>

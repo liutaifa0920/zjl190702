@@ -257,23 +257,46 @@
             <h1>{{addBoxTitle}}</h1>
             <div>
                 <h2>基础信息</h2>
-                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " style="width:30%" type="text"
-                    placeholder="民宿名称" v-model="addName" maxlength="10" show-word-limit>
-                </el-input>
-                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="一句话描述"
-                    v-model="addDescriptive" maxlength="20" show-word-limit></el-input>
-                <el-select v-model="addCategory" placeholder="运营类别" class="add-el-select add-sele-width">
-                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                    </el-option>
-                </el-select>
-                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东姓名"
-                    v-model="addHouse_name" show-word-limit></el-input>
-                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="重要提示"
-                    v-model="addTips" maxlength="20" show-word-limit></el-input>
-                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="推荐理由"
-                    v-model="addReason" maxlength="10" show-word-limit></el-input>
-                <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东微信号"
-                    v-model="addHouse_wx" show-word-limit></el-input>
+                <div>
+                    <span style="display: inline-block;width: 120px;text-align: left;">民宿名称</span> 
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " style="width:30%"
+                        type="text" placeholder="民宿名称" v-model="addName" maxlength="10" show-word-limit>
+                    </el-input>
+                </div>
+                <div>
+                    <span style="display: inline-block;width: 120px;text-align: left;">一句话描述</span> 
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                        placeholder="一句话描述" v-model="addDescriptive" maxlength="20" show-word-limit></el-input>
+                </div>
+                <div>
+                    <span style="display: inline-block;width: 120px;text-align: left;">运营类别</span> 
+                    <el-select v-model="addCategory" placeholder="运营类别" class="add-el-select add-sele-width">
+                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                        </el-option>
+                    </el-select>
+                </div>
+                <div>
+                    <span style="display: inline-block;width: 120px;text-align: left;">房东姓名</span> 
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东姓名"
+                        v-model="addHouse_name" show-word-limit></el-input>
+                
+                </div>
+                <div>
+                    <span style="display: inline-block;width: 120px;text-align: left;">重要提示</span> 
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="重要提示"
+                        v-model="addTips" maxlength="20" show-word-limit></el-input>
+                </div>
+                <div>
+                    <span style="display: inline-block;width: 120px;text-align: left;">推荐理由</span> 
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="推荐理由"
+                        v-model="addReason" maxlength="10" show-word-limit></el-input>
+                </div>
+                <div>
+                    <span style="display: inline-block;width: 120px;text-align: left;">房东微信号</span> 
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东微信号"
+                        v-model="addHouse_wx" show-word-limit></el-input>
+                </div>
+                
             </div>
             <div id="homestay-img">
                 <h2>民宿照片<span class="upload-num">{{uploadImgNum}}/20</span></h2>

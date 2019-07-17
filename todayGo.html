@@ -10,9 +10,8 @@
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <style>
-        #todatOutRoot {
+        #todatGoRoot {}
 
-        }
         .search-top {
             padding: 18px;
             display: flex;
@@ -31,15 +30,12 @@
         .el-input__inner {
             
         }
-        .el-input{
-            
-        }
     </style>
-    <title>今日离店</title>
+    <title>今日入住</title>
 </head>
 
 <body>
-    <div id="todatOutRoot">
+    <div id="todatGoRoot">
         <div class="search-top">
             <div>
                 <label for="">订单编号:</label>
@@ -47,15 +43,14 @@
                 <label for="">入住人姓名:</label>
                 <el-input style="width: 8vw;" v-model="orderName" placeholder="请输入内容"></el-input>
                 <label for="">民宿名称:</label>
-                <el-select style="width: 190px !important;" v-model="orderHomeStayName" placeholder="请选择" @change='homestayChange'>
+                <el-select style="width: 190px !important;" v-model="orderHomeStayName" @change='homestayChange' placeholder="请选择">
                     <el-option style="width: 190px !important;" v-for="item in currentHomeStay" :key="item.value" :label="item.label"
                         :value="item.value">
                     </el-option>
                 </el-select>
                 <label for="">房型名称:</label>
                 <el-select v-model="orderHouseTypeName" placeholder="请选择">
-                    <el-option v-for="item in currentHouseTP" :key="item.value" :label="item.label"
-                        :value="item.value">
+                    <el-option v-for="item in currentHouseTP" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                 </el-select>
                 <label for="">状态:</label>
@@ -66,12 +61,12 @@
                 </el-select>
             </div>
             <div>
-                <el-button type="primary" size="small" @click='querySearchTodayOut'>查&nbsp;询</el-button>
-                <el-button type="info" size="small" @click="clearSearchTodayOut">重&nbsp;置</el-button>
+                <el-button type="primary" size="small" @click='querySearchTodayGo'>查&nbsp;询</el-button>
+                <el-button type="info" size="small" @click="clearSearchTodayGo">重&nbsp;置</el-button>
             </div>
         </div>
         <div class="todayList-box">
-            <el-table :data="todayOutTableData" style="width: 100%" @cell-click='todayOutTabClick'>
+            <el-table :data="todayGoTableData" style="width: 100%" @cell-click='todayGoTabClick'>
                 <el-table-column prop="order_sn" label="订单编号">
                 </el-table-column>
                 <el-table-column prop="homestay_name" label="民宿名称">
@@ -80,66 +75,66 @@
                 </el-table-column>
                 <el-table-column prop="phone" label="联系人手机">
                 </el-table-column>
-                <el-table-column prop="check_in" label="入住时间">
+                <el-table-column prop="leave_time" label="离店时间">
                 </el-table-column>
                 <el-table-column prop="user_name" label="入住人姓名">
                 </el-table-column>
                 <el-table-column prop="order_status" label="操作">
                     <template scope="scope">
-                        <span style="cursor: pointer;" v-show="scope.row.order_status == '办理离店'" href="#"
-                            @click="toOutTodayOutBtn">办理离店</span>
-                        <span v-show="scope.row.order_status == '已离店'">已离店</span>
+                        <span style="cursor: pointer;" v-show="scope.row.order_status == '等待入住'" href="#"
+                            @click="toGoTodayGoBtn">等待入住</span>
+                        <span v-show="scope.row.order_status == '已入住'">已入住</span>
                     </template>
                 </el-table-column>
             </el-table>
         </div>
         <div class="footerPages">
-            <el-pagination @size-change="todayOutSizeChange" @current-change="todayOutCurrentChange"
-                :current-page="todayOutcurrentPage" :page-sizes="[8, 20, 50, 100]" :page-size="todayOutSize"
-                layout="total, sizes, prev, pager, next, jumper" :total="todayOuttotal">
+            <el-pagination @size-change="todayGoSizeChange" @current-change="todayGoCurrentChange"
+                :current-page="todayGocurrentPage" :page-sizes="[8, 20, 50, 100]" :page-size="todayGoSize"
+                layout="total, sizes, prev, pager, next, jumper" :total="todayGototal">
             </el-pagination>
         </div>
     </div>
 
     <script>
 
-        const listUrl = 'https://api.sdzhujialin.com/admin/Houseorder/IndexLeave';
+        const listUrl = 'https://api.sdzhujialin.com/admin/Houseorder/IndexData';
         const homeStayURL = 'https://api.sdzhujialin.com/admin/Houseorder/homestay';
         const HouseURL = 'https://api.sdzhujialin.com/admin/Houseorder/house';
         const homeStayHouseURL = 'https://api.sdzhujialin.com/admin/Housetag/house';
-        const toOutTodayOutUrl = 'https://api.sdzhujialin.com/admin/Houseorder/IndexLeaveval';
+        const toGoTodayGoUrl = 'https://api.sdzhujialin.com/admin/Houseorder/IndexDataval';
         new Vue({
-            el: '#todatOutRoot',
+            el: '#todatGoRoot',
             data: {
                 // 订单编号inp
                 orderNum: '',
                 // 入住人姓名
                 orderName: '',
                 // 民宿名称
-                orderHomeStayName: '',
+                orderHomeStayName: [],
                 // 房型名称
-                orderHouseTypeName: '',
+                orderHouseTypeName: [],
                 // 状态
                 orderStatus: '',
                 // 状态选项
                 orderStatusOptions: [
                     {
-                        value: 4,
-                        label: "已离店"
+                        value: 3,
+                        label: "已入住"
                     },
                     {
-                        value: 3,
-                        label: "未离店"
+                        value: 2,
+                        label: "未入住"
                     },
                 ],
                 // 列表假数据
-                todayOutTableData: [],
+                todayGoTableData: [],
                 // 分页当前页数
-                todayOutcurrentPage: 1,
-                todayOutSize: 8,
-                todayOuttotal: 0,
+                todayGocurrentPage: 1,
+                todayGoSize: 8,
+                todayGototal: 0,
                 // 点击表格订单ID
-                todayOutTableSNID: '',
+                todayGoTableSNID: '',
                 // 联动总信息
                 currentHomeStayHouseTP: [],
                 // 联动民宿
@@ -162,7 +157,7 @@
                 searchHouseID: '',
             },
             mounted() {
-                this.queryTodayOutList();
+                this.queryTodayGoList();
                 this.queryhomeStayHouse();
             },
             methods: {
@@ -219,45 +214,43 @@
                         }
                     })
                 },
-                todayOutSizeChange(val) {
-                    this.todayOutSize = val;
-                    this.queryTodayOutList();
+                todayGoSizeChange(val) {
+                    this.todayGoSize = val;
+                    this.queryTodayGoList();
                 },
-                todayOutCurrentChange(val) {
-                    this.todayOutcurrentPage = val;
-                    this.queryTodayOutList();
+                todayGoCurrentChange(val) {
+                    this.todayGocurrentPage = val;
+                    this.queryTodayGoList();
                 },
-                // 今日离店列表
-                queryTodayOutList() {
+                // 今日入住列表
+                queryTodayGoList() {
                     let that = this;
                     $.ajax({
                         url: listUrl,
                         data: {
-                            size: this.todayOutSize,
-                            order: this.todayOutcurrentPage,
+                            size: this.todayGoSize,
+                            order: this.todayGocurrentPage,
                             type: 1
                         },
                         type: 'POST',
                         dataType: 'json',
                         success(res) {
-                            // console.log(res);
                             if (res.code == 200) {
                                 res.data.data.map((e, i) => {
-                                    if (e.order_status == 3) {
-                                        return e.order_status = '办理离店';
-                                    } else if (e.order_status == 4) {
-                                        return e.order_status = '已离店';
+                                    if (e.order_status == 2) {
+                                        return e.order_status = '等待入住';
+                                    } else if (e.order_status == 3) {
+                                        return e.order_status = '已入住';
                                     }
                                 })
-                                that.todayOuttotal = res.data.total;
-                                that.todayOutTableData = res.data.data;
+                                that.todayGototal = res.data.total;
+                                that.todayGoTableData = res.data.data;
                             }
                         }
                     })
                 },
-                // 今日离店查询btn
-                querySearchTodayOut() {
-                    console.log(this.orderStatus);
+                // 今日入住查询btn
+                querySearchTodayGo() {
                     let that = this;
                     $.ajax({
                         url: listUrl,
@@ -273,59 +266,59 @@
                         success(res) {
                             if (res.code == 200) {
                                 res.data.data.map((e, i) => {
-                                    if (e.order_status == 3) {
-                                        return e.order_status = '办理离店';
-                                    } else if (e.order_status == 4) {
-                                        return e.order_status = '已离店';
+                                    if (e.order_status == 2) {
+                                        return e.order_status = '等待入住';
+                                    } else if (e.order_status == 3) {
+                                        return e.order_status = '已入住';
                                     }
                                 })
-                                that.todayOuttotal = res.data.total;
-                                that.todayOutTableData = res.data.data;
+                                that.todayGototal = res.data.total;
+                                that.todayGoTableData = res.data.data;
                                 // that.queryTodayAllList();
                             }
                         }
                     })
                 },
                 // 列表办理入住点击
-                todayOutTabClick(row, column, cell, event) {
-                    this.todayOutTableSNID = row.order_id;
+                todayGoTabClick(row, column, cell, event) {
+                    this.todayGoTableSNID = row.order_id;
                     this.roworder_id = row.order_id;
                     this.rowuser_id = row.user_id;
                     this.roworder_sn = row.order_sn;
                     this.rowprice = row.price;
-                    if (e.order_status == '办理离店') {
+                    if (e.order_status == '等待入住') {
+                        return e.order_status = 2;
+                    } else if (e.order_status == '已入住') {
                         return e.order_status = 3;
-                    } else if (e.order_status == '已离店') {
-                        return e.order_status = 4;
                     }
                     this.roworder_status = row.order_status;
                 },
-                toOutTodayOutBtn() {
+                toGoTodayGoBtn() {
                     let that = this;
-                    setTimeout(() => {
+                    setTimeGo(() => {
                         $.ajax({
-                            url: toOutTodayOutUrl,
+                            url: toGoTodayGoUrl,
                             data: {
-                                order_id: this.todayOutTableSNID
+                                order_id: this.todayGoTableSNID
                             },
                             type: 'POST',
                             dataType: 'json',
                             success(res) {
                                 if (res.code == 200) {
-                                    that.queryTodayOutList();
+                                    that.queryTodayGoList();
                                 }
                             }
                         })
                     }, 60);
                 },
                 // 清空
-                clearSearchTodayOut() {
+                clearSearchTodayGo() {
                     this.orderNum = '';
                     this.orderName = '';
                     this.orderHomeStayName = '';
                     this.orderHouseTypeName = '';
                     this.orderStatus = '';
-                    this.queryTodayOutList();
+                    this.queryTodayGoList();
                 },
                 // 成功tip
                 successTip(msg) {
