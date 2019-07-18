@@ -178,6 +178,8 @@
                                     that.currentHomeStay.push(tempObj);
                                 }
                                 // console.log(that.currentHomeStay)
+                            } else {
+                                that.failTip(res.msg);
                             }
                         }
                     })
@@ -245,6 +247,8 @@
                                 })
                                 that.todayGototal = res.data.total;
                                 that.todayGoTableData = res.data.data;
+                            } else {
+                                that.failTip(res.msg);
                             }
                         }
                     })
@@ -275,6 +279,8 @@
                                 that.todayGototal = res.data.total;
                                 that.todayGoTableData = res.data.data;
                                 // that.queryTodayAllList();
+                            } else {
+                                that.failTip(res.msg);
                             }
                         }
                     })
@@ -306,6 +312,8 @@
                             success(res) {
                                 if (res.code == 200) {
                                     that.queryTodayGoList();
+                                } else {
+                                    that.failTip(res.msg);
                                 }
                             }
                         })

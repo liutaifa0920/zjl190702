@@ -258,45 +258,45 @@
             <div>
                 <h2>基础信息</h2>
                 <div>
-                    <span style="display: inline-block;width: 120px;text-align: left;">民宿名称</span> 
+                    <span style="display: inline-block;width: 120px;text-align: left;">民宿名称</span>
                     <el-input class="add-el-input add-el-input--suffix add-el-input__inner " style="width:30%"
                         type="text" placeholder="民宿名称" v-model="addName" maxlength="10" show-word-limit>
                     </el-input>
                 </div>
                 <div>
-                    <span style="display: inline-block;width: 120px;text-align: left;">一句话描述</span> 
+                    <span style="display: inline-block;width: 120px;text-align: left;">一句话描述</span>
                     <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
                         placeholder="一句话描述" v-model="addDescriptive" maxlength="20" show-word-limit></el-input>
                 </div>
                 <div>
-                    <span style="display: inline-block;width: 120px;text-align: left;">运营类别</span> 
+                    <span style="display: inline-block;width: 120px;text-align: left;">运营类别</span>
                     <el-select v-model="addCategory" placeholder="运营类别" class="add-el-select add-sele-width">
                         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                         </el-option>
                     </el-select>
                 </div>
                 <div>
-                    <span style="display: inline-block;width: 120px;text-align: left;">房东姓名</span> 
-                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东姓名"
-                        v-model="addHouse_name" show-word-limit></el-input>
-                
+                    <span style="display: inline-block;width: 120px;text-align: left;">房东姓名</span>
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                        placeholder="房东姓名" v-model="addHouse_name" show-word-limit></el-input>
+
                 </div>
                 <div>
-                    <span style="display: inline-block;width: 120px;text-align: left;">重要提示</span> 
-                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="重要提示"
-                        v-model="addTips" maxlength="20" show-word-limit></el-input>
+                    <span style="display: inline-block;width: 120px;text-align: left;">重要提示</span>
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                        placeholder="重要提示" v-model="addTips" maxlength="20" show-word-limit></el-input>
                 </div>
                 <div>
-                    <span style="display: inline-block;width: 120px;text-align: left;">推荐理由</span> 
-                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="推荐理由"
-                        v-model="addReason" maxlength="10" show-word-limit></el-input>
+                    <span style="display: inline-block;width: 120px;text-align: left;">推荐理由</span>
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                        placeholder="推荐理由" v-model="addReason" maxlength="10" show-word-limit></el-input>
                 </div>
                 <div>
-                    <span style="display: inline-block;width: 120px;text-align: left;">房东微信号</span> 
-                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text" placeholder="房东微信号"
-                        v-model="addHouse_wx" show-word-limit></el-input>
+                    <span style="display: inline-block;width: 120px;text-align: left;">房东微信号</span>
+                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                        placeholder="房东微信号" v-model="addHouse_wx" show-word-limit></el-input>
                 </div>
-                
+
             </div>
             <div id="homestay-img">
                 <h2>民宿照片<span class="upload-num">{{uploadImgNum}}/20</span></h2>
@@ -675,6 +675,8 @@
                         success(res) {
                             if (res.code == 200) {
                                 that.checkList = res.data;
+                            } else {
+                                that.failTip(res.msg);
                             }
                         }
                     })
@@ -733,9 +735,7 @@
                             success(res) {
                                 if (res.code == 200) {
                                     that.queryImg(res.data);
-                                } else if (res.code == 201) {
-                                    that.failTip(res.msg);
-                                } else if (res.code == 300) {
+                                } else {
                                     that.failTip(res.msg);
                                 }
                             }
@@ -765,9 +765,7 @@
                                 that.successTip(res.msg);
                                 that.addFlag = false;
                                 that.queryHomestayList();
-                            } else if (res.code == 201) {
-                                that.failTip(res.msg);
-                            } else if (res.code == 302) {
+                            } else {
                                 that.failTip(res.msg);
                             }
                         }
@@ -785,69 +783,72 @@
                         dataType: "json",
                         success(res) {
                             // console.log(res);
-                            if (that.addBoxShow == false) {
-                                that.addFlag = true;
-                            } else {
-                                that.addFlag = !that.addFlag;
-                            }
+                            if (res.code == 200) {
+                                if (that.addBoxShow == false) {
+                                    that.addFlag = true;
+                                } else {
+                                    that.addFlag = !that.addFlag;
+                                }
 
 
-                            that.checkList = res.data.title;
-                            that.addName = res.data.data.name;
-                            that.addDescriptive = res.data.data.descriptive;
-                            that.addCategory = res.data.data.category == 0 ? '自营' : '民居';
-                            that.addHouse_name = res.data.data.house_name;
-                            that.addTips = res.data.data.tips;
-                            // 推荐理由
-                            that.addReason = res.data.data.reason;
-                            // 房主微信
-                            that.addHouse_wx = res.data.data.house_wx;
-                            // 无线
-                            that.addWifi = res.data.data.wifi.toString();
-                            // 有线网络服务
-                            that.addCable_network = res.data.data.cable_network.toString();
-                            // 停车服务
-                            that.addParking = res.data.data.parking.toString();
-                            // 服务信息总合
-                            let tempCheckArr = res.data.data.hotel.concat(res.data.data.restaurant, res.data.data.public, res.data.data.entertainment);
-                            for (let i = 0; i < res.data.title.length; i++) {
-                                for (let j = 0; j < res.data.title[i].content.length; j++) {
-                                    for (let m = 0; m < tempCheckArr.length; m++) {
-                                        if (res.data.title[i].content[j].id == tempCheckArr[m] * 1) {
-                                            tempCheckArr[m] = res.data.title[i].content[j].name;
+                                that.checkList = res.data.title;
+                                that.addName = res.data.data.name;
+                                that.addDescriptive = res.data.data.descriptive;
+                                that.addCategory = res.data.data.category == 0 ? '自营' : '民居';
+                                that.addHouse_name = res.data.data.house_name;
+                                that.addTips = res.data.data.tips;
+                                // 推荐理由
+                                that.addReason = res.data.data.reason;
+                                // 房主微信
+                                that.addHouse_wx = res.data.data.house_wx;
+                                // 无线
+                                that.addWifi = res.data.data.wifi.toString();
+                                // 有线网络服务
+                                that.addCable_network = res.data.data.cable_network.toString();
+                                // 停车服务
+                                that.addParking = res.data.data.parking.toString();
+                                // 服务信息总合
+                                let tempCheckArr = res.data.data.hotel.concat(res.data.data.restaurant, res.data.data.public, res.data.data.entertainment);
+                                for (let i = 0; i < res.data.title.length; i++) {
+                                    for (let j = 0; j < res.data.title[i].content.length; j++) {
+                                        for (let m = 0; m < tempCheckArr.length; m++) {
+                                            if (res.data.title[i].content[j].id == tempCheckArr[m] * 1) {
+                                                tempCheckArr[m] = res.data.title[i].content[j].name;
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            that.addHomeStayInfoList = tempCheckArr;
-                            // 民宿位置坐标
-                            that.addPosition = res.data.data.position;
-                            // 民宿位置描述
-                            that.addAddress = res.data.data.address;
-                            let tempImgArr = [];
-                            for (let i = 0; i < res.data.data.img.length; i++) {
-                                let tempImgObj = {};
-                                tempImgObj.name = res.data.data.img[i].img_id.toString();
-                                tempImgObj.url = res.data.data.img[i].img_url;
-                                // console.log(res.data.data.img[i].img_url);
-                                // console.log(tempImgObj)
-                                tempImgArr.push(tempImgObj);
-                            }
-                            // console.log(tempImgArr);
-                            // 照片组信息
-                            that.mounteImgArr = tempImgArr;
-                            that.upLoadImgList = tempImgArr;
-                            let is_main = {};
-                            for (let i = 0; i < res.data.data.img.length; i++) {
-                                if (res.data.data.img[i].is_main == 1) {
-                                    is_main = res.data.data.img[i];
-                                    res.data.data.img[i] = res.data.data.img[0];
-                                    res.data.data.img[0] = is_main;
-                                    // 主页索引
-                                    that.homeImgNum = i;
+                                that.addHomeStayInfoList = tempCheckArr;
+                                // 民宿位置坐标
+                                that.addPosition = res.data.data.position;
+                                // 民宿位置描述
+                                that.addAddress = res.data.data.address;
+                                let tempImgArr = [];
+                                for (let i = 0; i < res.data.data.img.length; i++) {
+                                    let tempImgObj = {};
+                                    tempImgObj.name = res.data.data.img[i].img_id.toString();
+                                    tempImgObj.url = res.data.data.img[i].img_url;
+                                    // console.log(res.data.data.img[i].img_url);
+                                    // console.log(tempImgObj)
+                                    tempImgArr.push(tempImgObj);
                                 }
+                                // console.log(tempImgArr);
+                                // 照片组信息
+                                that.mounteImgArr = tempImgArr;
+                                that.upLoadImgList = tempImgArr;
+                                let is_main = {};
+                                for (let i = 0; i < res.data.data.img.length; i++) {
+                                    if (res.data.data.img[i].is_main == 1) {
+                                        is_main = res.data.data.img[i];
+                                        res.data.data.img[i] = res.data.data.img[0];
+                                        res.data.data.img[0] = is_main;
+                                        // 主页索引
+                                        that.homeImgNum = i;
+                                    }
+                                }
+                            } else {
+                                that.failTip(res.msg);
                             }
-                            // console.log(that.upLoadImgList);
                         }
                     })
                 },
@@ -988,7 +989,7 @@
                             // console.log(res);
                             if (res.code == 200) {
                                 that.successTip(res.msg);
-                            } else if (res.code == 302) {
+                            } else {
                                 that.failTip(res.msg);
                             }
                         }
@@ -1011,6 +1012,8 @@
                         success(res) {
                             if (res.code == 200) {
                                 that.queryReviseHomeStay();
+                            } else {
+                                that.failTip(res.msg);
                             }
                         }
                     })
@@ -1029,6 +1032,8 @@
                             console.log(res);
                             if (res.code == 200) {
                                 that.queryReviseHomeStay();
+                            } else {
+                                that.failTip(res.msg);
                             }
                         }
                     })

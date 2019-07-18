@@ -10,9 +10,8 @@
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <style>
-        #todatOutRoot {
+        #todatOutRoot {}
 
-        }
         .search-top {
             padding: 18px;
             display: flex;
@@ -28,12 +27,9 @@
             color: #1890FF !important;
         }
 
-        .el-input__inner {
-            
-        }
-        .el-input{
-            
-        }
+        .el-input__inner {}
+
+        .el-input {}
     </style>
     <title>今日离店</title>
 </head>
@@ -47,15 +43,15 @@
                 <label for="">入住人姓名:</label>
                 <el-input style="width: 8vw;" v-model="orderName" placeholder="请输入内容"></el-input>
                 <label for="">民宿名称:</label>
-                <el-select style="width: 190px !important;" v-model="orderHomeStayName" placeholder="请选择" @change='homestayChange'>
-                    <el-option style="width: 190px !important;" v-for="item in currentHomeStay" :key="item.value" :label="item.label"
-                        :value="item.value">
+                <el-select style="width: 190px !important;" v-model="orderHomeStayName" placeholder="请选择"
+                    @change='homestayChange'>
+                    <el-option style="width: 190px !important;" v-for="item in currentHomeStay" :key="item.value"
+                        :label="item.label" :value="item.value">
                     </el-option>
                 </el-select>
                 <label for="">房型名称:</label>
                 <el-select v-model="orderHouseTypeName" placeholder="请选择">
-                    <el-option v-for="item in currentHouseTP" :key="item.value" :label="item.label"
-                        :value="item.value">
+                    <el-option v-for="item in currentHouseTP" :key="item.value" :label="item.label" :value="item.value">
                     </el-option>
                 </el-select>
                 <label for="">状态:</label>
@@ -183,6 +179,8 @@
                                     that.currentHomeStay.push(tempObj);
                                 }
                                 // console.log(that.currentHomeStay)
+                            } else {
+                                that.failTip(res.msg);
                             }
                         }
                     })
@@ -251,6 +249,8 @@
                                 })
                                 that.todayOuttotal = res.data.total;
                                 that.todayOutTableData = res.data.data;
+                            } else {
+                                that.failTip(res.msg);
                             }
                         }
                     })
@@ -282,6 +282,8 @@
                                 that.todayOuttotal = res.data.total;
                                 that.todayOutTableData = res.data.data;
                                 // that.queryTodayAllList();
+                            } else {
+                                that.failTip(res.msg);
                             }
                         }
                     })
@@ -313,6 +315,8 @@
                             success(res) {
                                 if (res.code == 200) {
                                     that.queryTodayOutList();
+                                } else {
+                                    that.failTip(res.msg);
                                 }
                             }
                         })
