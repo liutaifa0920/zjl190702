@@ -300,6 +300,7 @@
                 },
                 // 今日入住查询btn
                 querySearchTodayAll() {
+                    console.log(this.orderName)
                     let that = this;
                     $.ajax({
                         url: listUrl,
@@ -313,6 +314,7 @@
                         type: 'POST',
                         dataType: 'json',
                         success(res){
+                            console.log(res);
                             if(res.code == 200){
                                 res.data.data.map((e, i) => {
                                     if (e.order_status == 1) {
@@ -349,30 +351,30 @@
                 },
                 // 列表办理入住点击
                 todayAllTabClick(row, column, cell, event) {
-                    console.log(row);
+                    // console.log(event);
                     this.todayAllTableSNID = row.order_id;
                     this.roworder_id = row.order_id;
                     this.rowuser_id = row.user_id;
                     this.roworder_sn = row.order_sn;
                     this.rowprice = row.price;
-                    if (row.order_status == '等待付款') {
-                        return row.order_status = 1;
-                    } else if (row.order_status == '待入住') {
-                        return row.order_status = 2;
-                    } else if (row.order_status == '已入住') {
-                        return row.order_status = 3;
-                    } else if (row.order_status == '已离店') {
-                        return row.order_status = 4;
-                    } else if (row.order_status == '订单取消') {
-                        return row.order_status = 10;
-                    } else if (row.order_status == '已退款') {
-                        return row.order_status = 11;
-                    }
                     this.roworder_status = row.order_status;
                 },
                 // 退款
                 toAllTodayAllBtn() {
                     let that = this;
+                    if (this.roworder_status == '等待付款') {
+                        return this.roworder_status = 1;
+                    } else if (this.roworder_status == '待入住') {
+                        return this.roworder_status = 2;
+                    } else if (this.roworder_status == '已入住') {
+                        return this.roworder_status = 3;
+                    } else if (this.roworder_status == '已离店') {
+                        return this.roworder_status = 4;
+                    } else if (this.roworder_status == '订单取消') {
+                        return this.roworder_status = 10;
+                    } else if (this.roworder_status == '已退款') {
+                        return this.roworder_status = 11;
+                    }
                     setTimeout(() => {
                         $.ajax({
                             url: toAllTodayAllUrl,

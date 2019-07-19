@@ -361,8 +361,7 @@
                                 @click="afterPriceWeek">后七天</el-button>
                         </div>
                         <div style="margin-top: 20px;">
-                            <el-table :data="housePriceTabData" border width="100%" @cell-click='priceTabClick'
-                                @cell-mouse-leave='priceTabLeave'>
+                            <el-table :data="housePriceTabData" border width="100%" @cell-click='priceTabClick'>
                                 <el-table-column prop="house_name" label="房型/产品">
                                 </el-table-column>
 
@@ -2207,13 +2206,13 @@
                     this.rowhouse_id = row['house_id'] * 1;
                     this.rowcolumnproperty = row[column.property] * 1;
                     this.columnproperty = column.property;
-                    // this.setOnePrice(row['house_id'] * 1, row[column.property] * 1, column.property);
+                    this.setOnePrice(row['house_id'] * 1, row[column.property] * 1, column.property);
                 },
-                priceTabLeave(row, column, cell, event) {
-                    if (this.rowhouse_id && this.rowcolumnproperty && this.columnproperty) {
-                        this.setOnePrice(this.rowhouse_id, this.rowcolumnproperty, this.columnproperty);
-                    }
-                },
+                // priceTabLeave(row, column, cell, event) {
+                //     if (this.rowhouse_id && this.rowcolumnproperty && this.columnproperty) {
+                //         this.setOnePrice(this.rowhouse_id, this.rowcolumnproperty, this.columnproperty);
+                //     }
+                // },
 
                 // 房价列表请求
                 queryHousePriceList() {
@@ -2288,9 +2287,11 @@
                                 that.rowhouse_id = '';
                                 that.rowcolumnproperty = '';
                                 that.columnproperty = '';
-                            } else {
-                                that.failTip(res.msg);
-                            }
+                                that.successTip(res.msg);
+                            } 
+                            // else {
+                            //     that.failTip(res.msg);
+                            // }
                         }
                     })
                 },
@@ -2449,9 +2450,7 @@
                 },
                 // 房态列表请求
                 queryHouseStateList() {
-                    console.log('------------------');
                     console.log(this.currentHomeStayID);
-                    console.log('------------------');
                     let that = this;
                     $.ajax({
                         url: queryHouseStateListURL,

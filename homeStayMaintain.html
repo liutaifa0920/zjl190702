@@ -111,7 +111,6 @@
         }
 
         .upLoadSmallBox {
-
             width: 100% !important;
             height: 200px;
             padding: 8px;
@@ -193,6 +192,21 @@
             margin-top: 50px;
             text-align: center;
         }
+        #reviseRecommendBox{
+            width: 800px;
+            height: 30vh;
+            padding: 25px;
+            position: absolute;
+            margin: auto;
+            top: 60px;
+            right: 0;
+            left: 0;
+            background-color: white;
+            box-shadow: 0 0 10px #dddddd;
+            overflow-y: scroll;
+            border-radius: 8px;
+            z-index: 50;
+        }
     </style>
 
     <title>民宿维护</title>
@@ -211,8 +225,8 @@
                     </el-form-item>
                     <el-form-item label="运营类别">
                         <el-select v-model="category" placeholder="请选择" size="mini">
-                            <el-option label="自营" value="1"></el-option>
-                            <el-option label="民居" value="2"></el-option>
+                            <el-option label="自营" :value="1"></el-option>
+                            <el-option label="民居" :value="2"></el-option>
                         </el-select>
                     </el-form-item>
                 </div>
@@ -240,7 +254,8 @@
             <el-table-column prop="recommend" label="推荐" width="180">
             </el-table-column>
             <el-table-column label="操作">
-                <el-button icon="el-icon-edit" circle size="mini" type="primary"></el-button>
+                <el-button icon="el-icon-edit" circle size="mini" type="primary" @click="addBoxShowClickBtn"></el-button>
+                <el-button size="mini" type="primary" @click='recommendBoxBtn'>推荐修改</el-button>
             </el-table-column>
         </el-table>
         <div id="footer-page-box">
@@ -250,6 +265,22 @@
             </el-pagination>
         </div>
 
+        <!-- 推荐修改 -->
+        <div id="reviseRecommendBox" v-if="recommendFlag">
+            <i class="el-icon-close" @click="closeAddBoxClick"></i>
+            <h2>推荐修改</h2>
+            <el-radio-group v-model="recommendRadio">
+                <el-radio :label="1">1</el-radio>
+                <el-radio :label="2">2</el-radio>
+                <el-radio :label="3">3</el-radio>
+                <el-radio :label="4">4</el-radio>
+                <el-radio :label="5">5</el-radio>
+            </el-radio-group>
+            <div style="text-align: center;margin-top: 65px;">
+                <el-button type="info" size="mini" @click="closeAddBoxClick">取消</el-button>
+                <el-button type="primary" size="mini" @click="setReviseRecommend">确认</el-button>
+            </div>
+        </div>
 
         <!-- -------------------------------- 添加民宿,民宿详情,民宿信息修改弹出层 -------------------------------- -->
         <div id="addBox" v-if="addFlag">
@@ -484,6 +515,8 @@
         const setDeleImgURL = 'https://api.sdzhujialin.com/admin/Index/ImgDel';
         // 详情上传图片
         const setUploadImgURL = 'https://api.sdzhujialin.com/admin/Index/Imgadd';
+        // 修改推荐
+        const setRecommendURL = 'https://api.sdzhujialin.com/admin/index/recommend' 
 
         new Vue({
             el: '#homeStayMaintain',
@@ -568,6 +601,13 @@
                 addBoxShow: '',
                 // 修改/详情民宿ID
                 reviseHomeStayId: '',
+
+                // 推荐修改弹窗flag
+                recommendFlag: false,
+                // 推荐修改单选
+                recommendRadio: null,
+                // 当前推荐选择
+                // currentRecommendNum: null
             },
             methods: {
                 // 分页
@@ -634,22 +674,41 @@
                 },
 
 
-                // 修改按钮
+                // 点击表格
                 reviseBtn(row, column, cell, event) {
                     let currentCell = cell.className.split("")[18];
                     if (currentCell == 7) {
-                        // console.log(row.id);
+                        // console.log(row);
                         this.addBoxTitle = '民宿详情';
                         if (this.addBoxTitle == '民宿详情') {
                             this.addBoxShow = false;
                         }
                         this.reviseHomeStayId = row.id;
-                        this.queryReviseHomeStay();
+                        if(row.recommend != 0){
+                            this.recommendRadio = row.recommend;
+                        } else {
+                            this.recommendRadio = null;
+                        }
                     }
-
+                },
+                // 修改详情按钮
+                addBoxShowClickBtn(){
+                    this.addBoxShow = !this.addBoxShow;
+                    setTimeout(() => {
+                        this.queryReviseHomeStay();
+                    }, 60);
                 },
 
-
+                // 修改推荐按钮
+                recommendBoxBtn(){
+                    this.recommendFlag = !this.recommendFlag;
+                },
+                // 确认修改推荐按钮
+                setReviseRecommend(){
+                    setTimeout(() => {
+                        this.setReviseRecommend();
+                    }, 60);
+                },
 
                 // 新建民宿按钮
                 addHomeStayBtn() {
@@ -663,6 +722,7 @@
                 // 新建民宿弹窗关闭
                 closeAddBoxClick() {
                     this.addFlag = false;
+                    this.recommendFlag = false;
                     this.addBoxTitle = '';
                 },
                 // 发送可选项请求
@@ -677,6 +737,26 @@
                                 that.checkList = res.data;
                             } else {
                                 that.failTip(res.msg);
+                            }
+                        }
+                    })
+                },
+                // 修改推荐请求
+                setReviseRecommend(){
+                    // console.log(this.reviseHomeStayId);
+                    let that = this;
+                    $.ajax({
+                        url: setRecommendURL,
+                        data:{
+                            id: this.reviseHomeStayId,
+                            number: this.recommendRadio
+                        },
+                        type: 'POST',
+                        success(res){
+                            // console.log(res);
+                            if(res.code == 200){
+                                that.queryHomestayList();
+                                that.recommendFlag = false;
                             }
                         }
                     })
@@ -794,7 +874,7 @@
                                 that.checkList = res.data.title;
                                 that.addName = res.data.data.name;
                                 that.addDescriptive = res.data.data.descriptive;
-                                that.addCategory = res.data.data.category == 0 ? '自营' : '民居';
+                                that.addCategory = res.data.data.category == 1 ? '自营' : '民居';
                                 that.addHouse_name = res.data.data.house_name;
                                 that.addTips = res.data.data.tips;
                                 // 推荐理由
@@ -884,7 +964,14 @@
                 },
                 // 修改民宿请求
                 setReviseHomeStayInfo() {
-                    let tempCategory = this.addCategory == '自营' ? 0 : 1;
+                    // console.log(this.addCategory);
+                    let tempCategory = '';
+                    if(this.addCategory == 1){
+                        tempCategory = 1;
+                    } else {
+                        tempCategory = 2;
+                    }
+                    // console.log(tempCategory);
                     let that = this;
                     $.ajax({
                         url: setReviseHomeStayURL,

@@ -89,8 +89,12 @@
             </el-table>
         </div>
         <div class="footerPages">
-            <el-pagination @size-change="todayGoSizeChange" @current-change="todayGoCurrentChange"
-                :current-page="todayGocurrentPage" :page-sizes="[8, 20, 50, 100]" :page-size="todayGoSize"
+            <el-pagination 
+                @size-change="todayGoSizeChange" 
+                @current-change="todayGoCurrentChange" 
+                :current-page="todayGocurrentPage" 
+                :page-sizes="[8, 20, 50, 100]" 
+                :page-size="todayGoSize"     
                 layout="total, sizes, prev, pager, next, jumper" :total="todayGototal">
             </el-pagination>
         </div>
