@@ -146,7 +146,7 @@
 
         .upLoadSmallBox {
             width: 2000px;
-            height: 170px;
+            height: 148px;
         }
 
         .footer-check-box {
@@ -642,7 +642,7 @@
             </el-radio-group>
             <h4>退房时间</h4>
             <el-radio-group v-model="addHouseOut_time">
-                <el-radio label="12:00">离店日当天12：00以后</el-radio>
+                <el-radio label="12:00">离店日当天12：00以前</el-radio>
                 <el-radio :label="2">离店日当天</el-radio>
                 <div class="smallerInput">
                     <el-time-select v-model="addHouseOut_timeText" :picker-options="{
@@ -1195,10 +1195,10 @@
                 breakfastOptions: [
                     {
                         value: '1',
-                        label: '不含早餐'
+                        label: '含早餐'
                     }, {
                         value: '2',
-                        label: '含早餐'
+                        label: '不含早餐'
                     }
                 ],
                 // 绑定早餐
@@ -1975,8 +1975,20 @@
                                 that.addHouseSeveral_rooms = res.data.data.several_rooms;
                                 that.addHouseBed_info = res.data.data.bed_info;
                                 that.addHouseNumber = res.data.data.number;
-                                that.addHouseWindow = res.data.data.window;
-                                that.addHousebreakfast = res.data.data.breakfast;
+                                // that.addHouseWindow = res.data.data.window;
+                                // that.addHousebreakfast = res.data.data.breakfast;
+                                if(res.data.data.window == 1){
+                                    that.addHouseWindow = '有窗';
+                                } else {
+                                    that.addHouseWindow = '无窗';
+                                }
+                                if(res.data.data.breakfast == 1){
+                                    that.addHousebreakfast = '含早餐';
+                                } else {
+                                    that.addHousebreakfast = '不含早餐';
+                                }
+                                console.log(res.data.data.window);
+                                console.log(res.data.data.breakfast);
                                 that.addHouseWc = res.data.data.wc;
                                 that.addHouseVolume = res.data.data.volume;
                                 let tempCheckArr = res.data.data.room_facilities.concat(res.data.data.infrastructure, res.data.data.communication, res.data.data.bathroom, res.data.data.food);
@@ -2043,7 +2055,7 @@
                                 that.addHouseStartTime = res.data.data.reception_start_time;
                                 that.addHouseEndTime = res.data.data.reception_end_time;
                                 that.addHouseInvoice = res.data.data.invoice;
-                                console.log(res.data.data.deposit);
+                                // console.log(res.data.data.deposit);
                                 that.addHouseDeposit = res.data.data.deposit;
                                 if (res.data.data.deposit != 0 && that.addHouseDeposit_money == '') {
                                     that.addHouseDeposit = 0;
@@ -2149,8 +2161,19 @@
                     } else if (this.addHouseDeposit == 2 && this.addHouseDeposit_money != 0) {
                         tempDeposit = this.addHouseDeposit_money;
                     }
-                    // console.log(this.addHouseDeposit);
-                    // console.log(this.addHouseDeposit_money);
+                    
+                    if(this.addHouseWindow == '有窗'){
+                        this.addHouseWindow = 1;
+                    } else if(this.addHouseWindow == '无窗'){
+                        this.addHouseWindow = 2;
+                    }
+                    if(this.addHousebreakfast == '含早餐'){
+                        this.addHousebreakfast = 1;
+                    } else if(this.addHousebreakfast == '不含早餐') {
+                        this.addHousebreakfast = 2;
+                    }
+                    console.log(this.addHouseWindow);
+                    console.log(this.addHousebreakfast);
                     $.ajax({
                         url: setReviseHouseTypeInfoURL,
                         data: {
@@ -2327,7 +2350,7 @@
                                 that.queryHousePriceList();
                                 that.revisePriceFrame = false;
                             } else {
-                                that.failTip(res.msg);
+                                that.failTip("请填写完整修改信息");
                             }
                         }
                     })
@@ -2396,7 +2419,7 @@
                                 that.reviseStateFrame = false;
                                 that.queryHouseStateList();
                             } else {
-                                that.failTip(res.msg);
+                                that.failTip("请填写完整修改信息");
                             }
                         }
                     })
@@ -2435,7 +2458,7 @@
                                 that.reviseNumFrame = false;
                                 that.queryHouseStateList();
                             } else {
-                                that.failTip(res.msg);
+                                that.failTip("请填写完整修改信息");
                             }
                         }
                     })
@@ -2450,7 +2473,7 @@
                 },
                 // 房态列表请求
                 queryHouseStateList() {
-                    console.log(this.currentHomeStayID);
+                    // console.log(this.currentHomeStayID);
                     let that = this;
                     $.ajax({
                         url: queryHouseStateListURL,
@@ -2491,15 +2514,15 @@
                                     for (let i = 0; i < tempDataArr[0].name.length; i++) {
                                         tempWeekArr.push(tempDataArr[0].name[i].data);
                                     }
-                                    console.log(tempWeekArr)
-                                    console.log(tempArr)
+                                    // console.log(tempWeekArr)
+                                    // console.log(tempArr)
 
                                     that.houseStateTabWeek = tempWeekArr;
                                     that.houseStateTabData = tempArr;
                                     that.startHouseStatedate = res.data.frontdata;
                                     that.endHouseStatedate = res.data.afterdata;
                                 } else {
-                                    console.log('null')
+                                    // console.log('null')
                                     that.reviseStateCurrNameArr = [];
                                     that.reviseStateCurrIDArr = [];
                                     that.houseStateTabWeek = [];
@@ -2672,6 +2695,7 @@
                             success(res) {
                                 if (res.code == 200) {
                                     that.queryHouseStateList();
+                                    that.stateDateNum = 0;
                                     that.stateNumFlag = false;
                                 } else {
                                 that.failTip(res.msg);
@@ -2703,6 +2727,7 @@
                             // console.log(res);
                             if (res.code == 200) {
                                 that.queryHouseStateList();
+                                that.stateDateNum = 0;
                                 that.stateOpenFlag = false;
                             } else {
                                 that.failTip(res.msg);
@@ -2734,6 +2759,7 @@
                             // console.log(res);
                             if (res.code == 200) {
                                 that.queryHouseStateList();
+                                that.stateDateNum = 0;
                                 that.stateCloseFlag = false;
                             } else {
                                 that.failTip(res.msg);

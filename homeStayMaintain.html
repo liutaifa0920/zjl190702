@@ -112,7 +112,7 @@
 
         .upLoadSmallBox {
             width: 100% !important;
-            height: 200px;
+            height: 175px !important;
             padding: 8px;
             box-sizing: border-box;
             border: 1px solid #dcdfe6;
@@ -136,7 +136,7 @@
             font-size: 14px;
             font-weight: 500;
             right: 20px;
-            padding-top: 28px;
+            padding-top: 8px;
         }
 
         h2,
@@ -192,7 +192,8 @@
             margin-top: 50px;
             text-align: center;
         }
-        #reviseRecommendBox{
+
+        #reviseRecommendBox {
             width: 800px;
             height: 30vh;
             padding: 25px;
@@ -254,7 +255,8 @@
             <el-table-column prop="recommend" label="推荐" width="180">
             </el-table-column>
             <el-table-column label="操作">
-                <el-button icon="el-icon-edit" circle size="mini" type="primary" @click="addBoxShowClickBtn"></el-button>
+                <el-button icon="el-icon-edit" circle size="mini" type="primary" @click="addBoxShowClickBtn">
+                </el-button>
                 <el-button size="mini" type="primary" @click='recommendBoxBtn'>推荐修改</el-button>
             </el-table-column>
         </el-table>
@@ -330,7 +332,9 @@
 
             </div>
             <div id="homestay-img">
-                <h2>民宿照片<span class="upload-num">{{uploadImgNum}}/20</span></h2>
+                <h2>民宿照片
+                    <!-- <span class="upload-num">{{uploadImgNum}}/20</span> -->
+                </h2>
                 <div class="upLoadSmallBox">
                     <!-- 新建 -->
                     <div v-if="addBoxShow" class="upLoadBigBox">
@@ -516,7 +520,7 @@
         // 详情上传图片
         const setUploadImgURL = 'https://api.sdzhujialin.com/admin/Index/Imgadd';
         // 修改推荐
-        const setRecommendURL = 'https://api.sdzhujialin.com/admin/index/recommend' 
+        const setRecommendURL = 'https://api.sdzhujialin.com/admin/index/recommend'
 
         new Vue({
             el: '#homeStayMaintain',
@@ -684,7 +688,7 @@
                             this.addBoxShow = false;
                         }
                         this.reviseHomeStayId = row.id;
-                        if(row.recommend != 0){
+                        if (row.recommend != 0) {
                             this.recommendRadio = row.recommend;
                         } else {
                             this.recommendRadio = null;
@@ -692,7 +696,7 @@
                     }
                 },
                 // 修改详情按钮
-                addBoxShowClickBtn(){
+                addBoxShowClickBtn() {
                     this.addBoxShow = !this.addBoxShow;
                     setTimeout(() => {
                         this.queryReviseHomeStay();
@@ -700,11 +704,11 @@
                 },
 
                 // 修改推荐按钮
-                recommendBoxBtn(){
+                recommendBoxBtn() {
                     this.recommendFlag = !this.recommendFlag;
                 },
                 // 确认修改推荐按钮
-                setReviseRecommend(){
+                setReviseRecommend() {
                     setTimeout(() => {
                         this.setReviseRecommend();
                     }, 60);
@@ -742,19 +746,19 @@
                     })
                 },
                 // 修改推荐请求
-                setReviseRecommend(){
+                setReviseRecommend() {
                     // console.log(this.reviseHomeStayId);
                     let that = this;
                     $.ajax({
                         url: setRecommendURL,
-                        data:{
+                        data: {
                             id: this.reviseHomeStayId,
                             number: this.recommendRadio
                         },
                         type: 'POST',
-                        success(res){
+                        success(res) {
                             // console.log(res);
-                            if(res.code == 200){
+                            if (res.code == 200) {
                                 that.queryHomestayList();
                                 that.recommendFlag = false;
                             }
@@ -966,7 +970,7 @@
                 setReviseHomeStayInfo() {
                     // console.log(this.addCategory);
                     let tempCategory = '';
-                    if(this.addCategory == 1){
+                    if (this.addCategory == 1) {
                         tempCategory = 1;
                     } else {
                         tempCategory = 2;
