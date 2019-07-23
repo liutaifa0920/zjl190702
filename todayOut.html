@@ -81,7 +81,7 @@
                 <el-table-column prop="user_name" label="入住人姓名">
                 </el-table-column>
                 <el-table-column prop="order_status" label="操作">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span style="cursor: pointer;" v-show="scope.row.order_status == '办理离店'" href="#"
                             @click="toOutTodayOutBtn">办理离店</span>
                         <span v-show="scope.row.order_status == '已离店'">已离店</span>
@@ -104,6 +104,15 @@
         const HouseURL = 'https://api.sdzhujialin.com/admin/Houseorder/house';
         const homeStayHouseURL = 'https://api.sdzhujialin.com/admin/Housetag/house';
         const toOutTodayOutUrl = 'https://api.sdzhujialin.com/admin/Houseorder/IndexLeaveval';
+
+        // let URL = window.location.origin;
+        // URL = URL.replace('http://app',"https://api");
+        // const listUrl = URL + '/admin/Houseorder/IndexLeave';
+        // const homeStayURL = URL + '/admin/Houseorder/homestay';
+        // const HouseURL = URL + '/admin/Houseorder/house';
+        // const homeStayHouseURL = URL + '/admin/Housetag/house';
+        // const toOutTodayOutUrl = URL + '/admin/Houseorder/IndexLeaveval';
+
         new Vue({
             el: '#todatOutRoot',
             data: {
@@ -202,6 +211,7 @@
                         success(res) {
                             if (res.code == 200) {
                                 // console.log(res.data);
+                                that.currentHouseTP = [];
                                 for (let i = 0; i < res.data.length; i++) {
                                     let tempObj = {};
                                     tempObj.value = res.data[i].id;
@@ -233,7 +243,12 @@
                         data: {
                             size: this.todayOutSize,
                             order: this.todayOutcurrentPage,
-                            type: 1
+                            type: 1,
+                            order_sn: this.orderNum,
+                            user_name: this.orderName,
+                            homestay_id: this.orderHomeStayName,
+                            house_id: this.orderHouseTypeName,
+                            order_status: this.orderStatus
                         },
                         type: 'POST',
                         dataType: 'json',

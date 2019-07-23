@@ -86,7 +86,7 @@
                 <el-table-column prop="user_name" label="入住人姓名">
                 </el-table-column>
                 <el-table-column prop="order_status" label="操作">
-                    <template scope="scope">
+                    <template slot-scope="scope">
                         <span style="cursor: pointer;" v-show="scope.row.order_status == '待入住'"
                             @click="toGoTodayGoBtn">办理入住</span>
                         <span style="cursor: pointer;" v-show="scope.row.order_status == '待入住'"
@@ -110,13 +110,22 @@
     </div>
 
     <script>
-
+        
         const listUrl = 'https://api.sdzhujialin.com/admin/Houseorder/Index';
         const homeStayURL = 'https://api.sdzhujialin.com/admin/Houseorder/homestay';
         const HouseURL = 'https://api.sdzhujialin.com/admin/Houseorder/house';
         const toGoTodayGoUrl = 'https://api.sdzhujialin.com/admin/Houseorder/IndexDataval';
         const toOutTodayOutUrl = 'https://api.sdzhujialin.com/admin/Houseorder/IndexLeaveval';
         const toAllTodayAllUrl = 'https://api.sdzhujialin.com/admin/Houseorder/pay';
+
+        // let URL = window.location.origin;
+        // URL = URL.replace('http://app',"https://api");
+        // const listUrl = URl + '/admin/Houseorder/Index';
+        // const homeStayURL = URl + '/admin/Houseorder/homestay';
+        // const HouseURL = URl + '/admin/Houseorder/house';
+        // const toGoTodayGoUrl = URl + '/admin/Houseorder/IndexDataval';
+        // const toOutTodayOutUrl = URl + '/admin/Houseorder/IndexLeaveval';
+        // const toAllTodayAllUrl = URl + '/admin/Houseorder/pay';
 
         new Vue({
             el: '#todatAllRoot',
@@ -232,6 +241,7 @@
                         success(res) {
                             if (res.code == 200) {
                                 // console.log(res.data);
+                                that.currentHouseTP = [];
                                 for (let i = 0; i < res.data.length; i++) {
                                     let tempObj = {};
                                     tempObj.value = res.data[i].id;
@@ -263,7 +273,12 @@
                         data: {
                             size: this.todayAllSize,
                             order: this.todayAllcurrentPage,
-                            type: 1
+                            type: 1,
+                            order_sn: this.orderNum,
+                            user_name: this.orderName,
+                            homestay_id: this.orderHomeStayName,
+                            house_id: this.orderHouseTypeName,
+                            order_status: this.orderStatus
                         },
                         type: 'POST',
                         dataType: 'json',
@@ -361,6 +376,7 @@
                 },
                 // 退款
                 toAllTodayAllBtn() {
+                    console.log(123456781)
                     let that = this;
                     if (this.roworder_status == '等待付款') {
                         return this.roworder_status = 1;
