@@ -53,6 +53,12 @@
             box-sizing: border-box;
             overflow-y: scroll;
         }
+        #revise-state-name::-webkit-scrollbar{
+            display: none;
+        }
+        #revise-number-name::-webkit-scrollbar{
+            display: none;
+        }
 
         .el-icon-close {
             position: absolute;
@@ -215,6 +221,9 @@
         .el-table .el-button--info {
             padding: 7px 5px !important;
         }
+        .el-table .el-button--danger {
+            padding: 7px 5px !important;
+        }
 
         .el-table {
             padding-bottom: 90vh;
@@ -223,6 +232,15 @@
         .el-range-input {
             position: relative;
             left: 4px;
+        }
+
+        .dialogBox {
+            height: 60vh !important;
+            overflow-y: scroll;
+        }
+
+        .dialogBox::-webkit-scrollbar {
+            display: none;
         }
     </style>
 
@@ -465,9 +483,9 @@
                             <el-table-column prop='sort' label="排序">
                             </el-table-column>
                             <el-table-column label="操作">
-                                <el-button type="primary" icon="el-icon-edit" circle size="mini"
+                                <el-button type="primary" icon="el-icon-edit" size="mini"
                                     @click="setReviseHouseTypeBtn"></el-button>
-                                <el-button type="danger" icon="el-icon-delete" circle size="mini"
+                                <el-button type="danger" icon="el-icon-delete" size="mini"
                                     @click="setDeleHouseTypeBtn"></el-button>
                             </el-table-column>
                         </el-table>
@@ -484,227 +502,227 @@
         </el-tabs>
 
         <el-dialog v-if="addBoxShow" title="修改房量" :visible.sync="addBoxShow" width="50%">
-            <el-form label-width="140px">
-                <h2>基础信息</h2>
-                <el-form-item label="房型名称">
-                    <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseTypeName">
-                    </el-input>
-                </el-form-item>
-                <el-form-item label="面积">
-                    <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseTypeSize">
-                        <template slot="append">平方米</template>
-                    </el-input>
-                </el-form-item>
-                <el-form-item label="几室">
-                    <el-select class="addHouseTypeInp" v-model="addHouseSeveral_rooms" placeholder="几室">
-                        <el-option v-for="item in several_roomsOptions" :key="item.value" :label="item.label"
-                            :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <div v-for="addHouseBed_infoItem,i in addHouseBed_info" :key="i+'b'">
-                    <el-form-item :label="'床型'+ (i + 1)">
-                        <el-select class="addHouseTypeInp" v-model="addHouseBed_infoItem.name" placeholder="床型">
-                            <el-option v-for="item in bed_infoNameOptions" :key="item.value" :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="床宽">
-                        <el-select class="addHouseTypeInp" v-model="addHouseBed_infoItem.size" placeholder="床宽">
-                            <el-option v-for="item in bed_infoSizeOptions" :key="item.value" :label="item.label"
-                                :value="item.value">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </div>
-                <el-form-item>
-                    <el-button type="primary" plain :width="500" @click="addBed"> + 床型</el-button>
-                </el-form-item>
-                <el-form-item label="可入住人数">
-                    <el-select class="addHouseTypeInp" v-model="addHouseNumber" placeholder="请选择">
-                        <el-option v-for="item in numberOptions" :key="item.value" :label="item.label"
-                            :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="窗户">
-                    <el-select class="addHouseTypeInp" v-model="addHouseWindow" placeholder="请选择">
-                        <el-option v-for="item in windowOptions" :key="item.value" :label="item.label"
-                            :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="早餐">
-                    <el-select class="addHouseTypeInp" v-model="addHousebreakfast" placeholder="请选择">
-                        <el-option v-for="item in breakfastOptions" :key="item.value" :label="item.label"
-                            :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="卫生间">
-                    <el-select class="addHouseTypeInp" v-model="addHouseWc" placeholder="请选择">
-                        <el-option v-for="item in wcOptions" :key="item.value" :label="item.label" :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="房量">
-                    <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseVolume">
-                        <template slot="append">间</template>
-                    </el-input>
-                </el-form-item>
-                <h2>客房设置</h2>
-                <el-form-item v-for="checkItem,i in addHouseCheckList" :key="i+'c'" :label="checkItem.title">
-                    <el-checkbox-group v-model="addHouseInfoList">
-                        <el-checkbox v-for="check,j in checkItem.content" :label="check.name" :key="j+'d'">
-                        </el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
-                <h2>房屋详情</h2>
-                <el-form-item label="房屋详情">
-                    <el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="addHouseTestera" maxlength="50">
-                    </el-input>
-                </el-form-item>
-                <el-form-item label="加床服务">
-                    <el-radio-group v-model="addHouseExtra_bed">
-                        <el-radio :label="1">不可加床</el-radio>
-                        <el-radio :label="2">无偿加床</el-radio>
-                        <el-radio :label="3">有偿加床</el-radio>
-                    </el-radio-group>
-                    <div class="smallerInput">
-                        <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseExtra_bed_money">
-                            <!-- <template slot="prepend">面积</template> -->
-                            <template slot="append">元/人</template>
+            <div class="dialogBox">
+                <el-form label-width="140px">
+                    <h2>基础信息</h2>
+                    <el-form-item label="房型名称">
+                        <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseTypeName">
                         </el-input>
+                    </el-form-item>
+                    <el-form-item label="面积">
+                        <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseTypeSize">
+                            <template slot="append">平方米</template>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="几室">
+                        <el-select class="addHouseTypeInp" v-model="addHouseSeveral_rooms" placeholder="几室">
+                            <el-option v-for="item in several_roomsOptions" :key="item.value" :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <div v-for="addHouseBed_infoItem,i in addHouseBed_info" :key="i+'b'">
+                        <el-form-item :label="'床型'+ (i + 1)">
+                            <el-select class="addHouseTypeInp" v-model="addHouseBed_infoItem.name" placeholder="床型">
+                                <el-option v-for="item in bed_infoNameOptions" :key="item.value" :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="床宽">
+                            <el-select class="addHouseTypeInp" v-model="addHouseBed_infoItem.size" placeholder="床宽">
+                                <el-option v-for="item in bed_infoSizeOptions" :key="item.value" :label="item.label"
+                                    :value="item.value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
                     </div>
-                </el-form-item>
-                <el-form-item label="图片">
-                    <!-- 新建 -->
-                    <div v-if="currentAddbox" class="upLoadBigBox">
-                        <div class="upLoadSmallBox">
-                            <el-upload :action="tempAction" list-type="picture-card" :on-change="onUpload" :limit="10"
-                                accept="image/*">
-                                <i class="el-icon-plus"></i>
-                            </el-upload>
-                            <el-button type="primary" plain v-for="imgItem, i in addHouseList" :key="i+'new'"
-                                class="add-uploadimgbtn" @click="uploadIsMain(i)" size="mini">
-                                {{homeImgNum == i?'主页':'设为主页'}}</el-button>
+                    <el-form-item>
+                        <el-button type="primary" plain :width="500" @click="addBed"> + 床型</el-button>
+                    </el-form-item>
+                    <el-form-item label="可入住人数">
+                        <el-select class="addHouseTypeInp" v-model="addHouseNumber" placeholder="请选择">
+                            <el-option v-for="item in numberOptions" :key="item.value" :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="窗户">
+                        <el-select class="addHouseTypeInp" v-model="addHouseWindow" placeholder="请选择">
+                            <el-option v-for="item in windowOptions" :key="item.value" :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="早餐">
+                        <el-select class="addHouseTypeInp" v-model="addHousebreakfast" placeholder="请选择">
+                            <el-option v-for="item in breakfastOptions" :key="item.value" :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="卫生间">
+                        <el-select class="addHouseTypeInp" v-model="addHouseWc" placeholder="请选择">
+                            <el-option v-for="item in wcOptions" :key="item.value" :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="房量">
+                        <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseVolume">
+                            <template slot="append">间</template>
+                        </el-input>
+                    </el-form-item>
+                    <h2>客房设置</h2>
+                    <el-form-item v-for="checkItem,i in addHouseCheckList" :key="i+'c'" :label="checkItem.title">
+                        <el-checkbox-group v-model="addHouseInfoList">
+                            <el-checkbox v-for="check,j in checkItem.content" :label="check.name" :key="j+'d'">
+                            </el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <h2>房屋详情</h2>
+                    <el-form-item label="房屋详情">
+                        <el-input type="textarea" :rows="5" placeholder="请输入内容" v-model="addHouseTestera"
+                            maxlength="50">
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="加床服务">
+                        <el-radio-group v-model="addHouseExtra_bed">
+                            <el-radio :label="1">不可加床</el-radio>
+                            <el-radio :label="2">无偿加床</el-radio>
+                            <el-radio :label="3">有偿加床</el-radio>
+                        </el-radio-group>
+                        <div class="smallerInput">
+                            <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseExtra_bed_money">
+                                <!-- <template slot="prepend">面积</template> -->
+                                <template slot="append">元/人</template>
+                            </el-input>
                         </div>
+                    </el-form-item>
+                    <el-form-item label="图片">
+                        <!-- 新建 -->
+                        <div v-if="currentAddbox" class="upLoadBigBox">
+                            <div class="upLoadSmallBox">
+                                <el-upload :action="tempAction" list-type="picture-card" :on-change="onUpload"
+                                    :limit="10" accept="image/*">
+                                    <i class="el-icon-plus"></i>
+                                </el-upload>
+                                <el-button type="primary" plain v-for="imgItem, i in addHouseList" :key="i+'new'"
+                                    class="add-uploadimgbtn" @click="uploadIsMain(i)" size="mini">
+                                    {{homeImgNum == i?'主页':'设为主页'}}</el-button>
+                            </div>
+                        </div>
+                        <!-- 详情 -->
+                        <div v-if="!currentAddbox" class="upLoadBigBox">
+                            <div class="upLoadSmallBox">
+                                <el-upload :action="tempAction" list-type="picture-card" :on-change="onReviseUpload"
+                                    :on-remove="onDeleRevise" :limit="10" accept="image/*" :file-list="mounteImgArr">
+                                    <i class="el-icon-plus"></i>
+                                </el-upload>
+                                <el-button type="primary" plain v-for="imgItem, j in addHouseList" :key="j+'rev'"
+                                    class="add-uploadimgbtn" @click="uploadReviseIsMain(j)" size="mini">
+                                    {{homeImgNum == j?'主页':'设为主页'}}</el-button>
+                            </div>
+                        </div>
+                    </el-form-item>
+                    <el-form-item label="能否做饭">
+                        <el-radio-group v-model="addHouseIs_cook">
+                            <el-radio :label="1">能</el-radio>
+                            <el-radio :label="2">不能</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <h2>入住须知</h2>
+                    <el-form-item label="入住时间">
+                        <el-radio-group v-model="addHouseGo_time">
+                            <el-radio label="12:00">入住日当天12：00以后</el-radio>
+                            <el-radio :label="2">入住日当天</el-radio>
+                            <div class="smallerInput">
+                                <el-time-select v-model="addHouseGo_timeText" :picker-options="{
+                                                                    start: '00:00',
+                                                                    step: '01:00',
+                                                                    end: '23:59',
+                                                                }">
+                                </el-time-select>以后
+                            </div>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="退房时间">
+                        <el-radio-group v-model="addHouseOut_time">
+                            <el-radio label="12:00">离店日当天12：00以前</el-radio>
+                            <el-radio :label="2">离店日当天</el-radio>
+                            <div class="smallerInput">
+                                <el-time-select v-model="addHouseOut_timeText" :picker-options="{
+                                                                    start: '00:00',
+                                                                    step: '01:00',
+                                                                    end: '23:59',
+                                                                }">
+                                </el-time-select>以后
+                            </div>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="接待时间">
+                        <el-time-select placeholder="起始时间" v-model="addHouseStartTime" :picker-options="{
+                                            start: '00:00',
+                                            step: '01:00',
+                                            end: '23:59',
+                                        }">
+                        </el-time-select>
+                        <el-time-select placeholder="结束时间" v-model="addHouseEndTime" :picker-options="{
+                                          start: '00:00',
+                                          step: '01:00',
+                                          end: '23:59',
+                                          minTime: addHouseStartTime
+                                        }">
+                        </el-time-select>
+                    </el-form-item>
+                    <el-form-item label="发票">
+                        <el-radio-group v-model="addHouseInvoice">
+                            <el-radio :label="1">可开发票</el-radio>
+                            <el-radio :label="2">不可开发票</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="押金">
+                        <el-radio-group v-model="addHouseDeposit">
+                            <el-radio :label="0">无需押金</el-radio>
+                            <el-radio :label="2">需</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="押金金额">
+                        <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseDeposit_money">
+                            <template slot="append">元</template>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="房屋守则">
+                        <el-checkbox-group v-model="addHouseHousing_code">
+                            <el-checkbox label="接待儿童"></el-checkbox>
+                            <el-checkbox label="接待老人"></el-checkbox>
+                            <el-checkbox label="抽烟"></el-checkbox>
+                            <el-checkbox label="带宠物"></el-checkbox>
+                            <el-checkbox label="商业拍摄"></el-checkbox>
+                            <el-checkbox label="聚会"></el-checkbox>
+                            <el-checkbox label="额外加人"></el-checkbox>
+                            <el-checkbox label="接待外宾"></el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <el-form-item label="儿童入住">
+                        不接受18岁以下未成年人在没有监护人陪同下入住
+                    </el-form-item>
+                    <el-form-item label="退订政策">
+                        入住日18：00点之前可以免费取消，超过18:00则需要收取全部房费作为违约金支付给房东
+                    </el-form-item>
+                    <!-- 修改 -->
+                    <div style="text-align:center;" v-if="currentAddbox">
+                        <el-button @click="closeAddBoxClick">取 消</el-button>
+                        <el-button type="primary" @click="UploadHouseInfo">提 交</el-button>
                     </div>
                     <!-- 详情 -->
-                    <div v-if="!currentAddbox" class="upLoadBigBox">
-                        <div class="upLoadSmallBox">
-                            <el-upload :action="tempAction" list-type="picture-card" :on-change="onReviseUpload"
-                                :on-remove="onDeleRevise" :limit="10" accept="image/*" :file-list="mounteImgArr">
-                                <i class="el-icon-plus"></i>
-                            </el-upload>
-                            <el-button type="primary" plain v-for="imgItem, j in addHouseList" :key="j+'rev'"
-                                class="add-uploadimgbtn" @click="uploadReviseIsMain(j)" size="mini">
-                                {{homeImgNum == j?'主页':'设为主页'}}</el-button>
-                        </div>
+                    <div style="text-align:center;" v-if="!currentAddbox">
+                        <el-button @click="closeAddBoxClick">取 消</el-button>
+                        <el-button type="primary" @click="ReviseHouseTypeInfoBtn">提 交</el-button>
                     </div>
-                </el-form-item>
-                <el-form-item label="能否做饭">
-                    <el-radio-group v-model="addHouseIs_cook">
-                        <el-radio :label="1">能</el-radio>
-                        <el-radio :label="2">不能</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <h2>入住须知</h2>
-                <el-form-item label="入住时间">
-                    <el-radio-group v-model="addHouseGo_time">
-                        <el-radio label="12:00">入住日当天12：00以后</el-radio>
-                        <el-radio :label="2">入住日当天</el-radio>
-                        <div class="smallerInput">
-                            <el-time-select v-model="addHouseGo_timeText" :picker-options="{
-                                                    start: '00:00',
-                                                    step: '01:00',
-                                                    end: '23:59',
-                                                }">
-                            </el-time-select>以后
-                        </div>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="退房时间">
-                    <el-radio-group v-model="addHouseOut_time">
-                        <el-radio label="12:00">离店日当天12：00以前</el-radio>
-                        <el-radio :label="2">离店日当天</el-radio>
-                        <div class="smallerInput">
-                            <el-time-select v-model="addHouseOut_timeText" :picker-options="{
-                                                    start: '00:00',
-                                                    step: '01:00',
-                                                    end: '23:59',
-                                                }">
-                            </el-time-select>以后
-                        </div>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="接待时间">
-                    <el-time-select placeholder="起始时间" v-model="addHouseStartTime" :picker-options="{
-                            start: '00:00',
-                            step: '01:00',
-                            end: '23:59',
-                        }">
-                    </el-time-select>
-                    <el-time-select placeholder="结束时间" v-model="addHouseEndTime" :picker-options="{
-                          start: '00:00',
-                          step: '01:00',
-                          end: '23:59',
-                          minTime: addHouseStartTime
-                        }">
-                    </el-time-select>
-                </el-form-item>
-                <el-form-item label="发票">
-                    <el-radio-group v-model="addHouseInvoice">
-                        <el-radio :label="1">可开发票</el-radio>
-                        <el-radio :label="2">不可开发票</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="押金">
-                    <el-radio-group v-model="addHouseDeposit">
-                        <el-radio :label="0">无需押金</el-radio>
-                        <el-radio :label="2">需</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="押金金额">
-                    <el-input class="addHouseTypeInp" placeholder="请输入内容" v-model="addHouseDeposit_money">
-                        <template slot="append">元</template>
-                    </el-input>
-                </el-form-item>
-                <el-form-item label="房屋守则">
-                    <el-checkbox-group v-model="addHouseHousing_code">
-                        <el-checkbox label="接待儿童"></el-checkbox>
-                        <el-checkbox label="接待老人"></el-checkbox>
-                        <el-checkbox label="抽烟"></el-checkbox>
-                        <el-checkbox label="带宠物"></el-checkbox>
-                        <el-checkbox label="商业拍摄"></el-checkbox>
-                        <el-checkbox label="聚会"></el-checkbox>
-                        <el-checkbox label="额外加人"></el-checkbox>
-                        <el-checkbox label="接待外宾"></el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
-                <el-form-item label="儿童入住">
-                    不接受18岁以下未成年人在没有监护人陪同下入住
-                </el-form-item>
-                <el-form-item label="退订政策">
-                    入住日18：00点之前可以免费取消，超过18:00则需要收取全部房费作为违约金支付给房东
-                </el-form-item>
-                <!-- 修改 -->
-                <div style="text-align:center;" v-if="currentAddbox">
-                    <el-button @click="closeAddBoxClick">取 消</el-button>
-                    <el-button type="primary" @click="UploadHouseInfo">提 交</el-button>
-                </div>
-                <!-- 详情 -->
-                <div style="text-align:center;" v-if="!currentAddbox">
-                    <el-button @click="closeAddBoxClick">取 消</el-button>
-                    <el-button type="primary" @click="ReviseHouseTypeInfoBtn">提 交</el-button>
-                </div>
 
-            </el-form>
-            <!-- <span slot="footer" class="dialog-footer">
-                <el-button @click="closeAddBoxClick">取 消</el-button>
-                <el-button type="primary" @click="ReviseHouseTypeInfoBtn">提 交</el-button>
-            </span> -->
+                </el-form>
+            </div>
         </el-dialog>
 
         <!-- 修改房态弹出框 -->

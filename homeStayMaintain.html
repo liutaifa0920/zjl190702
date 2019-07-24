@@ -209,12 +209,12 @@
             z-index: 50;
         }
 
-        .el-dialog {
+        .dialogBox {
             height: 60vh !important;
             overflow-y: scroll;
         }
 
-        .el-dialog::-webkit-scrollbar {
+        .dialogBox::-webkit-scrollbar {
             display: none;
         }
     </style>
@@ -295,106 +295,110 @@
             </el-form>
         </el-dialog>
         <!-- <div id="reviseRecommendBox" v-if="recommendFlag">
-            <i class="el-icon-close" @click="closeAddBoxClick"></i>
-            
-        </div> -->
+                        <i class="el-icon-close" @click="closeAddBoxClick"></i>
+                        
+                    </div> -->
 
         <el-dialog v-if="addFlag" :title="addBoxTitle" :visible.sync="addFlag" width="50%" height="50vh">
-            <el-form label-width="100px">
-                <h2 style="font-size: 18px;">基础信息</h2>
-                <el-form-item label="民宿名称">
-                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " style="width:30%"
-                        type="text" placeholder="民宿名称" v-model="addName" maxlength="10" show-word-limit>
-                    </el-input>
-                </el-form-item>
-                <el-form-item label="一句话描述">
-                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
-                        placeholder="一句话描述" v-model="addDescriptive" maxlength="20" show-word-limit></el-input>
-                </el-form-item>
-                <el-form-item label="运营类别">
-                    <el-select v-model="addCategory" placeholder="运营类别" class="add-el-select add-sele-width">
-                        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="房东姓名">
-                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
-                        placeholder="房东姓名" v-model="addHouse_name" show-word-limit></el-input>
-                </el-form-item>
-                <el-form-item label="重要提示">
-                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
-                        placeholder="重要提示" v-model="addTips" maxlength="20" show-word-limit></el-input>
-                </el-form-item>
-                <el-form-item label="推荐理由">
-                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
-                        placeholder="推荐理由" v-model="addReason" maxlength="10" show-word-limit></el-input>
-                </el-form-item>
-                <el-form-item label="房东微信号">
-                    <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
-                        placeholder="房东微信号" v-model="addHouse_wx" show-word-limit></el-input>
-                </el-form-item>
-                <el-form-item label="民宿照片">
-                    <div class="upLoadSmallBox">
-                        <!-- 新建 -->
-                        <div v-if="addBoxShow" class="upLoadBigBox">
-                            <el-upload action="https://api.sdzhujialin.com/admin/Index/IndexData"
-                                list-type="picture-card" :on-change="onUpload" :limit="20" accept="image/*"
-                                :file-list="mounteImgArr">
-                                <i class="el-icon-plus"></i>
-                            </el-upload>
-                            <el-button type="primary" plain v-for="imgItem,i in upLoadImgList" class="add-uploadimgbtn"
-                                @click="upLoadBtn(i)" size="mini" :key="i">{{homeImgNum == i?'主页':'设为主页'}}</el-button>
+            <div class="dialogBox">
+                <el-form label-width="100px">
+                    <h2 style="font-size: 18px;">基础信息</h2>
+                    <el-form-item label="民宿名称">
+                        <el-input class="add-el-input add-el-input--suffix add-el-input__inner " style="width:30%"
+                            type="text" placeholder="民宿名称" v-model="addName" maxlength="10" show-word-limit>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item label="一句话描述">
+                        <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                            placeholder="一句话描述" v-model="addDescriptive" maxlength="20" show-word-limit></el-input>
+                    </el-form-item>
+                    <el-form-item label="运营类别">
+                        <el-select v-model="addCategory" placeholder="运营类别" class="add-el-select add-sele-width">
+                            <el-option v-for="item in options" :key="item.value" :label="item.label"
+                                :value="item.value">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="房东姓名">
+                        <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                            placeholder="房东姓名" v-model="addHouse_name" show-word-limit></el-input>
+                    </el-form-item>
+                    <el-form-item label="重要提示">
+                        <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                            placeholder="重要提示" v-model="addTips" maxlength="20" show-word-limit></el-input>
+                    </el-form-item>
+                    <el-form-item label="推荐理由">
+                        <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                            placeholder="推荐理由" v-model="addReason" maxlength="10" show-word-limit></el-input>
+                    </el-form-item>
+                    <el-form-item label="房东微信号">
+                        <el-input class="add-el-input add-el-input--suffix add-el-input__inner " type="text"
+                            placeholder="房东微信号" v-model="addHouse_wx" show-word-limit></el-input>
+                    </el-form-item>
+                    <el-form-item label="民宿照片">
+                        <div class="upLoadSmallBox">
+                            <!-- 新建 -->
+                            <div v-if="addBoxShow" class="upLoadBigBox">
+                                <el-upload action="https://api.sdzhujialin.com/admin/Index/IndexData"
+                                    list-type="picture-card" :on-change="onUpload" :limit="20" accept="image/*"
+                                    :file-list="mounteImgArr">
+                                    <i class="el-icon-plus"></i>
+                                </el-upload>
+                                <el-button type="primary" plain v-for="imgItem,i in upLoadImgList"
+                                    class="add-uploadimgbtn" @click="upLoadBtn(i)" size="mini" :key="i">
+                                    {{homeImgNum == i?'主页':'设为主页'}}</el-button>
+                            </div>
+                            <!-- 详情 -->
+                            <div v-if="!addBoxShow" class="upLoadBigBox">
+                                <el-upload action="https://api.sdzhujialin.com/admin/Index/Imgadd"
+                                    list-type="picture-card" :on-change="onUploadRevise" :on-remove="onDeleRevise"
+                                    :limit="20" accept="image/*" :file-list="mounteImgArr">
+                                    <i class="el-icon-plus"></i>
+                                </el-upload>
+                                <el-button type="primary" plain v-for="imgItem,i in upLoadImgList" :key="i"
+                                    class="add-uploadimgbtn" @click="upLoadBtn(i)" size="mini">
+                                    {{homeImgNum == i?'主页':'设为主页'}}
+                                </el-button>
+                            </div>
                         </div>
-                        <!-- 详情 -->
-                        <div v-if="!addBoxShow" class="upLoadBigBox">
-                            <el-upload action="https://api.sdzhujialin.com/admin/Index/Imgadd" list-type="picture-card"
-                                :on-change="onUploadRevise" :on-remove="onDeleRevise" :limit="20" accept="image/*"
-                                :file-list="mounteImgArr">
-                                <i class="el-icon-plus"></i>
-                            </el-upload>
-                            <el-button type="primary" plain v-for="imgItem,i in upLoadImgList" :key="i"
-                                class="add-uploadimgbtn" @click="upLoadBtn(i)" size="mini">
-                                {{homeImgNum == i?'主页':'设为主页'}}
-                            </el-button>
-                        </div>
+                    </el-form-item>
+                    <h2 style="font-size: 18px;">设施维护</h2>
+                    <el-form-item label="无线网络">
+                        <el-radio v-model="addWifi" label="0">无</el-radio>
+                        <el-radio v-model="addWifi" label="1">收费</el-radio>
+                        <el-radio v-model="addWifi" label="2">免费</el-radio>
+                    </el-form-item>
+                    <el-form-item label="有线网络">
+                        <el-radio v-model="addCable_network" label="0">无</el-radio>
+                        <el-radio v-model="addCable_network" label="1">收费</el-radio>
+                        <el-radio v-model="addCable_network" label="2">免费</el-radio>
+                    </el-form-item>
+                    <el-form-item label="停车服务">
+                        <el-radio v-model="addParking" label="0">无</el-radio>
+                        <el-radio v-model="addParking" label="1">收费</el-radio>
+                        <el-radio v-model="addParking" label="2">免费</el-radio>
+                    </el-form-item>
+                    <el-form-item v-for="checkItem,i in checkList" :key="i" :label="checkItem.title">
+                        <el-checkbox-group v-model="addHomeStayInfoList">
+                            <el-checkbox v-for="check,j in checkItem.content" :key="j" :label="check.name">
+                            </el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <el-form-item label="民宿位置">
+                        <container @set-to-position="setShowPosition" :position="addPosition"></container>
+                        <el-input v-model="addAddress" placeholder="民宿地址描述" size="small" class="add-addressInp"
+                            maxlength="20" show-word-limit></el-input>
+                    </el-form-item>
+                    <div style="text-align: center" v-if="addBoxShow">
+                        <el-button type="info" @click="closeAddBoxClick">取消</el-button>
+                        <el-button type="primary" @click="UploadHomeStayInfo">提交</el-button>
                     </div>
-                </el-form-item>
-                <h2 style="font-size: 18px;">设施维护</h2>
-                <el-form-item label="无线网络">
-                    <el-radio v-model="addWifi" label="0">无</el-radio>
-                    <el-radio v-model="addWifi" label="1">收费</el-radio>
-                    <el-radio v-model="addWifi" label="2">免费</el-radio>
-                </el-form-item>
-                <el-form-item label="有线网络">
-                    <el-radio v-model="addCable_network" label="0">无</el-radio>
-                    <el-radio v-model="addCable_network" label="1">收费</el-radio>
-                    <el-radio v-model="addCable_network" label="2">免费</el-radio>
-                </el-form-item>
-                <el-form-item label="停车服务">
-                    <el-radio v-model="addParking" label="0">无</el-radio>
-                    <el-radio v-model="addParking" label="1">收费</el-radio>
-                    <el-radio v-model="addParking" label="2">免费</el-radio>
-                </el-form-item>
-                <el-form-item v-for="checkItem,i in checkList" :key="i" :label="checkItem.title">
-                    <el-checkbox-group v-model="addHomeStayInfoList">
-                        <el-checkbox v-for="check,j in checkItem.content" :key="j" :label="check.name">
-                        </el-checkbox>
-                    </el-checkbox-group>
-                </el-form-item>
-                <el-form-item label="民宿位置">
-                    <container @set-to-position="setShowPosition" :position="addPosition"></container>
-                    <el-input v-model="addAddress" placeholder="民宿地址描述" size="small" class="add-addressInp"
-                        maxlength="20" show-word-limit></el-input>
-                </el-form-item>
-                <div style="text-align: center" v-if="addBoxShow">
-                    <el-button type="info" @click="closeAddBoxClick">取消</el-button>
-                    <el-button type="primary" @click="UploadHomeStayInfo">提交</el-button>
-                </div>
-                <div style="text-align: center" v-if="!addBoxShow">
-                    <el-button type="info" @click="closeAddBoxClick">取消</el-button>
-                    <el-button type="primary" @click="setReviseHomeStay">确认</el-button>
-                </div>
-            </el-form>
+                    <div style="text-align: center" v-if="!addBoxShow">
+                        <el-button type="info" @click="closeAddBoxClick">取消</el-button>
+                        <el-button type="primary" @click="setReviseHomeStay">确认</el-button>
+                    </div>
+                </el-form>
+            </div>
         </el-dialog>
         <!-- -------------------------------- 添加民宿,民宿详情,民宿信息修改弹出层 -------------------------------- -->
         <!-- <div id="addBox" v-if="addFlag">
