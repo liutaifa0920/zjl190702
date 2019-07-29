@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <!-- <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="tabs.css"> -->
+    <link rel="stylesheet" href="index.css">
     <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
@@ -53,10 +52,12 @@
             box-sizing: border-box;
             overflow-y: scroll;
         }
-        #revise-state-name::-webkit-scrollbar{
+
+        #revise-state-name::-webkit-scrollbar {
             display: none;
         }
-        #revise-number-name::-webkit-scrollbar{
+
+        #revise-number-name::-webkit-scrollbar {
             display: none;
         }
 
@@ -221,6 +222,7 @@
         .el-table .el-button--info {
             padding: 7px 5px !important;
         }
+
         .el-table .el-button--danger {
             padding: 7px 5px !important;
         }
@@ -265,7 +267,7 @@
                         <div>
                             <el-button v-show="stateAfterDateFlag" type="primary" icon="el-icon-arrow-left"
                                 @click="deforeStateWeek">前七天</el-button>
-                            <el-button type="primary">{{startHouseStatedate}}/{{endHouseStatedate}}</el-button>
+                            <el-button :style="stateAfterDateFlag == false?'margin-left: 0px !important;':''" type="primary">{{startHouseStatedate}}/{{endHouseStatedate}}</el-button>
                             <el-button v-show="stateNextDateFlag" type="primary" icon="el-icon-arrow-right"
                                 @click="afterStateWeek">后七天</el-button>
                         </div>
@@ -383,7 +385,7 @@
                         <div>
                             <el-button v-show="priceAfterDateFlag" type="primary" icon="el-icon-arrow-left"
                                 @click="deforePriceWeek">前七天</el-button>
-                            <el-button type="primary">{{startHousePricedate}}/{{endHousePricedate}}</el-button>
+                            <el-button :style="priceAfterDateFlag == false?'margin-left: 0px !important;':''" type="primary">{{startHousePricedate}}/{{endHousePricedate}}</el-button>
                             <el-button v-show="priceNextDateFlag" type="primary" icon="el-icon-arrow-right"
                                 @click="afterPriceWeek">后七天</el-button>
                         </div>
@@ -485,8 +487,8 @@
                             <el-table-column label="操作">
                                 <el-button type="primary" icon="el-icon-edit" size="mini"
                                     @click="setReviseHouseTypeBtn"></el-button>
-                                <el-button type="danger" icon="el-icon-delete" size="mini"
-                                    @click="setDeleHouseTypeBtn"></el-button>
+                                <el-button type="danger" icon="el-icon-delete" size="mini" @click="setDeleHouseTypeBtn">
+                                </el-button>
                             </el-table-column>
                         </el-table>
                         <div id="footer-page-box">
@@ -744,7 +746,6 @@
             </div>
             <div>
                 <span>修改日期</span>
-                <!-- {{roomStateValue}} -->
                 <el-date-picker v-model="roomStateValue" type="daterange" start-placeholder="开始日期"
                     end-placeholder="结束日期" :default-time="['00:00:00', '23:59:59']" size="mini"
                     format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
@@ -762,11 +763,6 @@
                 </el-row>
             </div>
         </el-dialog>
-        <!-- <div v-if="reviseStateFrame" id="revise-state">
-            <i class="el-icon-close" @click="closeReviseStateClick"></i>
-            <h4 class="revise-state-title">批量修改房态</h4>
-            
-        </div> -->
         <!-- 修改房量弹出框 -->
         <el-dialog v-if="reviseNumFrame" title="批量修改房量" :visible.sync="reviseNumFrame" width="50%" height="50vh">
             <p>房型</p>
@@ -801,11 +797,6 @@
                 </el-row>
             </div>
         </el-dialog>
-        <!-- <div v-if="reviseNumFrame" id="revise-number">
-            <i class="el-icon-close" @click="closeReviseNumClick"></i>
-            <h4 class="revise-state-title">批量修改房量</h4>
-            
-        </div> -->
         <el-dialog v-if="revisePriceFrame" title="修改房价" :visible.sync="revisePriceFrame" width="50%" height="50vh">
             <p>房型:{{revisePriceCurrName}}</p>
             <el-form label-width="100px">
@@ -836,10 +827,6 @@
                 </div>
             </div>
         </el-dialog>
-        <!-- <div v-show="revisePriceFrame" id="revisePriceFrameid">
-            <h3 style="background-color: #dddddd;padding: 5px;font-size: 1vw;">修改房价</h3>
-            
-        </div> -->
         <!-- 修改房量弹出框 -->
         <el-dialog v-if="stateNumFlag" title="修改房量" :visible.sync="stateNumFlag" width="50%" height="50vh">
             <p>房型名称: {{reviseStateCurrName}}</p>
@@ -850,10 +837,6 @@
                 <el-button type="primary" @click="ReviseStateNumBtn">确认</el-button>
             </div>
         </el-dialog>
-        <!-- <div v-show="stateNumFlag" class="stateSmall">
-            <h3 style="background-color: #dddddd;font-size: 1vw">修改房量</h3>
-            
-        </div> -->
         <!-- 可售转关房 -->
         <el-dialog v-if="stateOpenFlag" title="修改房量" :visible.sync="stateOpenFlag" width="50%">
             <p>房型名称: {{reviseStateCurrName}}</p>
@@ -863,9 +846,6 @@
                 <el-button type="primary" @click="ReviseStateOpenBtn">确认</el-button>
             </div>
         </el-dialog>
-        <!-- <div v-show="stateOpenFlag" class="stateSmall">
-            
-        </div> -->
         <!-- 关房转开启 -->
         <el-dialog v-if="stateCloseFlag" title="修改房量" :visible.sync="stateCloseFlag" width="50%">
             <p>房型名称: {{reviseStateCurrName}}</p>
@@ -875,55 +855,52 @@
                 <el-button type="primary" @click="ReviseStateCloseBtn">确认</el-button>
             </div>
         </el-dialog>
-        <!-- <div v-show="stateCloseFlag" class="stateSmall">
-            
-        </div> -->
     </div>
 
 
     <script>
         // 左侧民宿列表
-        const queryHomeStayListURL = 'https://api.sdzhujialin.com/admin/Homestay/IndexData'
+        const queryHomeStayListURL = 'https://api.izhujialin.com/admin/Homestay/IndexData'
         // 房型列表
-        const houseTypeListURL = 'https://api.sdzhujialin.com/admin/House/IndexData';
+        const houseTypeListURL = 'https://api.izhujialin.com/admin/House/IndexData';
         // 房型设施
-        const queryHouseCheckListURL = 'https://api.sdzhujialin.com/admin/Homestay/HouseData';
+        const queryHouseCheckListURL = 'https://api.izhujialin.com/admin/Homestay/HouseData';
         // 添加房型信息(除图)
-        const setAddhouseTypeInfoURL = 'https://api.sdzhujialin.com/admin/House/AddData';
+        const setAddhouseTypeInfoURL = 'https://api.izhujialin.com/admin/House/AddData';
         // 添加房型图片
-        const setAddHouseTypeImgURL = 'https://api.sdzhujialin.com/admin/House/upload';
+        const setAddHouseTypeImgURL = 'https://api.izhujialin.com/admin/House/upload';
         // 删除房型
-        const setDeleHouseTypeUrl = 'https://api.sdzhujialin.com/admin/House/DelData';
+        const setDeleHouseTypeUrl = 'https://api.izhujialin.com/admin/House/DelData';
         // 房型详情
-        const queryHouseTypeAllURL = 'https://api.sdzhujialin.com/admin/House/Details';
+        const queryHouseTypeAllURL = 'https://api.izhujialin.com/admin/House/Details';
         // 详情设为主图
-        const setReviseHouseTypeIsMainImgURL = 'https://api.sdzhujialin.com/admin/House/ImgOne';
+        const setReviseHouseTypeIsMainImgURL = 'https://api.izhujialin.com/admin/House/ImgOne';
         // 详情图片上传
-        const setReviseHouseTypeImgURL = 'https://api.sdzhujialin.com/admin/House/Imgadd';
+        const setReviseHouseTypeImgURL = 'https://api.izhujialin.com/admin/House/Imgadd';
         // 详情删除图片
-        const setReviseHouseTypeDeleImgURL = 'https://api.sdzhujialin.com/admin/House/ImgDel';
+        const setReviseHouseTypeDeleImgURL = 'https://api.izhujialin.com/admin/House/ImgDel';
         // 修改房型请求
-        const setReviseHouseTypeInfoURL = 'https://api.sdzhujialin.com/admin/House/Updata';
+        const setReviseHouseTypeInfoURL = 'https://api.izhujialin.com/admin/House/Updata';
         // ----------------房价-----------------
         // 房价列表
-        const queryHousePriceListURL = 'https://api.sdzhujialin.com/admin/Housemoney/IndexData';
+        const queryHousePriceListURL = 'https://api.izhujialin.com/admin/Housemoney/IndexData';
         // 单个房价修改
-        const setOnePriceURL = 'https://api.sdzhujialin.com/admin/Housemoney/Price';
+        const setOnePriceURL = 'https://api.izhujialin.com/admin/Housemoney/Price';
         // 批量修改房价
-        const setAllPriceURL = 'https://api.sdzhujialin.com/admin/Housemoney/BatchPrice';
+        const setAllPriceURL = 'https://api.izhujialin.com/admin/Housemoney/BatchPrice';
         // -----------------房态房量-----------------
         // 房态列表
-        const queryHouseStateListURL = 'https://api.sdzhujialin.com/admin/Houseroom/IndexData'
+        const queryHouseStateListURL = 'https://api.izhujialin.com/admin/Houseroom/IndexData'
         // 修改某天房量
-        const setReviseStateNumURL = 'https://api.sdzhujialin.com/admin/Houseroom/Closeouse';
+        const setReviseStateNumURL = 'https://api.izhujialin.com/admin/Houseroom/Closeouse';
         // 开启转关房
-        const setReviseStateOpenURL = 'https://api.sdzhujialin.com/admin/Houseroom/Close';
+        const setReviseStateOpenURL = 'https://api.izhujialin.com/admin/Houseroom/Close';
         // 关房转开启
-        const setReviseStateCloseURL = 'https://api.sdzhujialin.com/admin/Houseroom/Opne';
+        const setReviseStateCloseURL = 'https://api.izhujialin.com/admin/Houseroom/Opne';
         // 批量修改房态
-        const setReviseStateAllUrl = 'https://api.sdzhujialin.com/admin/Houseroom/Batch';
+        const setReviseStateAllUrl = 'https://api.izhujialin.com/admin/Houseroom/Batch';
         // 批量修改房量
-        const setReviseNumAllUrl = 'https://api.sdzhujialin.com/admin/Houseroom/BatchHouse';
+        const setReviseNumAllUrl = 'https://api.izhujialin.com/admin/Houseroom/BatchHouse';
 
         const cityOptions = [
             {
@@ -1424,27 +1401,17 @@
                 priceDay: '',
             },
             created() {
-                // this.queryHomeStayList();
                 this.queryHousePriceList();
-                // this.queryHouseStateList();
             },
             mounted() {
                 // 左侧民宿列表
                 this.queryHomeStayList();
                 // 首次民宿房型请求
                 this.activeHouseTypeList();
-                // 房态日期
-                // this.houseStateDate();
-                // 房价日期
-                // this.housePriceDate();
-                // 房价列表请求
-                // this.queryHousePriceList();
-                // 
             },
             methods: {
                 // 民宿列表选项卡
                 homeStayTabs(tab, event) {
-                    // console.log(tab.label);
                     for (let i = 0; i < this.homeStayData.length; i++) {
                         if (tab.label == this.homeStayData[i].name) {
                             this.currentHomeStayID = this.homeStayData[i].id
@@ -1461,7 +1428,6 @@
                 },
                 // 房型选项卡
                 houseTabsClick(tab, event) {
-                    // console.log(tab.label);
                     this.queryHousePriceList();
                     this.addBoxShow = false;
                     this.revisePriceFrame = false;
@@ -1469,12 +1435,10 @@
                 },
                 // 房型列表分页
                 currentSizeChange(val) {
-                    // console.log(val);
                     this.currentSize = val;
                     this.HouseTypeList();
                 },
                 currentPageChange(val) {
-                    // console.log(val);
                     this.currentPage = val;
                     this.HouseTypeList();
                 },
@@ -1499,12 +1463,10 @@
                 },
                 // 表格点击
                 houseTableCell(row, column, cell, event) {
-                    // console.log(row.id);
                     this.deleHouseID = row.id;
                 },
                 // 删除房型按钮
                 setDeleHouseTypeBtn() {
-                    // console.log('删除按钮dianji');
                     setTimeout(() => {
                         this.setDeleHouseType();
                     }, 60);
@@ -1574,12 +1536,6 @@
                     if (this.addHouseOut_time == 2) {
                         this.addHouseOut_time = this.addHouseOut_timeText;
                     }
-                    // if (this.addHouseDeposit == 2) {
-                    //     this.addHouseDeposit = this.addHouseDeposit_money;
-                    // }
-                    // if (this.addHouseExtra_bed == 3) {
-                    //     this.addHouseExtra_bed = this.addHouseExtra_bed_money;
-                    // }
 
                     if (!this.addHouseTypeName || !this.addHouseTypeSize || !this.addHouseSeveral_rooms || !this.addHouseBed_info[0].name || !this.addHouseBed_info[0].size || !this.addHouseNumber || !this.addHouseWindow || !this.addHousebreakfast || !this.addHouseWc || !this.addHouseVolume || !this.addHouseTestera || !this.addHouseList || !this.addHouseIs_cook || !this.addHouseGo_time || !this.addHouseOut_time || !this.addHouseStartTime || !this.addHouseEndTime || !this.addHouseInvoice || !this.addHouseHousing_code) {
                         this.failTip("信息填写不完整");
@@ -1608,7 +1564,6 @@
                 onReviseUpload(file, fileList) {
                     this.uploadNum++;
                     if (this.uploadNum == 2) {
-                        // console.log(file);
                         this.addHouseList = fileList;
                         this.setReviseHouseTypeImg(file.raw);
                         this.uploadNum = 0;
@@ -1616,9 +1571,6 @@
                 },
                 // 详情删除图片remove
                 onDeleRevise(file, fileList) {
-                    // console.log(file);
-                    // console.log(file.name);
-                    // console.log(this.addHouseList)
                     let deleNum = 0;
                     for (let i = 0; i < this.addHouseList.length; i++) {
                         if (file.name == this.addHouseList[i].name) {
@@ -1626,8 +1578,6 @@
                             break;
                         }
                     }
-                    // console.log(deleNum);
-                    // console.log(this.homeImgNum);
                     if (this.homeImgNum == deleNum) {
                         this.homeImgNum = 0;
                     }
@@ -1644,7 +1594,6 @@
                 },
                 // 详情图片上传
                 setReviseHouseTypeImg(file) {
-                    // console.log(this.deleHouseID);
                     let that = this;
                     let fd = new FormData();
                     fd.append('file', file);
@@ -1675,7 +1624,6 @@
                             homestay_id: this.deleHouseID
                         },
                         success(res) {
-                            // console.log(res);
                             if (res.code == 200) {
                                 that.queryHouseTypeAll();
                             } else {
@@ -1740,8 +1688,6 @@
                             }
                         }
                     });
-
-                    // this.housePriceDate();
                 },
                 // 房价后七天
                 afterPriceWeek() {
@@ -1799,12 +1745,10 @@
                         type: 'POST',
                         dataType: 'json',
                         success(res) {
-                            // console.log(res);
                             if (res.code == 200) {
                                 that.homeStayData = res.data;
                                 that.activeHomeStayID = res.data[0].id;
                                 that.currentHomeStayID = res.data[0].id;
-                                // that.queryHouseStateList();
                                 that.activeHouseTypeList();
                             } else {
                                 that.failTip(res.msg);
@@ -1850,7 +1794,6 @@
                             homestay_id: this.currentHomeStayID,
                         },
                         success(res) {
-                            // console.log(res);
                             if (res.code == 200) {
                                 that.houseData = res.data.data;
                                 that.allTotal = res.data.total;
@@ -1891,7 +1834,6 @@
                         type: 'POST',
                         dataType: 'json',
                         success(res) {
-                            // console.log(res);
                             if (res.code == 200) {
                                 that.addHouseCheckList = res.data;
                             } else {
@@ -1937,9 +1879,7 @@
                         dataType: 'json',
                         success(res) {
                             if (res.code == 200) {
-                                // that.HouseTypeList();
                                 that.setAddHouseTypeImg(res.data);
-                                // that.successTip(res.msg);
                             } else {
                                 that.failTip(res.msg);
                             }
@@ -1962,7 +1902,6 @@
                         processData: false,
                         contentType: false,
                         success(res) {
-                            // console.log(res);
                             if (res.code == 200) {
                                 that.HouseTypeList();
                                 that.addBoxShow = false;
@@ -1974,7 +1913,6 @@
                 },
                 // 删除房型请求
                 setDeleHouseType() {
-                    // console.log(this.deleHouseID);
                     let that = this;
                     $.ajax({
                         url: setDeleHouseTypeUrl,
@@ -1987,9 +1925,7 @@
                             if (res.code == 200) {
                                 if (that.currentPage != 1 && that.allTotal % 5 == 1) {
                                     that.currentPage--;
-                                    console.log(that.currentPage);
                                 }
-
                                 that.HouseTypeList();
                             } else {
                                 that.failTip(res.msg);
@@ -2015,8 +1951,6 @@
                                 that.addHouseSeveral_rooms = res.data.data.several_rooms;
                                 that.addHouseBed_info = res.data.data.bed_info;
                                 that.addHouseNumber = res.data.data.number;
-                                // that.addHouseWindow = res.data.data.window;
-                                // that.addHousebreakfast = res.data.data.breakfast;
                                 if (res.data.data.window == 1) {
                                     that.addHouseWindow = '有窗';
                                 } else {
@@ -2027,8 +1961,6 @@
                                 } else {
                                     that.addHousebreakfast = '不含早餐';
                                 }
-                                console.log(res.data.data.window);
-                                console.log(res.data.data.breakfast);
                                 that.addHouseWc = res.data.data.wc;
                                 that.addHouseVolume = res.data.data.volume;
                                 let tempCheckArr = res.data.data.room_facilities.concat(res.data.data.infrastructure, res.data.data.communication, res.data.data.bathroom, res.data.data.food);
@@ -2077,25 +2009,21 @@
                                 that.addHouseIs_cook = res.data.data.is_cook;
                                 if (res.data.data.go_time == '12:00') {
                                     that.addHouseGo_time = res.data.data.go_time;
-                                    // that.addHouseGo_timeText = '';
                                 } else {
                                     that.addHouseGo_time = 2;
                                     that.addHouseGo_timeText = res.data.data.go_time;
                                 }
                                 if (res.data.data.out_time == '12:00') {
                                     that.addHouseOut_time = res.data.data.out_time;
-                                    // that.addHouseOut_timeText = '';
                                 } else {
                                     that.addHouseOut_time = 2;
                                     that.addHouseOut_timeText = res.data.data.out_time;
                                 }
-                                // that.addHouseGo_timeText = res.data.data.go_time;
                                 that.addHouseOut_time = res.data.data.out_time;
                                 that.addHouseOut_timeText = res.data.data.out_time;
                                 that.addHouseStartTime = res.data.data.reception_start_time;
                                 that.addHouseEndTime = res.data.data.reception_end_time;
                                 that.addHouseInvoice = res.data.data.invoice;
-                                // console.log(res.data.data.deposit);
                                 that.addHouseDeposit = res.data.data.deposit;
                                 if (res.data.data.deposit != 0 && that.addHouseDeposit_money == '') {
                                     that.addHouseDeposit = 0;
@@ -2183,13 +2111,11 @@
                     let tempOut = '';
                     if (this.addHouseGo_time == 2) {
                         tempGo = this.addHouseGo_timeText;
-                        // this.addHouseGo_time = this.addHouseGo_timeText;
                     } else if (this.addHouseGo_time == '12:00') {
                         tempGo = '12:00'
                     }
                     if (this.addHouseOut_time == 2) {
                         tempOut = this.addHouseOut_timeText;
-                        // this.addHouseOut_time = this.addHouseOut_timeText;
                     } else if (this.addHouseOut_time == '12:00') {
                         tempOut = '12:00'
                     }
@@ -2212,8 +2138,6 @@
                     } else if (this.addHousebreakfast == '不含早餐') {
                         this.addHousebreakfast = 2;
                     }
-                    console.log(this.addHouseWindow);
-                    console.log(this.addHousebreakfast);
                     $.ajax({
                         url: setReviseHouseTypeInfoURL,
                         data: {
@@ -2249,7 +2173,6 @@
                         dataType: 'json',
                         success(res) {
                             if (res.code == 200) {
-                                // console.log(res);
                                 that.addBoxShow = false;
                                 that.HouseTypeList();
                             } else {
@@ -2265,22 +2188,15 @@
                     this.reviseOneInput = false;
                     this.revisePriceCurrName = row['house_name'];
                     this.revisePriceCurrID = row['house_id'];
-                    // console.log(row[column.property]*1)
                     this.rowhouse_id = row['house_id'] * 1;
                     this.rowcolumnproperty = row[column.property] * 1;
                     this.columnproperty = column.property;
                     this.setOnePrice(row['house_id'] * 1, row[column.property] * 1, column.property);
                 },
-                // priceTabLeave(row, column, cell, event) {
-                //     if (this.rowhouse_id && this.rowcolumnproperty && this.columnproperty) {
-                //         this.setOnePrice(this.rowhouse_id, this.rowcolumnproperty, this.columnproperty);
-                //     }
-                // },
 
                 // 房价列表请求
                 queryHousePriceList() {
                     let that = this;
-                    // console.log(this.currentHomeStayID);
                     $.ajax({
                         url: queryHousePriceListURL,
                         data: {
@@ -2293,13 +2209,10 @@
                             let tempDataArr = res.data.data;
                             let tempArr = [];
                             let tempWeekArr = [];
-                            // console.log(res.data.data.length);
                             if (res.code == 200) {
                                 if (res.data.data.length != 0) {
                                     for (let i = 0; i < tempDataArr.length; i++) {
                                         let tempObj = {};
-                                        // that.reviseStateCurrNameArr.push(tempDataArr[i].house_name);
-                                        // that.reviseStateCurrIDArr.push(tempDataArr[i].house_id);
                                         tempObj.house_id = tempDataArr[i].house_id;
                                         tempObj.house_name = tempDataArr[i].house_name;
                                         for (let j = 0; j < tempDataArr[i].name.length; j++) {
@@ -2318,8 +2231,6 @@
                                     that.startHousePricedate = res.data.frontdata;
                                     that.endHousePricedate = res.data.afterdata;
                                 } else {
-                                    // that.reviseStateCurrNameArr = [];
-                                    // that.reviseStateCurrIDArr = [];
                                     that.housePriceTabWeek = [];
                                     that.housePriceTabData = [];
                                     that.startHousePricedate = '';
@@ -2352,9 +2263,6 @@
                                 that.columnproperty = '';
                                 that.successTip(res.msg);
                             }
-                            // else {
-                            //     that.failTip(res.msg);
-                            // }
                         }
                     })
                 },
@@ -2428,7 +2336,6 @@
                 },
 
                 roomStateOpen() {
-                    // this.reviseStateFrame = false;
                     this.setReviseStateAll();
                 },
                 roomStateClose() {
@@ -2465,7 +2372,6 @@
                     })
                 },
                 roomNumOpen() {
-                    // this.reviseNumFrame = false;
                     this.setReviseNumAll();
                 },
                 roomNumClose() {
@@ -2505,7 +2411,6 @@
                 },
                 // 房态表格点击
                 stateTabClick(row, column, cell, event) {
-                    // this.reviseOneInput = false;
                     this.reviseStateCurrName = row['house_name'];
                     this.reviseStateCurrID = row['house_id'];
                     this.reviseStateCurrDate = column.property;
@@ -2513,7 +2418,6 @@
                 },
                 // 房态列表请求
                 queryHouseStateList() {
-                    // console.log(this.currentHomeStayID);
                     let that = this;
                     $.ajax({
                         url: queryHouseStateListURL,
@@ -2524,12 +2428,9 @@
                         type: 'POST',
                         dataType: 'json',
                         success(res) {
-
-                            // console.log(res.data)
                             let tempDataArr = res.data.data;
                             let tempArr = [];
                             let tempWeekArr = [];
-                            // console.log(res.data.data.length);
                             if (res.code == 200) {
                                 if (res.data.data.length != 0) {
                                     that.reviseStateCurrNameArr = [];
@@ -2590,7 +2491,6 @@
                         type: 'POST',
                         Frontdata: 'json',
                         success(res) {
-                            // console.log(res.data)
                             if (res.code == 200) {
                                 let tempDataArr = res.data.data;
                                 let tempArr = [];
@@ -2613,7 +2513,6 @@
                                             tempObj.homestay_id = tempDataArr[i].name[j].homestay_id;
                                             tempObj.id = tempDataArr[i].name[j].id;
                                             tempObj.week = tempDataArr[i].name[j].week;
-
                                         }
                                         tempArr.push(tempObj);
                                     }
@@ -2715,10 +2614,6 @@
                 },
                 // 修改某天房量请求
                 setReviseStateNum() {
-                    // console.log(this.reviseStateCurrID)
-                    // console.log(this.reviseStateOverNum)
-                    // console.log(this.ReviseStateNum)
-
                     if (this.reviseStateOverNum > this.ReviseStateNum * 1) {
                         this.failTip("修改房量应不能小于已售房量")
                     } else {
@@ -2963,10 +2858,6 @@
                         this.addHouseDeposit_money = '';
                         this.addHouseDeposit = 0;
                     }
-                    // else if (this.addHouseDeposit * 1 != 0 && this.currentAddbox == false) {
-                    //     this.addHouseDeposit = this.addHouseDeposit_money
-                    //     // this.addHouseDeposit = 2;
-                    // }
                 },
                 addHouseExtra_bed() {
                     if (this.addHouseExtra_bed * 1 == 1 || this.addHouseExtra_bed * 1 == 2) {
@@ -3031,9 +2922,6 @@
                             this.failTip("请输入数字")
                         }
                     }
-                    // if (this.reviseStateOverNum > this.ReviseStateNum) {
-                    //     this.failTip("修改房量应不能小于已售房量")
-                    // }
                 },
                 stateNumFlag() {
                     if (this.stateNumFlag == false) {
@@ -3056,8 +2944,6 @@
                 },
                 reviseStateFrame() {
                     if (this.reviseStateFrame == false) {
-                        // this.reviseStateCurrNameArr = [];
-                        // this.reviseStateCurrIDArr = [];
                         this.stateOpenHouse = '';
                         this.checkedCitiesState = [];
                         this.roomStateValue = [];
@@ -3066,7 +2952,6 @@
                     }
                 },
                 checkedStateHousenameList() {
-                    // console.log(this.checkedStateHousenameList);
                     let tempArr = [];
                     for (let i = 0; i < this.checkedStateHousenameList.length; i++) {
                         for (let j = 0; j < this.reviseStateCurrIDArr.length; j++) {
@@ -3075,7 +2960,6 @@
                             }
                         }
                     }
-                    console.log(tempArr);
                     this.currentCheckedNumHousenameInput = tempArr;
                 },
                 reviseNumFrame() {

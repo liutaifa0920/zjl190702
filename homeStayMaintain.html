@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <!-- <link rel="stylesheet" href="homeStayMaintain.css"> -->
-    <!-- <link rel="stylesheet" href="index.css"> -->
+    <link rel="stylesheet" href="index.css">
     <script type="text/javascript" src="http://webapi.amap.com/maps?v=1.4.6&key=7628693ecd6dc7544c976722c9a15b4c">
     </script>
     <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
@@ -294,11 +294,8 @@
                 </div>
             </el-form>
         </el-dialog>
-        <!-- <div id="reviseRecommendBox" v-if="recommendFlag">
-                        <i class="el-icon-close" @click="closeAddBoxClick"></i>
-                        
-                    </div> -->
 
+        <!---------------------------------- 添加民宿,民宿详情,民宿信息修改弹出层 ---------------------------------->
         <el-dialog v-if="addFlag" :title="addBoxTitle" :visible.sync="addFlag" width="50%" height="50vh">
             <div class="dialogBox">
                 <el-form label-width="100px">
@@ -339,7 +336,7 @@
                         <div class="upLoadSmallBox">
                             <!-- 新建 -->
                             <div v-if="addBoxShow" class="upLoadBigBox">
-                                <el-upload action="https://api.sdzhujialin.com/admin/Index/IndexData"
+                                <el-upload action="https://api.izhujialin.com/admin/Index/IndexData"
                                     list-type="picture-card" :on-change="onUpload" :limit="20" accept="image/*"
                                     :file-list="mounteImgArr">
                                     <i class="el-icon-plus"></i>
@@ -350,7 +347,7 @@
                             </div>
                             <!-- 详情 -->
                             <div v-if="!addBoxShow" class="upLoadBigBox">
-                                <el-upload action="https://api.sdzhujialin.com/admin/Index/Imgadd"
+                                <el-upload action="https://api.izhujialin.com/admin/Index/Imgadd"
                                     list-type="picture-card" :on-change="onUploadRevise" :on-remove="onDeleRevise"
                                     :limit="20" accept="image/*" :file-list="mounteImgArr">
                                     <i class="el-icon-plus"></i>
@@ -400,11 +397,7 @@
                 </el-form>
             </div>
         </el-dialog>
-        <!-- -------------------------------- 添加民宿,民宿详情,民宿信息修改弹出层 -------------------------------- -->
-        <!-- <div id="addBox" v-if="addFlag">
-            <i class="el-icon-close" @click="closeAddBoxClick"></i>
-            
-        </div> -->
+        
     </div>
 
 
@@ -501,25 +494,25 @@
             },
         }
         // 页面首次渲染
-        const fristListURL = 'https://api.sdzhujialin.com/admin/Index/IndexData';
+        const fristListURL = 'https://api.izhujialin.com/admin/Index/IndexData';
         // 民宿设置
-        const addCheckListURL = 'https://api.sdzhujialin.com/admin/Facilities/IndexData';
+        const addCheckListURL = 'https://api.izhujialin.com/admin/Facilities/IndexData';
         // 添加民宿
-        const setHomeStayInfoURL = 'https://api.sdzhujialin.com/admin/Index/AddData';
+        const setHomeStayInfoURL = 'https://api.izhujialin.com/admin/Index/AddData';
         // 添加民宿图片上传
-        const setHomeStayImgURL = 'https://api.sdzhujialin.com/admin/Index/upload';
+        const setHomeStayImgURL = 'https://api.izhujialin.com/admin/Index/upload';
         // 民宿详情接口
-        const queryReviseHomeStayURL = 'https://api.sdzhujialin.com/admin/Index/Details';
+        const queryReviseHomeStayURL = 'https://api.izhujialin.com/admin/Index/Details';
         // 修改民宿
-        const setReviseHomeStayURL = 'https://api.sdzhujialin.com/admin/Index/Updata';
+        const setReviseHomeStayURL = 'https://api.izhujialin.com/admin/Index/Updata';
         // 详情设为主图
-        const setIsMainImgURL = 'https://api.sdzhujialin.com/admin/Index/ImgOne';
+        const setIsMainImgURL = 'https://api.izhujialin.com/admin/Index/ImgOne';
         // 详情删除图片
-        const setDeleImgURL = 'https://api.sdzhujialin.com/admin/Index/ImgDel';
+        const setDeleImgURL = 'https://api.izhujialin.com/admin/Index/ImgDel';
         // 详情上传图片
-        const setUploadImgURL = 'https://api.sdzhujialin.com/admin/Index/Imgadd';
+        const setUploadImgURL = 'https://api.izhujialin.com/admin/Index/Imgadd';
         // 修改推荐
-        const setRecommendURL = 'https://api.sdzhujialin.com/admin/index/recommend'
+        const setRecommendURL = 'https://api.izhujialin.com/admin/index/recommend'
 
         new Vue({
             el: '#homeStayMaintain',
@@ -746,7 +739,6 @@
                 },
                 // 修改推荐请求
                 setReviseRecommend() {
-                    // console.log(this.reviseHomeStayId);
                     let that = this;
                     $.ajax({
                         url: setRecommendURL,
@@ -756,7 +748,6 @@
                         },
                         type: 'POST',
                         success(res) {
-                            // console.log(res);
                             if (res.code == 200) {
                                 that.queryHomestayList();
                                 that.recommendFlag = false;
@@ -835,7 +826,6 @@
                     }
                     fd.append("id", id);
                     fd.append("flag", this.homeImgNum);
-                    // console.log(fd.get("files[]"));
                     $.ajax({
                         url: setHomeStayImgURL,
                         type: 'POST',
@@ -843,7 +833,6 @@
                         processData: false,
                         contentType: false,
                         success(res) {
-                            // console.log(res);
                             if (res.code == 200) {
                                 that.successTip(res.msg);
                                 that.addFlag = false;
@@ -865,7 +854,6 @@
                         },
                         dataType: "json",
                         success(res) {
-                            // console.log(res);
                             if (res.code == 200) {
                                 if (that.addBoxShow == false) {
                                     that.addFlag = true;
@@ -911,11 +899,8 @@
                                     let tempImgObj = {};
                                     tempImgObj.name = res.data.data.img[i].img_id.toString();
                                     tempImgObj.url = res.data.data.img[i].img_url;
-                                    // console.log(res.data.data.img[i].img_url);
-                                    // console.log(tempImgObj)
                                     tempImgArr.push(tempImgObj);
                                 }
-                                // console.log(tempImgArr);
                                 // 照片组信息
                                 that.mounteImgArr = tempImgArr;
                                 that.upLoadImgList = tempImgArr;
@@ -967,14 +952,12 @@
                 },
                 // 修改民宿请求
                 setReviseHomeStayInfo() {
-                    // console.log(this.addCategory);
                     let tempCategory = '';
                     if (this.addCategory == 1) {
                         tempCategory = 1;
                     } else {
                         tempCategory = 2;
                     }
-                    // console.log(tempCategory);
                     let that = this;
                     $.ajax({
                         url: setReviseHomeStayURL,
@@ -1022,7 +1005,6 @@
                             }
                         })
                         this.uploadNum = 0;
-                        // console.log(this.upLoadImgList);
                     }
                 },
                 // 修改上传图片change
@@ -1037,9 +1019,6 @@
                 },
                 // 修改删除图片remove
                 onDeleRevise(file, fileList) {
-                    // console.log(file);
-                    // console.log(file.name);
-                    // console.log(this.upLoadImgList)
                     let deleNum = 0;
                     for (let i = 0; i < this.upLoadImgList.length; i++) {
                         if (file.name == this.upLoadImgList[i].name) {
@@ -1047,8 +1026,6 @@
                             break;
                         }
                     }
-                    // console.log(deleNum);
-                    // console.log(this.homeImgNum);
                     if (this.homeImgNum == deleNum) {
                         this.homeImgNum = 0;
                     }
@@ -1056,7 +1033,6 @@
                 },
                 // 设为主页按钮
                 upLoadBtn(i) {
-                    // console.log(this.upLoadImgList)
                     this.homeImgNum = i;
                     if (this.addBoxShow == false) {
                         this.setIsMainImg();
@@ -1064,7 +1040,6 @@
                 },
                 // 详情设为主图请求
                 setIsMainImg() {
-                    // console.log(this.mounteImgArr);
                     let that = this;
                     let tempImg_id = this.mounteImgArr[this.homeImgNum].name
                     $.ajax({
@@ -1076,7 +1051,6 @@
                         type: 'POST',
                         dataType: 'json',
                         success(res) {
-                            // console.log(res);
                             if (res.code == 200) {
                                 that.successTip(res.msg);
                             } else {
@@ -1088,11 +1062,9 @@
                 // 详情上传图片请求
                 setUploadImg(file) {
                     let that = this;
-                    // console.log(this.reviseHomeStayId);
                     let formData = new FormData();
                     formData.append('file', file);
                     formData.append("homestay_id", this.reviseHomeStayId)
-                    // console.log(formData.get('file'));
                     $.ajax({
                         url: setUploadImgURL,
                         data: formData,
@@ -1119,7 +1091,6 @@
                             homestay_id: this.reviseHomeStayId
                         },
                         success(res) {
-                            console.log(res);
                             if (res.code == 200) {
                                 that.queryReviseHomeStay();
                             } else {

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <link rel="stylesheet" href="index.css">
     <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
@@ -57,8 +58,18 @@
             padding: 8px;
             margin-top: 0px;
         }
-        .el-form-item__content{
+
+        .el-form-item__content {
             text-align: left !important;
+        }
+
+        .dialogBox {
+            height: 60vh !important;
+            overflow-y: scroll;
+        }
+
+        .dialogBox::-webkit-scrollbar {
+            display: none;
         }
     </style>
     <title>标签管理</title>
@@ -82,23 +93,26 @@
             </div>
         </div>
 
-        <el-dialog v-if="addTipBoxFlag" title="修改房量" :visible.sync="addTipBoxFlag" width="50%">
-            <el-form label-width="200px">
-                <el-form-item v-for="infoItems,i in allTipInfo" :key="i" :label="'民宿: ' + infoItems.homestay_name">
-                    <el-radio-group v-model="radio" style="text-align: left;">
-                        <el-radio v-for="infoItem,j in infoItems.house_name" :key="j"
-                            :label="infoItem.id + ',' + infoItem.name + ',' + infoItems.homestay_name + ',' + infoItems.homestay_id">
-                            {{infoItem.name}}</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <div style="text-align: center;">
-                    <el-button @click="closeaddBox">取消</el-button>
-                    <el-button type="primary" @click="addReviseBtn">确认</el-button>
-                </div>
-            </el-form>
+        <el-dialog v-if="addTipBoxFlag" title="修改房型" :visible.sync="addTipBoxFlag" width="50%">
+            <div class="dialogBox">
+                <el-form label-width="200px">
+                    <el-form-item v-for="infoItems,i in allTipInfo" :key="i" :label="'民宿: ' + infoItems.homestay_name">
+                        <el-radio-group v-model="radio" style="text-align: left;">
+                            <el-radio v-for="infoItem,j in infoItems.house_name" :key="j"
+                                :label="infoItem.id + ',' + infoItem.name + ',' + infoItems.homestay_name + ',' + infoItems.homestay_id">
+                                {{infoItem.name}}</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <div style="text-align: center;">
+                        <el-button @click="closeaddBox">取消</el-button>
+                        <el-button type="primary" @click="addReviseBtn">确认</el-button>
+                    </div>
+                </el-form>
+            </div>
+
         </el-dialog>
 
-        
+
         <!-- <div style="text-align: center;margin-top: 20px;">
         <el-pagination
             @size-change="hsTipSizeChange"
@@ -115,10 +129,10 @@
     </div>
 
     <script>
-        const queryHSTipListURL = 'https://api.sdzhujialin.com/admin/Housetag/IndexData';
-        const queryReviseTipURL = 'https://api.sdzhujialin.com/admin/Housetag/house';
-        const setReviseTipURL = 'https://api.sdzhujialin.com/admin/Housetag/AddTag';
-        const setDeleTipURL = 'https://api.sdzhujialin.com/admin/Housetag/DelTag';
+        const queryHSTipListURL = 'https://api.izhujialin.com/admin/Housetag/IndexData';
+        const queryReviseTipURL = 'https://api.izhujialin.com/admin/Housetag/house';
+        const setReviseTipURL = 'https://api.izhujialin.com/admin/Housetag/AddTag';
+        const setDeleTipURL = 'https://api.izhujialin.com/admin/Housetag/DelTag';
 
         // let URL = window.location.origin;
         // URL = URL.replace('http://app',"https://api");
